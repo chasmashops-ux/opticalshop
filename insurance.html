@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance Services</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f4c81, #1b6ca8);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        header p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: auto;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 50px auto;
+        }
+
+        .insurance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 16px;
+            padding: 30px 25px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            transition: 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .card i {
+            font-size: 50px;
+            color: #1b6ca8;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #0f4c81;
+        }
+
+        .card p {
+            font-size: 15px;
+            flex-grow: 1;
+            line-height: 1.7;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 12px 24px;
+            background: #1b6ca8;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #0f4c81;
+        }
+
+        .features {
+            margin-top: 70px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .feature-box {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.06);
+        }
+
+        .feature-box h3 {
+            color: #0f4c81;
+            margin-bottom: 12px;
+        }
+
+        footer {
+            background: #0f4c81;
+            color: white;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-box {
+            text-align: left;
+        }
+
+        .footer-box h3 {
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .footer-box p,
+        .footer-box li {
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .footer-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 20px;
+        }
+
+        @media(max-width: 768px) {
+            header h1 {
+                font-size: 32px;
+            }
+
+            header p {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Protect What Matters Most</h1>
+        <p>
+            Explore our complete range of insurance services designed to keep your family, vehicle, home, and health secure.
+        </p>
+    </header>
+
+    <div class="container">
+
+        <div class="insurance-grid">
+
+            <div class="card">
+                <i class="fas fa-motorcycle"></i>
+                <h2>Two Wheeler Insurance</h2>
+                <p>
+                    Secure your bike or scooter with comprehensive coverage including accidents, theft, and third-party liability.
+                </p>
+                <a href="/vehicleinsurance.html" class="btn">View Plans</a>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-car"></i>
+                <h2>Four Wheeler Insurance</h2>
+                <p>
+                    Protect your car with cashless repairs, accidental damage coverage, and roadside assistance.
+                </p>
+                <a href="./vehicleinsurance.html" class="btn">View Plans</a>
+            </div>
+
+             <div class="card">
+                <i class="fas fa-bus"></i>
+                <h2>Travel Bus Insurance</h2>
+                <p>
+                    Secure your passenger buses with coverage for accidents, damages, passengers, and commercial travel risks.
+                </p>
+                <a href="/vehicleinsurance.html" class="btn">View Plans</a>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-truck"></i>
+                <h2>Commercial Vehicle Insurance</h2>
+                <p>
+                    Protect your commercial fleet including trucks, taxis, and delivery vehicles with complete business coverage.
+                </p>
+                <a href="./vehicleinsurance.html" class="btn">View Plans</a>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-heart"></i>
+                <h2>Life Insurance</h2>
+                <p>
+                    Ensure financial security for your family with flexible life insurance plans and long-term benefits.
+                </p>
+                <a href="https://saathi.licindia.co.in/s/hetal-saumil-rana/02382842" class="btn">View Plans</a>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-user-doctor"></i>
+                <h2>Health Insurance</h2>
+                <p>
+                    Get quality healthcare coverage with hospitalization benefits, cashless treatment, and medical support.
+                </p>
+                <a href="https://saathi.licindia.co.in/s/hetal-saumil-rana/02382842" class="btn">View Plans</a>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-user-shield"></i>
+                <h2>Personal Accident Insurance</h2>
+                <p>
+                    Financial protection against accidental injuries, disabilities, hospitalization, and unforeseen emergencies.
+                </p>
+                <a href="https://saathi.licindia.co.in/s/hetal-saumil-rana/02382842" class="btn">View Plans</a>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-house"></i>
+                <h2>Home Insurance</h2>
+                <p>
+                    Safeguard your home against fire, natural disasters, theft, and unexpected damages.
+                </p>
+                <a href="https://saathi.licindia.co.in/s/hetal-saumil-rana/02382842" class="btn">View Plans</a>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-box">
+                <h3>Quick Claim Process</h3>
+                <p>
+                    Hassle-free and fast claim settlement with expert support.
+                </p>
+            </div>
+
+            <div class="feature-box">
+                <h3>Affordable Premiums</h3>
+                <p>
+                    Flexible and budget-friendly plans for every customer.
+                </p>
+            </div>
+
+            <div class="feature-box">
+                <h3>24/7 Support</h3>
+                <p>
+                    Dedicated customer service available anytime you need assistance.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="footer-container">
+
+            <div class="footer-box">
+                <h3>Contact Information</h3>
+                <p><strong>Hetal Rana</strong> </p>
+                <p>
+                    <strong>Office Address:</strong><br>
+                    B 304 Riddhi Vinayak Tower,<br>
+                    Near Vijaynagar Railway Crossing,<br>
+                    Vijaynagar, Naranpura,<br>
+                    Ahmedabad - 380013
+                </p>
+                <p>
+                                 9429409817
+    <a href="https://wa.me/919429409817" target="_blank" style="text-decoration:none;">
+        <i class="fab fa-whatsapp"
+           style="color:#25D366; margin-left:8px; font-size:24px;"></i>
+    </a>
+
+    &nbsp;&nbsp;/&nbsp;&nbsp;
+
+    9429409818
+    <a href="https://wa.me/919429409818" target="_blank" style="text-decoration:none;">
+        <i class="fab fa-whatsapp"
+           style="color:#25D366; margin-left:8px; font-size:24px;"></i>
+    </a>
+                </p>
+                <p><strong>Mail Id:</strong> rana.saumil@gmail.com / hetu123sam@gmail.com</p>
+            </div>
+
+            <div class="footer-box">
+                <h3>Insurance Companies We Serve</h3>
+                <ul>
+                    <li>LIC</li>
+                    <li>ICICI Insurance</li>
+                    <li>HDFC Insurance</li>
+                    <li>Niva Bupa Health Insurance</li>
+                    <li>SBI General Insurance Co Ltd</li>
+                    <li>Care Health Insurance</li>
+                    <li>And Many More...</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="copyright">
+            <p>© 2026 Insurance Services. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
