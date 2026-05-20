@@ -1,0 +1,130 @@
+document.addEventListener("DOMContentLoaded", function () {
+
+    // ===== HEADER =====
+    document.getElementById("site-header").innerHTML = `
+     <!-- Premium Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a href="/">
+                <img src="/assets/images/Logo.png"  alt="Shree Hari chasma Ghar logo" title="Shree Hari Chasma Ghar" class="shcg-logo"> 
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/eyeglasses">EyeGlasses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/sunglasses">SunGlasses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contactlenses">Contact Lenses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#services">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-book" href="tel:+918732969601">Book Eye Test</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    `;
+
+    // ===== FOOTER =====
+    document.getElementById("site-footer").innerHTML = `
+
+      <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="row g-5">
+                    <div class="col-lg-3 col-md-6">
+                        <h3 class="footer-logo">Shree Hari</h3>
+                        <p class="footer-description">Premium optical store specializing in eyeglasses, sunglasses, and contact lenses with 30+ years of professional eye care experience in New Ranip, Ahmedabad.</p>
+                        <div class="social-links">
+                            <a href="https://twitter.com/hari_ghar" target="_blank" class="social-link">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="https://www.facebook.com/shriharichasmaghar" target="_blank" class="social-link">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/in/shree-hari-chasma-ghar/" target="_blank" class="social-link">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="https://www.instagram.com/shreeharichasmagharindia/" target="_blank" class="social-link">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <h4 class="footer-title">Quick Links</h4>
+                        <ul class="footer-links">
+                            <li><a href="#home"><i class="fas fa-chevron-right"></i> Home</a></li>
+                            <li><a href="#eyeglasses"><i class="fas fa-chevron-right"></i> EyeGlasses</a></li>
+                            <li><a href="#sunglasses"><i class="fas fa-chevron-right"></i> SunGlasses</a></li>
+                            <li><a href="#contact-lenses"><i class="fas fa-chevron-right"></i> Contact Lenses</a></li>
+                            <li><a href="#services"><i class="fas fa-chevron-right"></i> Services</a></li>
+                            <li><a href="#about"><i class="fas fa-chevron-right"></i> About</a></li>
+                            <li><a href="#contact"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <h4 class="footer-title">Popular Links</h4>
+                        <ul class="footer-links">
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Professional Optometry Service</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Myopia Management</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Optical Services Glasses</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Vision Screening</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Lenses for Prescription</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Glasses Repair</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> FAQ</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Google Reviews</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <h4 class="footer-title">Contact Details</h4>
+                        <div class="footer-contact">
+                            <p><i class="fas fa-map-marker-alt"></i> 5 Sun Residency, Anand Party Plot Rd, near Manki Circle, New Ranip, Ahmedabad, Gujarat 382470</p>
+                            <p><i class="fas fa-phone"></i> <a href="tel:+918732969601">+91 8732969601</a></p>
+                            <p><i class="fas fa-envelope"></i> <a href="mailto:chasmashops@gmail.com">chasmashops@gmail.com</a></p>
+                            <p><i class="fas fa-clock"></i> Mon-Sat: 10:00 AM - 9:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="mb-0">
+                    Copyright &copy; 2026 All Rights Reserved.
+                    <a href="#" class="me-2">Privacy Policy</a><br>
+                    For Eyewear Shop In New Ranip Ahmedabad <a href="#home">Shree Hari Chasma Ghar</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+    <!-- Floating Buttons -->
+    <a href="https://wa.me/918732969601" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    
+    <a href="tel:+918732969601" class="call-float" aria-label="Call">
+        <i class="fas fa-phone"></i>
+    </a>
+  
+    `;
+});
