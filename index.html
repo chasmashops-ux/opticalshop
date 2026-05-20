@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+Shree Hari Chasma Ghar | Eyewear Store | Optical Shop | Optician In New Ranip Ahmedabad
+</title>
+
+<meta name="description" content="Best Optician In New Ranip Ahmedabad. Shree Hari Chasma Ghar provides stylish eyewear, sunglasses, computer glasses, blue cut lenses and optical solutions near Ranip, Gota, Chandlodiya and Jagatpur.">
+
+<meta name="keywords" content="
+Best Optician In New Ranip Ahmedabad,
+Optical Shop In Ranip,
+Eyewear Store Ahmedabad,
+Sunglasses Store Ahmedabad,
+Computer Glasses Ahmedabad,
+Blue Cut Lens Ahmedabad,
+Optical Shop Near Gota,
+Optical Shop Near Chandlodiya,
+Optician Near Jagatpur,
+Affordable Eyewear Ahmedabad">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:#f8fafc;
+    color:#1e293b;
+    overflow-x:hidden;
+}
+
+.container{
+    width:90%;
+    max-width:1300px;
+    margin:auto;
+}
+
+/* HEADER */
+
+header{
+    position:fixed;
+    top:0;
+    width:100%;
+    z-index:999;
+    background:rgba(2,6,23,0.92);
+    backdrop-filter:blur(10px);
+    box-shadow:0 5px 20px rgba(0,0,0,0.2);
+}
+
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 0;
+}
+
+.logo{
+    color:white;
+    font-size:32px;
+    font-weight:800;
+}
+
+.logo span{
+    color:#38bdf8;
+}
+
+.nav-links a{
+    color:white;
+    text-decoration:none;
+    margin-left:30px;
+    transition:0.3s;
+    font-weight:500;
+}
+
+.nav-links a:hover{
+    color:#38bdf8;
+}
+
+/* HERO */
+
+.hero{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    background:
+    linear-gradient(rgba(2,6,23,0.82),rgba(2,6,23,0.85)),
+    url('https://images.unsplash.com/photo-1511499767150-a48a237f0083?q=80&w=1600&auto=format&fit=crop');
+
+    background-size:cover;
+    background-position:center;
+    color:white;
+    position:relative;
+}
+
+.hero-content{
+    max-width:900px;
+    animation:fadeUp 1s ease;
+}
+
+.hero h1{
+    font-size:70px;
+    line-height:1.2;
+    margin-bottom:25px;
+    font-weight:800;
+}
+
+.hero p{
+    font-size:21px;
+    color:#cbd5e1;
+    line-height:1.9;
+    margin-bottom:35px;
+}
+
+.hero-btns{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    padding:16px 32px;
+    border-radius:50px;
+    text-decoration:none;
+    font-weight:600;
+    transition:0.4s;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+}
+
+.btn-primary{
+    background:#0ea5e9;
+    color:white;
+}
+
+.btn-primary:hover{
+    background:#0284c7;
+    transform:translateY(-5px);
+}
+
+.btn-secondary{
+    border:2px solid white;
+    color:white;
+}
+
+.btn-secondary:hover{
+    background:white;
+    color:#0f172a;
+}
+
+/* FLOAT */
+
+.floating{
+    position:absolute;
+    width:130px;
+    height:130px;
+    border-radius:50%;
+    background:rgba(14,165,233,0.2);
+    animation:float 6s infinite ease-in-out;
+}
+
+.f1{
+    top:15%;
+    right:10%;
+}
+
+.f2{
+    bottom:15%;
+    left:8%;
+    animation-delay:2s;
+}
+
+/* SECTION */
+
+.section{
+    padding:110px 0;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:70px;
+}
+
+.section-title h2{
+    font-size:52px;
+    margin-bottom:20px;
+}
+
+.section-title p{
+    color:#64748b;
+    font-size:18px;
+}
+
+/* GRID */
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:30px;
+}
+
+/* CARD */
+
+.card{
+    background:white;
+    padding:40px 30px;
+    border-radius:25px;
+    box-shadow:0 10px 35px rgba(0,0,0,0.08);
+    transition:0.5s;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+}
+
+.card:hover{
+    transform:translateY(-10px);
+}
+
+.card::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:5px;
+    background:linear-gradient(90deg,#0ea5e9,#2563eb);
+}
+
+.icon{
+    width:85px;
+    height:85px;
+    background:#e0f2fe;
+    color:#0284c7;
+    border-radius:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:36px;
+    margin-bottom:25px;
+}
+
+.card h3{
+    font-size:24px;
+    margin-bottom:15px;
+}
+
+.card p{
+    color:#64748b;
+    line-height:1.9;
+}
+
+/* ABOUT */
+
+.about{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:60px;
+    align-items:center;
+}
+
+.about img{
+    width:100%;
+    border-radius:30px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.15);
+}
+
+.about-content h2{
+    font-size:48px;
+    margin-bottom:25px;
+}
+
+.about-content p{
+    color:#64748b;
+    line-height:2;
+    margin-bottom:20px;
+}
+
+/* AREA */
+
+.area-section{
+    background:#020b24;
+    color:white;
+}
+
+.area-box{
+    background:#1e293b;
+    border-radius:35px;
+    padding:50px;
+}
+
+.area-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-top:40px;
+}
+
+.area-item{
+    background:#334155;
+    padding:20px;
+    border-radius:16px;
+    transition:0.4s;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    font-weight:600;
+}
+
+.area-item::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.15),
+    transparent
+    );
+
+    transition:0.6s;
+}
+
+.area-item:hover::before{
+    left:100%;
+}
+
+.area-item:hover{
+    background:#0ea5e9;
+    transform:translateY(-6px) scale(1.04);
+    box-shadow:0 10px 25px rgba(14,165,233,0.4);
+}
+
+/* REVIEW */
+
+.review{
+    background:white;
+    padding:35px;
+    border-radius:25px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.stars{
+    color:#f59e0b;
+    font-size:22px;
+    margin-bottom:15px;
+}
+
+.review p{
+    color:#64748b;
+    line-height:1.9;
+    margin-bottom:15px;
+}
+
+/* CTA */
+
+.cta{
+    background:linear-gradient(135deg,#0284c7,#2563eb);
+    color:white;
+    border-radius:35px;
+    padding:80px 50px;
+    text-align:center;
+}
+
+.cta h2{
+    font-size:52px;
+    margin-bottom:20px;
+}
+
+.cta p{
+    font-size:20px;
+    max-width:850px;
+    margin:auto;
+    margin-bottom:35px;
+}
+
+/* FOOTER */
+
+footer{
+    background:#020617;
+    color:white;
+    padding:80px 0 30px;
+}
+
+.footer-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:40px;
+}
+
+.footer-box h3{
+    margin-bottom:20px;
+}
+
+.footer-box p,
+.footer-box a{
+    color:#cbd5e1;
+    text-decoration:none;
+    line-height:2;
+}
+
+.social{
+    display:flex;
+    gap:15px;
+    margin-top:20px;
+}
+
+.social a{
+    width:45px;
+    height:45px;
+    background:#1e293b;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:0.3s;
+}
+
+.social a:hover{
+    background:#0ea5e9;
+}
+
+.copy{
+    text-align:center;
+    margin-top:50px;
+    color:#94a3b8;
+}
+
+/* MODAL */
+
+.modal{
+    display:none;
+    position:fixed;
+    z-index:99999;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.75);
+    backdrop-filter:blur(8px);
+}
+
+.modal-content{
+    background:white;
+    margin:6% auto;
+    width:90%;
+    max-width:720px;
+    border-radius:28px;
+    overflow:hidden;
+    animation:popup 0.4s ease;
+}
+
+.modal-header{
+    background:linear-gradient(135deg,#0284c7,#2563eb);
+    color:white;
+    padding:28px;
+}
+
+.modal-header h2{
+    font-size:34px;
+}
+
+.close{
+    float:right;
+    font-size:38px;
+    cursor:pointer;
+}
+
+.modal-body{
+    padding:40px;
+    color:#475569;
+    line-height:2;
+    font-size:18px;
+}
+
+.modal-footer{
+    background:#f1f5f9;
+    padding:25px 40px;
+}
+
+/* ANIMATION */
+
+@keyframes popup{
+    from{
+        transform:scale(0.7);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes float{
+    0%{
+        transform:translateY(0px);
+    }
+    50%{
+        transform:translateY(-20px);
+    }
+    100%{
+        transform:translateY(0px);
+    }
+}
+
+/* MOBILE */
+
+@media(max-width:992px){
+
+.about{
+    grid-template-columns:1fr;
+}
+
+.hero h1{
+    font-size:45px;
+}
+
+.section-title h2{
+    font-size:36px;
+}
+
+}
+
+@media(max-width:768px){
+
+.nav-links{
+    display:none;
+}
+
+.hero h1{
+    font-size:34px;
+}
+
+.hero p{
+    font-size:17px;
+}
+
+.section{
+    padding:80px 0;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="container navbar">
+
+<div class="logo">
+Shree Hari <span>Chasma Ghar</span>
+</div>
+
+<div class="nav-links">
+<a href="#">Home</a>
+<a href="#">Services</a>
+<a href="#">Areas</a>
+<a href="#">Reviews</a>
+<a href="#">Contact</a>
+</div>
+
+</div>
+
+</header>
+
+<!-- HERO -->
+
+<section class="hero">
+
+<div class="floating f1"></div>
+<div class="floating f2"></div>
+
+<div class="container">
+
+<div class="hero-content">
+
+<h1>
+Best Optician In New Ranip Ahmedabad
+</h1>
+
+<p>
+Shree Hari Chasma Ghar is a premium eyewear store, sunglasses store and optical shop serving customers from Ranip, Gota, Chandlodiya, Jagatpur, Chenpur, Nirnay Nagar and nearby Ahmedabad locations.
+</p>
+
+<div class="hero-btns">
+
+<a href="tel:8732969601" class="btn btn-primary">
+
+<i class="fa-solid fa-phone"></i>
+Call Now
+
+</a>
+
+<a href="https://www.google.com/maps?num=10&sca_esv=6ae1e180e0e86bb6&biw=1680&bih=923&sxsrf=ANbL-n5YYp6Uf3hpZrgqeSJscbHAtiz8cw:1778742105158&mat=CSnsvQSsD5e6&um=1&ie=UTF-8&fb=1&gl=in&sa=X&geocode=KT36E3wLg145MZSFGqPqSPBm&daddr=Shop+No+-+5,+Sun+Residency,+opp.+Aakash+Residency,+near+Manki+Circle+road,+New+Ranip,+Ahmedabad,+Gujarat+382470"
+target="_blank"
+class="btn btn-secondary">
+
+<i class="fa-solid fa-location-dot"></i>
+Get Direction
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- SERVICES -->
+
+
+
+<section class="section">
+
+<div class="container">
+
+<div class="section-title">
+
+<h2>
+Our Optical Services
+</h2>
+
+<p>
+Premium eyewear collection with stylish sunglasses, computer glasses and blue cut lenses in Ahmedabad.
+</p>
+
+</div>
+
+<div class="grid">
+
+<!-- Stylish Eyeglasses -->
+
+<div class="card"
+onclick="openAreaModal(
+'Stylish Eyeglasses',
+'Modern fashionable eyeglass frames for men, women and kids. Customers from New Ranip, Ranip, Gota and Chandlodiya regularly visit Shree Hari Chasma Ghar for stylish eyewear collection and affordable pricing.'
+)">
+
+<div class="icon">
+<i class="fa-solid fa-glasses"></i>
+</div>
+
+<h3>
+Stylish Eyeglasses
+</h3>
+
+<p>
+Modern fashionable eyeglass frames for men, women and kids.
+</p>
+
+</div>
+
+<!-- Computer Glasses -->
+
+<div class="card"
+onclick="openAreaModal(
+'Computer Glasses',
+'Blue cut lenses and computer glasses help reduce digital eye strain and protect eyes during long mobile and laptop usage. Premium computer glasses available near New Ranip Ahmedabad.'
+)">
+
+<div class="icon">
+<i class="fa-solid fa-laptop"></i>
+</div>
+
+<h3>
+Computer Glasses
+</h3>
+
+<p>
+Blue cut lenses and computer glasses for digital eye protection.
+</p>
+
+</div>
+
+<!-- Branded Sunglasses -->
+
+<div class="card"
+onclick="openAreaModal(
+'Branded Sunglasses',
+'Stylish UV protected sunglasses available for daily use, fashion wear and driving protection. Explore premium sunglasses collection at Shree Hari Chasma Ghar near Ranip Ahmedabad.'
+)">
+
+<div class="icon">
+<i class="fa-solid fa-sun"></i>
+</div>
+
+<h3>
+Branded Sunglasses
+</h3>
+
+<p>
+Stylish UV protected sunglasses for daily and outdoor wear.
+</p>
+
+</div>
+
+<!-- Contact Lenses -->
+
+<div class="card"
+onclick="openAreaModal(
+'Contact Lenses',
+'Comfortable contact lenses with expert support and guidance available for customers from Gota, Jagatpur, Chandlodiya and nearby Ahmedabad locations.'
+)">
+
+<div class="icon">
+<i class="fa-solid fa-eye"></i>
+</div>
+
+<h3>
+Contact Lenses
+</h3>
+
+<p>
+Comfortable contact lenses with expert support and guidance.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+
+<!-- AREA -->
+
+<section class="section area-section">
+
+<div class="container">
+
+<div class="section-title">
+
+<h2>
+Areas We Serve
+</h2>
+
+<p style="color:#cbd5e1;">
+Trusted optical shop and eyewear store for nearby Ahmedabad locations.
+</p>
+
+</div>
+
+<div class="area-box">
+
+<div class="area-grid">
+
+<div class="area-item"
+onclick="openAreaModal(
+'New Ranip Optical Shop',
+'Trusted optical shop in New Ranip Ahmedabad offering stylish eyewear, sunglasses, computer glasses and premium optical solutions near Manki Circle road.'
+)">
+New Ranip
+</div>
+
+<div class="area-item"
+onclick="openAreaModal(
+'Ranip Optical Shop',
+'Customers from Ranip Ahmedabad regularly visit Shree Hari Chasma Ghar for stylish eyeglasses, sunglasses and affordable optical products.'
+)">
+Ranip
+</div>
+
+<div class="area-item"
+onclick="openAreaModal(
+'Gota Eyewear Store',
+'Premium eyewear collection, blue cut lenses and fashionable sunglasses available for customers from Gota Ahmedabad.'
+)">
+Gota
+</div>
+
+<div class="area-item"
+onclick="openAreaModal(
+'Nirnay Nagar Optician',
+'Computer glasses, contact lenses and premium optical solutions available for customers from Nirnay Nagar Ahmedabad.'
+)">
+Nirnay Nagar
+</div>
+
+<div class="area-item"
+onclick="openAreaModal(
+'Akhbarnagar Optical Shop',
+'Affordable prescription glasses and stylish eyewear collection available for customers from Akhbarnagar.'
+)">
+Akhbarnagar
+</div>
+
+<div class="area-item"
+onclick="openAreaModal(
+'Chenpur Eyewear Store',
+'Customers from Chenpur visit our optical shop for stylish frames, computer glasses and premium sunglasses.'
+)">
+Chenpur
+</div>
+
+<div class="area-item"
+onclick="openAreaModal(
+'Vandematram Optical Shop',
+'Premium optical services and fashionable eyewear collection for customers from Vandematram Ahmedabad.'
+)">
+Vandematram
+</div>
+
+<div class="area-item"
+onclick="openAreaModal(
+'Kali Gam Eyewear Store',
+'Affordable eyewear, blue cut lenses and contact lenses available for customers from Kali Gam.'
+)">
+Kali Gam
+</div>
+
+<div class="area-item"
+onclick="openAreaModal(
+'Chandlodiya Optical Shop',
+'Stylish sunglasses, eyeglasses and premium optical solutions available for Chandlodiya customers.'
+)">
+Chandlodiya
+</div>
+
+<div class="area-item"
+onclick="openAreaModal(
+'Jagatpur Eyewear Store',
+'Customers from Jagatpur regularly visit our optical store for stylish frames and affordable eyewear.'
+)">
+Jagatpur
+</div>
+
+<div class="area-item"
+onclick="openAreaModal(
+'Godrej Garden City Optical Shop',
+'Modern eyewear collection and computer glasses available for customers from Godrej Garden City Ahmedabad.'
+)">
+Godrej Garden City
+</div>
+
+<div class="area-item"
+onclick="openAreaModal(
+'Gayatri Nagar Optician',
+'Trusted optical solutions and premium eyewear available for customers from Gayatri Nagar.'
+)">
+Gayatri Nagar
+</div>
+
+<div class="area-item"
+onclick="openAreaModal(
+'Chamunda Nagar Optical Shop',
+'Affordable eyeglasses, contact lenses and fashionable sunglasses available near Chamunda Nagar.'
+)">
+Chamunda Nagar
+</div>
+
+<div class="area-item"
+onclick="openAreaModal(
+'Digvijaynagar Eyewear Store',
+'Customers from Digvijaynagar trust Shree Hari Chasma Ghar for stylish eyewear and premium service.'
+)">
+Digvijaynagar
+</div>
+
+<div class="area-item"
+onclick="openAreaModal(
+'Khodiyar Temple Area Optical Shop',
+'Premium optical shop near Khodiyar Temple Area Ahmedabad with modern eyeglass and sunglasses collection.'
+)">
+Khodiyar Temple Area
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- REVIEWS -->
+
+<section class="section">
+
+<div class="container">
+
+<div class="section-title">
+
+<h2>
+Customer Reviews
+</h2>
+
+<p>
+People trust our optical store for stylish eyewear and premium sunglasses collection.
+</p>
+
+</div>
+
+<div class="grid">
+
+<div class="review">
+
+<div class="stars">
+★★★★★
+</div>
+
+<p>
+Best optical shop near New Ranip Ahmedabad with affordable pricing and stylish frames.
+</p>
+
+<strong>
+Customer From Ranip
+</strong>
+
+</div>
+
+<div class="review">
+
+<div class="stars">
+★★★★★
+</div>
+
+<p>
+Visited from Gota and found an amazing sunglasses collection with premium quality.
+</p>
+
+<strong>
+Customer From Gota
+</strong>
+
+</div>
+
+<div class="review">
+
+<div class="stars">
+★★★★★
+</div>
+
+<p>
+Trusted optician near Chandlodiya with excellent support and stylish eyeglass frames.
+</p>
+
+<strong>
+Customer From Chandlodiya
+</strong>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- CTA -->
+
+<section class="section">
+
+<div class="container">
+
+<div class="cta">
+
+<h2>
+Upgrade Your Eyewear Style Today
+</h2>
+
+<p>
+Visit Shree Hari Chasma Ghar for premium eyewear, sunglasses, computer glasses and affordable optical solutions in Ahmedabad.
+</p>
+
+<a href="tel:8732969601" class="btn btn-secondary">
+
+<i class="fa-solid fa-phone"></i>
+Contact Now
+
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+
+<div class="container">
+
+<div class="footer-grid">
+
+<div class="footer-box">
+
+<h3>
+Shree Hari Chasma Ghar
+</h3>
+
+<p>
+Eyewear Store, Sunglasses Store, Optical Shop & Trusted Optician In New Ranip Ahmedabad.
+</p>
+
+<p>
+<i class="fa-solid fa-location-dot"></i>
+
+Shop No - 5, Sun Residency,
+opp. Aakash Residency,
+near Manki Circle road,
+New Ranip Ahmedabad - 382470
+</p>
+
+<p>
+<i class="fa-solid fa-phone"></i>
+087329 69601
+</p>
+
+<div class="social">
+
+<a href="https://www.facebook.com/shriharichasmaghar" target="_blank">
+<i class="fa-brands fa-facebook-f"></i>
+</a>
+
+<a href="https://www.instagram.com/shreeharichasmagharindia/" target="_blank">
+<i class="fa-brands fa-instagram"></i>
+</a>
+
+<a href="https://www.youtube.com/channel/UCDFsI9ZCrHM-lZsyU0RBb3Q" target="_blank">
+<i class="fa-brands fa-youtube"></i>
+</a>
+
+<a href="https://x.com/hari_ghar" target="_blank">
+<i class="fa-brands fa-x-twitter"></i>
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="copy">
+© 2026 Shree Hari Chasma Ghar | All Rights Reserved
+</div>
+
+</div>
+
+</footer>
+
+<!-- MODAL -->
+
+<div id="areaModal" class="modal">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<span class="close" onclick="closeAreaModal()">
+&times;
+</span>
+
+<h2 id="areaTitle">
+Area Title
+</h2>
+
+</div>
+
+<div class="modal-body">
+
+<p id="areaDescription">
+Description
+</p>
+
+<div style="margin-top:35px; display:flex; gap:15px; flex-wrap:wrap;">
+
+<a href="tel:8732969601" class="btn btn-primary">
+
+<i class="fa-solid fa-phone"></i>
+Call Now
+
+</a>
+
+<a
+href="https://www.google.com/maps?num=10&sca_esv=6ae1e180e0e86bb6&biw=1680&bih=923&sxsrf=ANbL-n5YYp6Uf3hpZrgqeSJscbHAtiz8cw:1778742105158&mat=CSnsvQSsD5e6&um=1&ie=UTF-8&fb=1&gl=in&sa=X&geocode=KT36E3wLg145MZSFGqPqSPBm&daddr=Shop+No+-+5,+Sun+Residency,+opp.+Aakash+Residency,+near+Manki+Circle+road,+New+Ranip,+Ahmedabad,+Gujarat+382470"
+target="_blank"
+class="btn btn-secondary">
+
+<i class="fa-solid fa-location-dot"></i>
+Get Direction
+
+</a>
+
+</div>
+
+</div>
+
+<div class="modal-footer">
+
+<h3 style="margin-bottom:10px;">
+Shree Hari Chasma Ghar
+</h3>
+
+<p>
+Eyewear Store | Sunglasses Store | Optical Shop | Optician In New Ranip Ahmedabad
+</p>
+
+<p style="margin-top:10px;">
+
+<i class="fa-solid fa-location-dot"></i>
+
+Shop No - 5, Sun Residency,
+opp. Aakash Residency,
+near Manki Circle road,
+New Ranip Ahmedabad - 382470
+
+</p>
+
+<p style="margin-top:10px;">
+
+<i class="fa-solid fa-phone"></i>
+087329 69601
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- MODAL -->
+
+<div id="areaModal" class="modal">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<span class="close" onclick="closeAreaModal()">
+&times;
+</span>
+
+<h2 id="areaTitle">
+Title
+</h2>
+
+</div>
+
+<div class="modal-body">
+
+<p id="areaDescription">
+Description
+</p>
+
+<div style="margin-top:35px; display:flex; gap:15px; flex-wrap:wrap;">
+
+<a href="tel:8732969601" class="btn btn-primary">
+
+<i class="fa-solid fa-phone"></i>
+Call Now
+
+</a>
+
+<a
+href="https://www.google.com/maps?num=10&sca_esv=6ae1e180e0e86bb6&biw=1680&bih=923&sxsrf=ANbL-n5YYp6Uf3hpZrgqeSJscbHAtiz8cw:1778742105158&mat=CSnsvQSsD5e6&um=1&ie=UTF-8&fb=1&gl=in&sa=X&geocode=KT36E3wLg145MZSFGqPqSPBm&daddr=Shop+No+-+5,+Sun+Residency,+opp.+Aakash+Residency,+near+Manki+Circle+road,+New+Ranip,+Ahmedabad,+Gujarat+382470"
+target="_blank"
+class="btn btn-secondary">
+
+<i class="fa-solid fa-location-dot"></i>
+Get Direction
+
+</a>
+
+</div>
+
+</div>
+
+<div class="modal-footer">
+
+<h3 style="margin-bottom:10px;">
+Shree Hari Chasma Ghar
+</h3>
+
+<p>
+Eyewear Store | Sunglasses Store | Optical Shop | Optician In New Ranip Ahmedabad
+</p>
+
+<p style="margin-top:10px;">
+
+<i class="fa-solid fa-location-dot"></i>
+
+Shop No - 5, Sun Residency,
+opp. Aakash Residency,
+near Manki Circle road,
+New Ranip Ahmedabad - 382470
+
+</p>
+
+<p style="margin-top:10px;">
+
+<i class="fa-solid fa-phone"></i>
+087329 69601
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SCRIPT -->
+
+<script>
+
+function openAreaModal(title, description){
+
+document.getElementById("areaModal").style.display = "block";
+
+document.getElementById("areaTitle").innerHTML = title;
+
+document.getElementById("areaDescription").innerHTML = description;
+
+}
+
+function closeAreaModal(){
+
+document.getElementById("areaModal").style.display = "none";
+
+}
+
+window.onclick = function(event){
+
+const modal = document.getElementById("areaModal");
+
+if(event.target == modal){
+
+modal.style.display = "none";
+
+}
+
+}
+
+function openAreaModal(title, description){
+
+document.getElementById("areaModal").style.display = "block";
+
+document.getElementById("areaTitle").innerHTML = title;
+
+document.getElementById("areaDescription").innerHTML = description;
+
+}
+
+function closeAreaModal(){
+
+document.getElementById("areaModal").style.display = "none";
+
+}
+
+window.onclick = function(event){
+
+const modal = document.getElementById("areaModal");
+
+if(event.target == modal){
+
+modal.style.display = "none";
+
+}
+
+}
+
+
+</script>
+
+</body>
+</html>
