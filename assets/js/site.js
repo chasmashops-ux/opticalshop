@@ -225,7 +225,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             <br><br>
 
-            <a href="https://maps.google.com/?q=Shree+Hari+Chasma+Ghar"
+            <a href="https://maps.google.com/?q=Shree+Hari+Chasma+Ghar+new+ranip+ahmedabad"
             target="_blank">
 
             🗺 Open Google Map
