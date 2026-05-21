@@ -1380,3 +1380,82 @@
 
 
 
+/* ================================
+   MOBILE OVERFLOW FIX
+================================ */
+
+html,
+body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+.container,
+.container-fluid,
+.row {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Navbar mobile fix */
+.navbar {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.navbar-toggler {
+    margin-right: 0 !important;
+}
+
+/* Hero section mobile fix */
+@media (max-width: 767px) {
+
+    .hero-section {
+        overflow-x: hidden;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        line-height: 1.2;
+        word-break: break-word;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .hero-buttons {
+        width: 100%;
+    }
+
+    .btn-primary-custom,
+    .btn-secondary-custom {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        font-size: 1rem;
+    }
+
+    /* image fix */
+    .hero-image img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* collection image fix */
+    .collection-image img {
+        height: 100%;
+    }
+
+    /* feature slider fix */
+    .feature-image-slider {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    /* floating buttons fix */
+    .whatsapp-float,
+    .call-float,
+    .scroll-top {
+        right: 15px;
+    }
+}
