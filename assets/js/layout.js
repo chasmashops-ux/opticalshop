@@ -17,22 +17,22 @@ document.addEventListener("DOMContentLoaded", function () {
                         <a class="nav-link" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/eyeglasses">EyeGlasses</a>
+                        <a class="nav-link" href="eyeglasses.html">EyeGlasses</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/sunglasses">SunGlasses</a>
+                        <a class="nav-link" href="sunglasses.html">SunGlasses</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/contactlenses">Contact Lenses</a>
+                        <a class="nav-link" href="contactlenses.html">Contact Lenses</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#services">Services</a>
+                        <a class="nav-link" href="services.html">Services</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#about">About</a>
+                        <a class="nav-link" href="about.html">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact Us</a>
+                        <a class="nav-link" href="contact.html">Contact Us</a>
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-book" href="tel:+918732969601">Book Eye Test</a>
@@ -51,7 +51,9 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="footer-content">
                 <div class="row g-5">
                     <div class="col-lg-3 col-md-6">
-                        <h3 class="footer-logo">Shree Hari</h3>
+                        <h3 class="footer-logo">
+                            <img src="/assets/images/Logo.png"  alt="Shree Hari chasma Ghar logo" title="Shree Hari Chasma Ghar" class="shcg-logo"> 
+                        </h3>
                         <p class="footer-description">Premium optical store specializing in eyeglasses, sunglasses, and contact lenses with 30+ years of professional eye care experience in New Ranip, Ahmedabad.</p>
                         <div class="social-links">
                             <a href="https://twitter.com/hari_ghar" target="_blank" class="social-link">
@@ -72,27 +74,27 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="col-lg-3 col-md-6">
                         <h4 class="footer-title">Quick Links</h4>
                         <ul class="footer-links">
-                            <li><a href="#home"><i class="fas fa-chevron-right"></i> Home</a></li>
-                            <li><a href="#eyeglasses"><i class="fas fa-chevron-right"></i> EyeGlasses</a></li>
-                            <li><a href="#sunglasses"><i class="fas fa-chevron-right"></i> SunGlasses</a></li>
-                            <li><a href="#contact-lenses"><i class="fas fa-chevron-right"></i> Contact Lenses</a></li>
-                            <li><a href="#services"><i class="fas fa-chevron-right"></i> Services</a></li>
-                            <li><a href="#about"><i class="fas fa-chevron-right"></i> About</a></li>
-                            <li><a href="#contact"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
+                            <li><a href="/"><i class="fas fa-chevron-right"></i> Home</a></li>
+                            <li><a href="eyeglasses.html"><i class="fas fa-chevron-right"></i> EyeGlasses</a></li>
+                            <li><a href="sunglasses.html"><i class="fas fa-chevron-right"></i> SunGlasses</a></li>
+                            <li><a href="contact-lenses.html"><i class="fas fa-chevron-right"></i> Contact Lenses</a></li>
+                            <li><a href="services.html"><i class="fas fa-chevron-right"></i> Services</a></li>
+                            <li><a href="about.html"><i class="fas fa-chevron-right"></i> About</a></li>
+                            <li><a href="contact.html"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
                         </ul>
                     </div>
                     
                     <div class="col-lg-3 col-md-6">
                         <h4 class="footer-title">Popular Links</h4>
                         <ul class="footer-links">
-                            <li><a href="#"><i class="fas fa-chevron-right"></i> Professional Optometry Service</a></li>
-                            <li><a href="#"><i class="fas fa-chevron-right"></i> Myopia Management</a></li>
-                            <li><a href="#"><i class="fas fa-chevron-right"></i> Optical Services Glasses</a></li>
-                            <li><a href="#"><i class="fas fa-chevron-right"></i> Vision Screening</a></li>
-                            <li><a href="#"><i class="fas fa-chevron-right"></i> Lenses for Prescription</a></li>
-                            <li><a href="#"><i class="fas fa-chevron-right"></i> Glasses Repair</a></li>
-                            <li><a href="#"><i class="fas fa-chevron-right"></i> FAQ</a></li>
-                            <li><a href="#"><i class="fas fa-chevron-right"></i> Google Reviews</a></li>
+                            <li><a href="professionaloptometryservice.html"><i class="fas fa-chevron-right"></i> Professional Optometry Service</a></li>
+                            <li><a href="myopiamanagement.html"><i class="fas fa-chevron-right"></i> Myopia Management</a></li>
+                            <li><a href="opticalservicesglasses.html"><i class="fas fa-chevron-right"></i> Optical Services Glasses</a></li>
+                            <li><a href="visionscreening.html"><i class="fas fa-chevron-right"></i> Vision Screening</a></li>
+                            <li><a href="lensesforprescription.html"><i class="fas fa-chevron-right"></i> Lenses for Prescription</a></li>
+                            <li><a href="glassesrepair.html"><i class="fas fa-chevron-right"></i> Glasses Repair</a></li>
+                            <li><a href="faq.html"><i class="fas fa-chevron-right"></i> FAQ</a></li>
+                            <li><a href="googlereviews.html"><i class="fas fa-chevron-right"></i> Google Reviews</a></li>
                         </ul>
                     </div>
                     
@@ -111,8 +113,8 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="footer-bottom">
                 <p class="mb-0">
                     Copyright &copy; 2026 All Rights Reserved.
-                    <a href="#" class="me-2">Privacy Policy</a><br>
-                    For Eyewear Shop In New Ranip Ahmedabad <a href="#home">Shree Hari Chasma Ghar</a>
+                    <a href="privacypolicy.html" class="me-2">Privacy Policy</a><br>
+                    For Eyewear Shop In New Ranip Ahmedabad <a href="/">Shree Hari Chasma Ghar</a>
                 </p>
             </div>
         </div>
@@ -122,9 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <i class="fab fa-whatsapp"></i>
     </a>
     
-    <a href="tel:+918732969601" class="call-float" aria-label="Call">
-        <i class="fas fa-phone"></i>
-    </a>
+
   
     `;
 });
