@@ -17,22 +17,22 @@ document.addEventListener("DOMContentLoaded", function () {
                         <a class="nav-link" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="eyeglasses.html">EyeGlasses</a>
+                        <a class="nav-link" href="/eyeglasses.html">EyeGlasses</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="sunglasses.html">SunGlasses</a>
+                        <a class="nav-link" href="/sunglasses.html">SunGlasses</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="contactlenses.html">Contact Lenses</a>
+                        <a class="nav-link" href="/contactlenses.html">Contact Lenses</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="services.html">Services</a>
+                        <a class="nav-link" href="/services.html">Services</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="about.html">About</a>
+                        <a class="nav-link" href="/about-us.html">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="contact.html">Contact Us</a>
+                        <a class="nav-link" href="/contact-us.html">Contact Us</a>
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-book" href="tel:+918732969601">Book Eye Test</a>
@@ -76,32 +76,33 @@ document.addEventListener("DOMContentLoaded", function () {
                         <ul class="footer-links">
                             <li><a href="/"><i class="fas fa-chevron-right"></i> Home</a></li>
                             <li><a href="eyeglasses.html"><i class="fas fa-chevron-right"></i> EyeGlasses</a></li>
-                            <li><a href="sunglasses.html"><i class="fas fa-chevron-right"></i> SunGlasses</a></li>
-                            <li><a href="contact-lenses.html"><i class="fas fa-chevron-right"></i> Contact Lenses</a></li>
-                            <li><a href="services.html"><i class="fas fa-chevron-right"></i> Services</a></li>
-                            <li><a href="about.html"><i class="fas fa-chevron-right"></i> About</a></li>
-                            <li><a href="contact.html"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
+                            <li><a href="/sunglasses.html"><i class="fas fa-chevron-right"></i> SunGlasses</a></li>
+                            <li><a href="/contact-lenses.html"><i class="fas fa-chevron-right"></i> Contact Lenses</a></li>
+                            <li><a href="/services.html"><i class="fas fa-chevron-right"></i> Services</a></li>
+                            <li><a href="/about.html"><i class="fas fa-chevron-right"></i> About</a></li>
+                            <li><a href="/contact-us.html"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
                         </ul>
                     </div>
                     
                     <div class="col-lg-3 col-md-6">
                         <h4 class="footer-title">Popular Links</h4>
                         <ul class="footer-links">
-                            <li><a href="professionaloptometryservice.html"><i class="fas fa-chevron-right"></i> Professional Optometry Service</a></li>
-                            <li><a href="myopiamanagement.html"><i class="fas fa-chevron-right"></i> Myopia Management</a></li>
-                            <li><a href="opticalservicesglasses.html"><i class="fas fa-chevron-right"></i> Optical Services Glasses</a></li>
-                            <li><a href="visionscreening.html"><i class="fas fa-chevron-right"></i> Vision Screening</a></li>
-                            <li><a href="lensesforprescription.html"><i class="fas fa-chevron-right"></i> Lenses for Prescription</a></li>
-                            <li><a href="glassesrepair.html"><i class="fas fa-chevron-right"></i> Glasses Repair</a></li>
-                            <li><a href="faq.html"><i class="fas fa-chevron-right"></i> FAQ</a></li>
-                            <li><a href="googlereviews.html"><i class="fas fa-chevron-right"></i> Google Reviews</a></li>
+                            <li><a href="/professionaloptometryservice.html"><i class="fas fa-chevron-right"></i> Professional Optometry Service</a></li>
+                            <li><a href="/myopiamanagement.html"><i class="fas fa-chevron-right"></i> Myopia Management</a></li>
+                            <li><a href="/opticalservicesglasses.html"><i class="fas fa-chevron-right"></i> Optical Services Glasses</a></li>
+                            <li><a href="/visionscreening.html"><i class="fas fa-chevron-right"></i> Vision Screening</a></li>
+                            <li><a href="/lensesforprescription.html"><i class="fas fa-chevron-right"></i> Lenses for Prescription</a></li>
+                            <li><a href="/glassesrepair.html"><i class="fas fa-chevron-right"></i> Glasses Repair</a></li>
+                            <li><a href="/faq.html"><i class="fas fa-chevron-right"></i> FAQ</a></li>
+                            <li><a href="/googlereviews.html"><i class="fas fa-chevron-right"></i> Google Reviews</a></li>
                         </ul>
                     </div>
                     
                     <div class="col-lg-3 col-md-6">
-                        <h4 class="footer-title">Contact Details</h4>
+                        <h4 class="footer-title">Get In Touch</h4>
                         <div class="footer-contact">
-                            <p><i class="fas fa-map-marker-alt"></i> 5 Sun Residency, Anand Party Plot Rd, near Manki Circle, New Ranip, Ahmedabad, Gujarat 382470</p>
+                            <p><i class="fas fa-map-marker-alt"></i> <a target="_blank" href="https://www.google.com/maps/place/Shree+Hari+Chasma+Ghar+-+Chasma+Shop,+Sunglasses+S/data=!3m1!4b1!4m2!3m1!1s0x395e830b7c13fa3d:0x66f048eaa31a8594">
+                            5 Sun Residency, Anand Party Plot Rd, near Manki Circle, New Ranip, Ahmedabad, Gujarat 382470</a></p>
                             <p><i class="fas fa-phone"></i> <a href="tel:+918732969601">+91 8732969601</a></p>
                             <p><i class="fas fa-envelope"></i> <a href="mailto:chasmashops@gmail.com">chasmashops@gmail.com</a></p>
                             <p><i class="fas fa-clock"></i> Mon-Sat: 10:00 AM - 9:00 PM</p>
@@ -113,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="footer-bottom">
                 <p class="mb-0">
                     Copyright &copy; 2026 All Rights Reserved.
-                    <a href="privacypolicy.html" class="me-2">Privacy Policy</a><br>
+                    <a href="/privacypolicy.html" class="me-2">Privacy Policy</a><br>
                     For Eyewear Shop In New Ranip Ahmedabad <a href="/">Shree Hari Chasma Ghar</a>
                 </p>
             </div>
@@ -142,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         <div class="pulse-ring"></div>
 
-        <img src="assets/images/ai-robot.svg"
+        <img src="/assets/images/ai-robot.svg"
              alt="AI Assistant">
 
     </div>
@@ -245,6 +246,10 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
 
 </div>
+
+
+
+ 
 
   
     `;
