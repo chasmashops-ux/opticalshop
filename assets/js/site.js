@@ -1086,11 +1086,6 @@ function changePage(page){
 
 }
 
-renderServices(currentPage);
-
-renderPagination();
-
-
 
 const servicesContainer =
 document.getElementById('servicesContainer');

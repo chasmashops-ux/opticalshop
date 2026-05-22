@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         <div class="ai-header-left">
 
-            <img src="assets/images/ai-robot.svg"
+            <img src="/assets/images/ai-robot.svg"
                  alt="AI Assistant">
 
             <div>

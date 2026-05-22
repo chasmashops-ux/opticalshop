@@ -3047,7 +3047,6 @@ img {
 
 
 
-
 /* -----------------------------------sevreice page detail -------------------------------------------------------------------------------- */
 
 /* =====================================================
@@ -3326,10 +3325,10 @@ img {
         padding: 80px 0;
     }
 
-    .service-main-title {
+    /* .service-main-title {
 
         font-size: 2.3rem;
-    }
+    } */
 
     .service-features-grid {
 
@@ -3346,4 +3345,80 @@ img {
         flex-direction: column;
     }
 
+}
+
+
+
+/* =========================================
+   HERO MOBILE PERFECT FIX
+========================================= */
+
+@media (max-width: 767px) {
+
+    .premium-hero-slider {
+        min-height: auto;
+        padding-top: 90px;
+        padding-bottom: 50px;
+    }
+
+    .hero-slide {
+        position: relative;
+        transform: none;
+    }
+
+    .hero-slide .row {
+        min-height: auto !important;
+        padding: 30px 0;
+    }
+
+    .hero-modern-content {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .hero-main-title,
+    .hero-center-title {
+        font-size: 2rem;
+        line-height: 1.2;
+        margin-bottom: 20px;
+    }
+
+    .hero-modern-text,
+    .center-slide-content p {
+        font-size: 15px;
+        line-height: 1.8;
+        margin-bottom: 25px;
+    }
+
+    .hero-btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-btn-primary,
+    .hero-btn-outline {
+        width: 100%;
+        justify-content: center;
+        padding: 14px 20px;
+        font-size: 15px;
+    }
+
+    .hero-modern-image {
+        margin-top: 20px;
+    }
+
+    .hero-modern-image img {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 20px;
+        animation: none;
+    }
+
+    .center-slide-content {
+        padding: 60px 15px;
+    }
+
+    .hero-slider-dots {
+        bottom: 10px;
+    }
 }
