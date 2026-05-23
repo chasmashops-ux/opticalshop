@@ -128,9 +128,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // OPEN CHAT
 
-    if (aiButton && aiContainer) {
+   if (aiButton && aiContainer) {
 
-        aiButton.onclick = function () {
+    aiButton.onclick = function (e) {
+
+        e.stopPropagation();
+
+        if (
+            aiContainer.style.display === "flex"
+        ) {
+
+            aiContainer.style.display = "none";
+
+        } else {
 
             aiContainer.style.display = "flex";
 
@@ -138,20 +148,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-    // CLOSE CHAT
+}
 
-    if (closeChat && aiContainer) {
+// CLOSE BUTTON
 
-        closeChat.onclick = function () {
+if (closeChat && aiContainer) {
 
-            aiContainer.style.display = "none";
+    closeChat.onclick = function () {
 
-        }
+        aiContainer.style.display = "none";
 
     }
 
+}
 
-    
+// OUTSIDE CLICK CLOSE
+
+document.addEventListener("click", function (e) {
+
+    if (
+        aiContainer &&
+        aiContainer.style.display === "flex" &&
+        !aiContainer.contains(e.target) &&
+        !aiButton.contains(e.target)
+    ) {
+
+        aiContainer.style.display = "none";
+
+    }
+
+});
+
 
     // DYNAMIC ANSWERS
 
@@ -564,9 +591,6 @@ document.addEventListener("DOMContentLoaded", function () {
 AOS.init({
     disable: window.innerWidth < 768
 });
-
-
-
 
 
 

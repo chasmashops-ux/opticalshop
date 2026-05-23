@@ -87,12 +87,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="col-lg-3 col-md-6">
                         <h4 class="footer-title">Popular Links</h4>
                         <ul class="footer-links">
-                            <li><a href="/professionaloptometryservice.html"><i class="fas fa-chevron-right"></i> Professional Optometry Service</a></li>
-                            <li><a href="/myopiamanagement.html"><i class="fas fa-chevron-right"></i> Myopia Management</a></li>
-                            <li><a href="/opticalservicesglasses.html"><i class="fas fa-chevron-right"></i> Optical Services Glasses</a></li>
-                            <li><a href="/visionscreening.html"><i class="fas fa-chevron-right"></i> Vision Screening</a></li>
-                            <li><a href="/lensesforprescription.html"><i class="fas fa-chevron-right"></i> Lenses for Prescription</a></li>
-                            <li><a href="/glassesrepair.html"><i class="fas fa-chevron-right"></i> Glasses Repair</a></li>
+                            <li><a href="/services/professional-optometry-service.html"><i class="fas fa-chevron-right"></i> Professional Optometry Service</a></li>
+                            <li><a href="/services/best-optician-in-new-ranip.html"><i class="fas fa-chevron-right"></i>Best Optician in New Ranip</a></li>
+                            <li><a href="/services/blue-cut-glasses-store-ahmedabad.html"><i class="fas fa-chevron-right"></i> Blue Cut Glasses Store Ahmedabad</a></li>
+                            <li><a href="/services/color-contact-lens-shop-ranip.html"><i class="fas fa-chevron-right"></i> Color Contact Lens Shop Ranip</a></li>
+                            <li><a href="/services/computer-glasses-in-ranip.html"><i class="fas fa-chevron-right"></i> Computer Glasses in Ranip</a></li>
+                            <li><a href="/services/uv-protection-sunglasses-store.html"><i class="fas fa-chevron-right"></i> UV Protection Sunglasses Store</a></li>
                             <li><a href="/faq.html"><i class="fas fa-chevron-right"></i> FAQ</a></li>
                             <li><a href="/googlereviews.html"><i class="fas fa-chevron-right"></i> Google Reviews</a></li>
                         </ul>
