@@ -357,8 +357,6 @@ document.addEventListener("click", function (e) {
             answer: `
             🏷 <b>Premium Brands Available</b>
 
-            ✔ RayBan Style
-
             ✔ Fastrack
 
             ✔ Stylish Premium Collection
