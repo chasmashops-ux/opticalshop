@@ -2334,20 +2334,17 @@ img {
 .service-image-wrapper {
     position: relative;
     overflow: hidden;
-    border-radius: 36px;
     box-shadow: 0 40px 80px rgba(0, 0, 0, 0.12);
 }
 
 .service-image-wrapper img {
     width: 100%;
     height: 750px;
-    object-fit: cover;
+    object-fit: initial;
     transition: .7s ease;
 }
 
-.service-image-wrapper:hover img {
-    transform: scale(1.08);
-}
+
 
 /* FLOAT CARD */
 .service-floating-card {
