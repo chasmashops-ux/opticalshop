@@ -84,37 +84,32 @@
 
     <script type="application/ld+json">
 {
-    "@context":"https://schema.org",
-
-    "@type":"Optician",
-
-    "name":"Shree Hari Chasma Ghar",
-
-    "url":"https://www.shreeharichasmaghar.com",
-
-    "image":"https://www.shreeharichasmaghar.com/assets/images/Logo.png",
-
-    "telephone":"+918732969601",
-
-    "priceRange":"₹₹",
-
-    "description":"Trusted chasma store in Ranip Ahmedabad offering eyeglasses, sunglasses, contact lenses and eye testing services.",
-
-    "address":{
-        "@type":"PostalAddress",
-
-        "streetAddress":"5 Sun Residency, Anand Party Plot Rd, near Manki Circle",
-
-        "addressLocality":"New Ranip",
-
-        "addressRegion":"Gujarat",
-
-        "postalCode":"382470",
-
-        "addressCountry":"IN"
-    }
+ "@context":"https://schema.org",
+ "@type":"BreadcrumbList",
+ "itemListElement":[
+  {
+   "@type":"ListItem",
+   "position":1,
+   "name":"Home",
+   "item":"https://www.shreeharichasmaghar.com"
+  },
+  {
+   "@type":"ListItem",
+   "position":2,
+   "name":"Services",
+   "item":"https://www.shreeharichasmaghar.com/services"
+  },
+  {
+   "@type":"ListItem",
+   "position":3,
+   "name":"Chasma Store In Ranip Ahmedabad",
+   "item":"https://www.shreeharichasmaghar.com/services/chasma-store-in-ranip-ahmedabad"
+  }
+ ]
 }
 </script>
+
+
 
 </head>
 
@@ -236,6 +231,36 @@
     </section>
 
 
+    <section class="container py-5">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="mb-4">
+            <h3>Do you provide computerized eye testing?</h3>
+            <p>Yes, we provide accurate computerized eye testing and vision checking using modern optical equipment.</p>
+        </div>
+
+        <div class="mb-4">
+            <h3>Do you offer blue cut glasses?</h3>
+            <p>Yes, we offer premium blue cut glasses that help reduce digital eye strain caused by mobile and computer
+                screens.</p>
+        </div>
+
+        <div class="mb-4">
+            <h3>Are branded sunglasses available?</h3>
+            <p>Yes, we have a wide collection of branded and stylish sunglasses for men, women and kids.</p>
+        </div>
+
+        <div class="mb-4">
+            <h3>Do you sell contact lenses?</h3>
+            <p>Yes, we offer comfortable contact lenses and provide guidance for proper usage and care.</p>
+        </div>
+
+        <div class="mb-4">
+            <h3>Where is your optical store located?</h3>
+            <p>Our store is located at New Ranip, Ahmedabad near Manki Circle.</p>
+        </div>
+    </section>
+
     <!-- FOOTER -->
     <div id="site-footer"></div>
     <div class="scroll-top" id="scrollTop" aria-label="Scroll to Top">
@@ -246,6 +271,47 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="/assets/js/layout.js" defer></script>
     <script src="/assets/js/site.js" defer></script>
+
+    <script type="application/ld+json">
+{
+ "@context":"https://schema.org",
+ "@type":"FAQPage",
+ "mainEntity":[
+  {
+   "@type":"Question",
+   "name":"Do you provide computerized eye testing?",
+   "acceptedAnswer":{
+    "@type":"Answer",
+    "text":"Yes, we provide accurate computerized eye testing using advanced optical equipment."
+   }
+  },
+  {
+   "@type":"Question",
+   "name":"Do you offer blue cut glasses?",
+   "acceptedAnswer":{
+    "@type":"Answer",
+    "text":"Yes, we offer premium blue cut glasses for digital screen protection."
+   }
+  },
+  {
+   "@type":"Question",
+   "name":"Are branded sunglasses available?",
+   "acceptedAnswer":{
+    "@type":"Answer",
+    "text":"Yes, we have a wide collection of branded sunglasses."
+   }
+  },
+  {
+   "@type":"Question",
+   "name":"Do you sell contact lenses?",
+   "acceptedAnswer":{
+    "@type":"Answer",
+    "text":"Yes, we provide contact lenses and lens care guidance."
+   }
+  }
+ ]
+}
+</script>
 </body>
 
 </html>
