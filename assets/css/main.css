@@ -2040,7 +2040,6 @@ body {
 
 /* TITLE */
 .hero-main-title {
-    font-size: clamp(3rem, 7vw, 5.5rem);
     font-weight: 900;
     line-height: 1.05;
     color: #0f172a;
