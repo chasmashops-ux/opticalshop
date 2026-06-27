@@ -84,6 +84,7 @@ if (statsSection) {
 const scrollTopBtn = document.getElementById('scrollTop');
 
 window.addEventListener('scroll', () => {
+    if (!scrollTopBtn) return;
     if (window.scrollY > 500) {
         scrollTopBtn.classList.add('show');
     } else {
@@ -91,12 +92,14 @@ window.addEventListener('scroll', () => {
     }
 });
 
-scrollTopBtn.addEventListener('click', () => {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
+if (scrollTopBtn) {
+    scrollTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     });
-});
+}
 
 
 // Prevent Default for Floating Buttons
@@ -1119,3 +1122,197 @@ if(servicesContainer){
     renderPagination();
 
 }
+
+// Eyeglasses Catalog and Try-On
+const isSunglassesCatalog = document.body?.dataset?.catalog === 'sunglasses' || window.location.pathname.includes('/sunglasses');
+
+const sunglassesTemplates = [
+    { category: 'Aviator', title: 'Aviator Sun Frame', meta: 'Polarized UV400', price: '₹2,199', image: '/assets/images/eyeglasss/Home.jpg', badge: 'Trending' },
+    { category: 'Wayfarer', title: 'Wayfarer Classic', meta: 'Premium Tinted Lens', price: '₹2,499', image: '/assets/images/eyeglasss/women.png', badge: 'New' },
+    { category: 'Round', title: 'Round Retro Frame', meta: 'Matte Finish', price: '₹1,899', image: '/assets/images/eyeglasss/men.png', badge: 'Best Seller' },
+    { category: 'Cat-Eye', title: 'Cat-Eye Glam Frame', meta: 'Fashion Sunglass', price: '₹2,699', image: '/assets/images/eyeglasss/feature.png', badge: 'Popular' },
+    { category: 'Sports', title: 'Sport Shield Frame', meta: 'Wraparound Protection', price: '₹2,999', image: '/assets/images/eyeglasss/kid.png', badge: 'Sports' }
+];
+
+const eyeglassTemplates = isSunglassesCatalog ? sunglassesTemplates : [
+    { category: 'Women', title: 'Classic Women Frame', meta: 'Blue Cut Lens', price: '₹1,499', image: '/assets/images/eyeglasss/women.png', badge: 'New' },
+    { category: 'Men', title: 'Men Aviator Frame', meta: 'UV Protection', price: '₹1,699', image: '/assets/images/eyeglasss/men.png', badge: 'Best Seller' },
+    { category: 'Kids', title: 'Kids Fun Frame', meta: 'Lightweight Fit', price: '₹999', image: '/assets/images/eyeglasss/kid.png', badge: 'Kids' },
+    { category: 'Sunglasses', title: 'Gradient Sunglass Frame', meta: 'Polarized UV400', price: '₹2,199', image: '/assets/images/eyeglasss/Home.jpg', badge: 'Trending' },
+    { category: 'Blue Cut', title: 'Blue Cut Computer Frame', meta: 'Anti Glare', price: '₹1,599', image: '/assets/images/eyeglasss/feature.png', badge: 'Popular' }
+];
+
+const eyeglassFrames = Array.from({ length: isSunglassesCatalog ? 320 : 520 }, (_, index) => {
+    const template = eyeglassTemplates[index % eyeglassTemplates.length];
+    const variantIndex = Math.floor(index / eyeglassTemplates.length) + 1;
+    return {
+        id: index + 1,
+        category: template.category,
+        title: `${template.title} ${variantIndex}`,
+        meta: template.meta,
+        price: template.price,
+        image: template.image,
+        badge: template.badge,
+        sku: `SHC-${1000 + index}`
+    };
+});
+
+const productsPerPage = 15;
+let currentFramePage = 1;
+let activeFrameCategory = 'All';
+let currentStream = null;
+
+function getFilteredFrames() {
+    if (activeFrameCategory === 'All') {
+        return eyeglassFrames;
+    }
+    return eyeglassFrames.filter(frame => frame.category === activeFrameCategory);
+}
+
+function renderProductGrid() {
+    const container = document.getElementById('productGrid');
+    const filtered = getFilteredFrames();
+    const total = filtered.length;
+    const start = (currentFramePage - 1) * productsPerPage;
+    const pageItems = filtered.slice(start, start + productsPerPage);
+
+    container.innerHTML = pageItems.map(frame => `
+        <div class="col-sm-6 col-lg-4 col-xl-3" data-aos="fade-up">
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="${frame.image}" alt="${frame.title}" loading="lazy">
+                    <span class="product-badge">${frame.badge}</span>
+                </div>
+                <div class="product-details">
+                    <h3 class="product-title">${frame.title}</h3>
+                    <p class="product-meta">${frame.meta} • ${frame.category}</p>
+                    <p class="product-price">${frame.price}</p>
+                    <div class="product-actions">
+                        <button class="tryon-card-btn" onclick="openTryOn(${frame.id})"><i class="fas fa-camera"></i> Try On</button>
+                        <span class="product-sku">${frame.sku}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    document.getElementById('visibleCount').textContent = pageItems.length;
+    document.getElementById('totalCount').textContent = total;
+    document.getElementById('activeCategory').textContent = activeFrameCategory;
+    renderFramesPagination(total);
+}
+
+function renderFramesPagination(totalFrames) {
+    const pagination = document.getElementById('paginationControls');
+    const totalPages = Math.max(1, Math.ceil(totalFrames / productsPerPage));
+    let html = '';
+
+    for (let page = 1; page <= totalPages; page++) {
+        html += `
+            <button class="pagination-button ${page === currentFramePage ? 'active' : ''}" onclick="changeFramePage(${page})">${page}</button>
+        `;
+    }
+
+    pagination.innerHTML = html;
+}
+
+function changeFramePage(page) {
+    currentFramePage = page;
+    renderProductGrid();
+    const collectionSection = document.getElementById('eyeglass-collection');
+    if (collectionSection) {
+        window.scrollTo({ top: collectionSection.offsetTop - 100, behavior: 'smooth' });
+    }
+}
+
+function setFrameCategory(category) {
+    activeFrameCategory = category;
+    currentFramePage = 1;
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.category === category);
+    });
+    renderProductGrid();
+}
+
+window.openTryOn = function (id) {
+    const frame = eyeglassFrames.find(item => item.id === id);
+    if (!frame) return;
+    const modal = document.getElementById('tryOnModal');
+    const placeholder = document.getElementById('tryOnPlaceholder');
+    const video = document.getElementById('tryOnVideo');
+
+    if (modal) {
+        modal.hidden = false;
+        placeholder.style.display = 'none';
+        startCamera(video, placeholder);
+    }
+};
+
+function closeTryOn() {
+    const modal = document.getElementById('tryOnModal');
+    const video = document.getElementById('tryOnVideo');
+    if (modal) {
+        modal.hidden = true;
+    }
+    stopCamera(video);
+}
+
+function startCamera(videoElement, placeholder) {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        placeholder.style.display = 'flex';
+        return;
+    }
+
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+        .then(stream => {
+            currentStream = stream;
+            videoElement.srcObject = stream;
+            videoElement.play();
+            placeholder.style.display = 'none';
+        })
+        .catch(() => {
+            placeholder.style.display = 'flex';
+        });
+}
+
+function stopCamera(videoElement) {
+    if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
+    }
+    if (videoElement) {
+        videoElement.srcObject = null;
+    }
+}
+
+function setupEyeglassesCatalog() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => setFrameCategory(btn.dataset.category));
+    });
+
+    const closeButtons = document.querySelectorAll('#closeTryOn, #closeTryOnFooter');
+    closeButtons.forEach(btn => {
+        btn.addEventListener('click', closeTryOn);
+    });
+
+    const tryOnModal = document.getElementById('tryOnModal');
+    if (tryOnModal) {
+        tryOnModal.addEventListener('click', (event) => {
+            if (event.target === tryOnModal) {
+                closeTryOn();
+            }
+        });
+    }
+
+    renderProductGrid();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupEyeglassesCatalog);
+} else {
+    setupEyeglassesCatalog();
+}
+
+window.setFrameCategory = setFrameCategory;
+window.changeFramePage = changeFramePage;
