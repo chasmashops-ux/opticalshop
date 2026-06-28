@@ -140,20 +140,26 @@
 
     <div class="tryon-modal" id="tryOnModal" hidden>
         <div class="tryon-dialog">
-            <button class="tryon-close" id="closeTryOn"><i class="fas fa-times"></i></button>
+            <button class="tryon-close" id="closeTryOn" aria-label="Close try-on">&times;</button>
             <div class="tryon-header">
-                <div>
-                    <h3 class="tryon-title">Try On Frame</h3>
-                    <p class="tryon-text">Use your device camera to preview the frame on your face.</p>
-                </div>
+                <h3 class="tryon-title" id="tryOnTitle">Virtual Try-On</h3>
+                <p class="tryon-text">Allow camera access — your frame fits on your face automatically. Turn your head for a 360° look.</p>
             </div>
-            <div class="tryon-video-wrapper">
+            <div class="tryon-stage">
                 <video id="tryOnVideo" autoplay playsinline muted></video>
-                <div class="frame-overlay"></div>
-                <div class="tryon-placeholder" id="tryOnPlaceholder">Camera unavailable or permission denied.</div>
+                <canvas id="tryOnCanvas"></canvas>
+                <div class="tryon-status" id="tryOnStatus">Starting camera…</div>
             </div>
-            <div class="tryon-footer">
-                <button class="coming-btn" id="closeTryOnFooter">Close</button>
+            <div class="tryon-styles" id="tryOnStyles"></div>
+            <div class="tryon-controls">
+                <label class="tryon-slider">Size
+                    <input type="range" id="tryOnSize" min="0.7" max="1.6" step="0.01" value="1">
+                </label>
+                <div class="tryon-buttons">
+                    <button class="tryon-btn ghost" id="tryOnSwitch" type="button">Switch Camera</button>
+                    <button class="tryon-btn ghost" id="closeTryOnFooter" type="button">Close</button>
+                    <button class="tryon-btn primary" id="tryOnCapture" type="button">📸 Capture Photo</button>
+                </div>
             </div>
         </div>
     </div>
@@ -171,6 +177,7 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="/assets/js/layout.js"></script>
     <script src="/assets/js/site.js"></script>
+    <script src="/assets/js/tryon.js"></script>
 
 </body>
 

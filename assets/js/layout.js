@@ -182,123 +182,74 @@ document.addEventListener("DOMContentLoaded", function () {
     </a>
     
 <!-- ===================================
-     FLOATING AI ASSISTANT
+     OPTICARE AI ASSISTANT
 =================================== -->
 
 <div class="floating-ai-wrapper">
 
-    <!-- Hover Message -->
-
     <div class="ai-hover-message">
-        👋 Hi, I'm Optical AI Assistant
+        👋 Ask OptiCare AI — glasses, lenses &amp; eye care
     </div>
 
-    <!-- AI Button -->
-
-    <div class="premium-ai-button" id="aiChatButton">
-
-        <div class="pulse-ring"></div>
-
-        <img src="/assets/images/ai-robot.svg"
-             alt="AI Assistant">
-
+    <div class="premium-ai-button" id="aiChatButton" role="button" tabindex="0" aria-label="Open OptiCare AI chat">
+        <span class="pulse-ring"></span>
+        <img src="/assets/images/ai-robot.svg" alt="OptiCare AI" width="50" height="60">
+        <span class="ai-button-dot"></span>
     </div>
 
 </div>
 
 <!-- CHAT WINDOW -->
 
-<div class="premium-ai-chat" id="aiChatContainer">
-
-    <!-- HEADER -->
+<div class="premium-ai-chat" id="aiChatContainer" role="dialog" aria-label="OptiCare AI assistant">
 
     <div class="premium-ai-header">
 
         <div class="ai-header-left">
-
-            <img src="/assets/images/ai-robot.svg"
-                 alt="AI Assistant">
-
+            <span class="ai-avatar">
+                <img src="/assets/images/ai-robot.svg" alt="OptiCare AI" width="40" height="40">
+                <span class="ai-status-dot"></span>
+            </span>
             <div>
-                <h4>Optical AI Assistant</h4>
-                <span>Online Now</span>
+                <h4>OptiCare AI</h4>
+                <span>Online • replies instantly</span>
             </div>
-
         </div>
 
-        <button id="closeChat">✕</button>
+        <button id="closeChat" aria-label="Close chat">&times;</button>
 
     </div>
-
-    <!-- BODY -->
 
     <div class="premium-ai-body" id="chatBody">
 
         <div class="bot-message">
-
-            👋 Welcome to
-            <b>Shree Hari Chasma Ghar</b>
-
-            <br><br>
-
-            Please select a question 👇
-
+            👋 Welcome to <b>Shree Hari Chasma Ghar</b><br>
+            I'm <b>OptiCare AI</b> — ask me in English, हिंदी or ગુજરાતી.<br>
+            Pick a topic below 👇
         </div>
 
     </div>
 
-    <!-- QUESTIONS -->
-
     <div class="default-ai-questions">
-
-        <button onclick="askQuestion('Frame price')">👓 Frame Price</button>
-
-        <button onclick="askQuestion('Sunglasses')">😎 Sunglasses</button>
-
-        <button onclick="askQuestion('Lens')">🔵 Lens</button>
-
-        <button onclick="askQuestion('Eye test')">👁 Eye Test</button>
-
-        <button onclick="askQuestion('Repair')">🔧 Repair</button>
-
-        <button onclick="askQuestion('Location')">📍 Location</button>
-
-        <button onclick="askQuestion('Timing')">🕙 Timing</button>
-
-        <button onclick="askQuestion('Contact')">📞 Contact</button>
-
-        <button onclick="askQuestion('WhatsApp')">💬 WhatsApp</button>
-
-        <button onclick="askQuestion('Kids glasses')">👶 Kids</button>
-
-        <button onclick="askQuestion('Women collection')">👩 Women</button>
-
-        <button onclick="askQuestion('Men collection')">🧔 Men</button>
-
-        <button onclick="askQuestion('Offers')">🎁 Offers</button>
-
-        <button onclick="askQuestion('Payment')">💳 Payment</button>
-
-        <button onclick="askQuestion('Blue cut lens')">💻 Blue Cut</button>
-
-        <button onclick="askQuestion('Anti glare')">✨ Anti Glare</button>
-
+        <button type="button" onclick="askQuestion('Which frame suits me?')">✨ Suggest a frame</button>
+        <button type="button" onclick="askQuestion('Frame price')">👓 Price</button>
+        <button type="button" onclick="askQuestion('Eye test')">👁 Eye Test</button>
+        <button type="button" onclick="askQuestion('Blue cut lens')">💻 Blue Cut</button>
+        <button type="button" onclick="askQuestion('Sunglasses')">🕶️ Sunglasses</button>
+        <button type="button" onclick="askQuestion('Contact lens')">🔵 Contact Lens</button>
+        <button type="button" onclick="askQuestion('Kids glasses')">👶 Kids</button>
+        <button type="button" onclick="askQuestion('Repair')">🔧 Repair</button>
+        <button type="button" onclick="askQuestion('Timing')">🕙 Timing</button>
+        <button type="button" onclick="askQuestion('Location')">📍 Location</button>
+        <button type="button" onclick="askQuestion('Offers')">🎁 Offers</button>
+        <button type="button" onclick="askQuestion('WhatsApp')">💬 WhatsApp</button>
     </div>
-    <!-- MESSAGE INPUT -->
 
-    <!-- ADD THIS -->
     <div class="premium-ai-input">
-
-        <input type="text"
-               id="aiMessageInput"
-               placeholder="Ask anything about glasses...">
-
-        <button id="sendAiMessage">
-
-            <i class="fas fa-paper-plane"></i>
-
+        <input type="text" id="aiMessageInput" placeholder="Type in English / हिंदी / ગુજરાતી..." aria-label="Type your message">
+        <button id="sendAiMessage" aria-label="Send message">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
         </button>
-
     </div>
 
 </div>

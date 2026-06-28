@@ -183,284 +183,232 @@ document.addEventListener("click", function (e) {
 });
 
 
-    // DYNAMIC ANSWERS
+    // ===============================================
+    //  OptiCare AI — multilingual smart assistant
+    // ===============================================
 
-    const aiAnswers = [
+    const STORE = {
+        phone: "+91 8732969601",
+        whatsapp: "https://wa.me/918732969601",
+        map: "https://maps.google.com/?q=Shree+Hari+Chasma+Ghar+new+ranip+ahmedabad",
+        hours: "Mon–Sun, 10 AM – 9 PM"
+    };
 
-        {
-            keywords: ["frame", "price", "frame price", "glass price"],
-            answer: `
-            👓 <b>Premium Frames Available</b>
+    // ---- Language detection (native script + romanized hints) ----
+    const HI_HINTS = ["kitna", "kitne", "kya", "kaha", "kahan", "chahiye", "batao", "kaise", "kaun", "kaunsa", "konsa", "nahi", "haan", "accha", "theek", "paisa", "kimat", "mujhe", "aankh", "chasma", "chashma"];
+    const GU_HINTS = ["ketla", "ketli", "kem", "cho", "che", "sastu", "saru", "joiye", "aapo", "kyare", "kona", "kevi", "bhav", "tame", "mane"];
+    function detectLang(t) {
+        if (/[઀-૿]/.test(t)) return "gu";
+        if (/[ऀ-ॿ]/.test(t)) return "hi";
+        const s = " " + t.toLowerCase() + " ";
+        const gu = GU_HINTS.reduce((n, w) => n + (s.includes(" " + w + " ") ? 1 : 0), 0);
+        const hi = HI_HINTS.reduce((n, w) => n + (s.includes(" " + w + " ") ? 1 : 0), 0);
+        if (gu > 0 && gu >= hi) return "gu";
+        if (hi > 0) return "hi";
+        return "en";
+    }
+    function L(a, lang) { return (a && (a[lang] || a.en)) || ""; }
 
-            ✔ Frame price starts from ₹499
-
-            ✔ Men / Women / Kids Collection
-
-            ✔ Stylish & Branded Frames
-            `
-        },
-
-        {
-            keywords: ["sunglasses", "sun glass", "goggles"],
-            answer: `
-            😎 <b>Premium Sunglasses Collection</b>
-
-            ✔ UV Protection
-
-            ✔ Stylish Fashion Collection
-
-            ✔ Branded Sunglasses Available
-            `
-        },
-
-        {
-            keywords: ["lens", "contact lens", "lenses"],
-            answer: `
-            🔵 <b>Lens Collection</b>
-
-            ✔ Blue Cut Lens
-
-            ✔ Anti Glare Lens
-
-            ✔ Zero Power Lens
-
-            ✔ Contact Lens Available
-            `
-        },
-
-        {
-            keywords: ["repair", "repairing", "fix"],
-            answer: `
-            🔧 <b>Glasses Repair Service</b>
-
-            Repair starts from ₹150
-            `
-        },
-
-        {
-            keywords: ["eye", "test", "eye test", "checkup"],
-            answer: `
-            👁 <b>Digital Eye Testing Available</b>
-
-            Professional eye testing service available at store.
-            `
-        },
-
-        {
-            keywords: ["timing", "time", "open", "close"],
-            answer: `
-            🕙 <b>Shop Timing</b>
-
-            Monday to Sunday
-
-            10:00 AM to 9:00 PM
-            `
-        },
-
-        {
-            keywords: ["location", "address", "map"],
-            answer: `
-            📍 <b>Shree Hari Chasma Ghar</b>
-
-            New Ranip Ahmedabad
-
-            <br><br>
-
-            <a href="https://maps.google.com/?q=Shree+Hari+Chasma+Ghar+new+ranip+ahmedabad"
-            target="_blank">
-
-            🗺 Open Google Map
-
-            </a>
-            `
-        },
-
-        {
-            keywords: ["contact", "phone", "number", "mobile"],
-            answer: `
-            📞 <b>Call Us</b>
-
-            <a href="tel:+918732969601">
-
-            +91 8732969601
-
-            </a>
-            `
-        },
-
-        {
-            keywords: ["whatsapp", "wa"],
-            answer: `
-            💬 <b>WhatsApp Support</b>
-
-            <a href="https://wa.me/918732969601"
-            target="_blank">
-
-            Open WhatsApp Chat
-
-            </a>
-            `
-        },
-
-        {
-            keywords: ["kids", "kid", "child"],
-            answer: `
-            👶 <b>Kids Collection Available</b>
-
-            Comfortable & stylish kids glasses available.
-            `
-        },
-
-        {
-            keywords: ["women", "ladies", "girl"],
-            answer: `
-            👩 <b>Women Collection</b>
-
-            Latest fashionable women eyewear available.
-            `
-        },
-
-        {
-            keywords: ["men", "man", "boys"],
-            answer: `
-            🧔 <b>Men Collection</b>
-
-            Premium stylish men frame collection available.
-            `
-        },
-
-        {
-            keywords: ["offer", "discount", "sale"],
-            answer: `
-            🎁 <b>Special Offers Available</b>
-
-            Visit store for latest discounts & combo offers.
-            `
-        },
-
-        {
-            keywords: ["payment", "upi", "paytm"],
-            answer: `
-            💳 <b>Payment Methods</b>
-
-            ✔ Cash
-
-            ✔ UPI
-
-            ✔ PhonePe
-
-            ✔ Google Pay
-
-            ✔ Paytm
-            `
-        },
-
-        {
-            keywords: ["brand", "brands"],
-            answer: `
-            🏷 <b>Premium Brands Available</b>
-
-            ✔ Fastrack
-
-            ✔ Stylish Premium Collection
-            `
-        },
-
-        {
-            keywords: ["blue cut", "computer"],
-            answer: `
-            💻 <b>Blue Cut Computer Glasses</b>
-
-            Best for mobile & computer users.
-            `
-        },
-
-        {
-            keywords: ["anti glare"],
-            answer: `
-            ✨ <b>Anti Glare Lens Available</b>
-
-            Better night vision & eye comfort.
-            `
-        },
-
-        {
-            keywords: ["doctor", "optometrist"],
-            answer: `
-            👨‍⚕ <b>Professional Optometrist Available</b>
-
-            Accurate eye testing & guidance available.
-            `
-        },
-
-        {
-            keywords: ["hello", "hi", "hey"],
-            answer: `
-            👋 Hello Welcome to
-
-            <b>Shree Hari Chasma Ghar</b>
-
-            How can I help you today?
-            `
-        }
-
+    // ---- Knowledge base (keys matched as substrings; includes native-script keys) ----
+    const KB = [
+        { k: ["frame", "frames", "chasma", "chashma", "chshma", "glasses", "spectacle", "spectacles", "eyeglass", "eye glass", "specs", "चश्मा", "चशमा", "फ्रेम", "ચશ્મા", "ફ્રેમ"], a: {
+            en: "👓 <b>Eyeglasses &amp; Frames</b><br>Full-rim, half-rim &amp; rimless frames for men, women &amp; kids — with Blue-Cut, Anti-Glare &amp; power lenses. Frames from <b>₹499</b>.",
+            hi: "👓 <b>चश्मा व फ्रेम</b><br>पुरुष, महिला व बच्चों के लिए फुल-रिम, हाफ-रिम व रिमलेस फ्रेम — Blue-Cut, Anti-Glare व पावर लेंस के साथ। फ्रेम <b>₹499</b> से।",
+            gu: "👓 <b>ચશ્મા અને ફ્રેમ</b><br>પુરુષ, સ્ત્રી અને બાળકો માટે ફુલ-રિમ, હાફ-રિમ અને રિમલેસ ફ્રેમ — Blue-Cut, Anti-Glare અને પાવર લેન્સ સાથે. ફ્રેમ <b>₹499</b> થી." } },
+        { k: ["hello", "hii", "hey", "namaste", "namaskar", "kem cho", "ram ram", "good morning", "good evening", "નમસ્તે", "नमस्ते", "કેમ છો"], a: {
+            en: "👋 Welcome to <b>Shree Hari Chasma Ghar</b>!<br>I'm <b>OptiCare AI</b>. How can I help with glasses, lenses or eye care today?",
+            hi: "👋 <b>Shree Hari Chasma Ghar</b> में आपका स्वागत है!<br>मैं <b>OptiCare AI</b> हूँ। चश्मा, लेंस या आई-केयर में कैसे मदद करूँ?",
+            gu: "👋 <b>Shree Hari Chasma Ghar</b> માં આપનું સ્વાગત છે!<br>હું <b>OptiCare AI</b> છું. ચશ્મા, લેન્સ કે આઇ-કેરમાં કેવી રીતે મદદ કરું?" } },
+        { k: ["price", "cost", "rate", "charge", "how much", "kitna", "kitne", "ketla", "ketli", "bhav", "kimat", "kimmat", "कीमत", "कितने", "दाम", "કિંમત", "ભાવ", "કેટલા"], a: {
+            en: "💰 <b>Pricing</b><br>Price depends on • Frame • Lens type • Brand • Coating.<br>Tell me your need and I'll suggest the best value. Frames from <b>₹499</b>. 👓",
+            hi: "💰 <b>कीमत</b><br>कीमत निर्भर है • फ्रेम • लेंस • ब्रांड • कोटिंग पर।<br>बताइए क्या चाहिए, सबसे अच्छा विकल्प सुझाऊँगा। फ्रेम <b>₹499</b> से। 👓",
+            gu: "💰 <b>કિંમત</b><br>કિંમત આધાર રાખે • ફ્રેમ • લેન્સ • બ્રાન્ડ • કોટિંગ પર.<br>કહો શું જોઈએ, શ્રેષ્ઠ વિકલ્પ સૂચવીશ. ફ્રેમ <b>₹499</b> થી. 👓" } },
+        { k: ["computer", "laptop", "screen", "coding", "office work", "digital", "blue cut", "blue light", "bluecut"], a: {
+            en: "💻 For long screen time I recommend <b>Blue Cut lenses</b>.<br>They reduce digital eye strain and improve comfort. Add Anti-Glare for best results. 👓",
+            hi: "💻 ज़्यादा स्क्रीन उपयोग के लिए <b>Blue Cut लेंस</b> सही हैं।<br>ये डिजिटल आई-स्ट्रेन कम करते हैं। Anti-Glare के साथ और बेहतर। 👓",
+            gu: "💻 વધુ સ્ક્રીન વપરાશ માટે <b>Blue Cut લેન્સ</b> શ્રેષ્ઠ છે.<br>ડિજિટલ આઇ-સ્ટ્રેન ઘટાડે છે. Anti-Glare સાથે વધુ સારું. 👓" } },
+        { k: ["night drive", "night driving", "driving at night", "headlight", "glare at night"], a: {
+            en: "🌙 For night driving I recommend <b>Anti-Reflection (AR) lenses</b>.<br>They cut headlight glare for clearer, safer vision. 🚗",
+            hi: "🌙 रात की ड्राइविंग के लिए <b>Anti-Reflection (AR) लेंस</b> सुझाता हूँ।<br>हेडलाइट की चमक कम कर साफ़ दृष्टि देते हैं। 🚗",
+            gu: "🌙 રાત્રે ડ્રાઇવિંગ માટે <b>Anti-Reflection (AR) લેન્સ</b> સૂચવું છું.<br>હેડલાઇટની ઝગઝગાટ ઘટાડી સ્પષ્ટ દ્રષ્ટિ આપે છે. 🚗" } },
+        { k: ["outdoor", "sunlight", "dhoop", "bright light", "beach"], a: {
+            en: "😎 For outdoor use, <b>Polarized Sunglasses</b> are best.<br>They block glare and give UV400 protection. ☀️",
+            hi: "😎 बाहर उपयोग के लिए <b>Polarized Sunglasses</b> सबसे अच्छे हैं।<br>ग्लेयर रोकते और UV400 सुरक्षा देते हैं। ☀️",
+            gu: "😎 બહાર વપરાશ માટે <b>Polarized Sunglasses</b> શ્રેષ્ઠ છે.<br>ઝગઝગાટ રોકે અને UV400 સુરક્ષા આપે. ☀️" } },
+        { k: ["reading", "padhna", "padhne", "vanchva", "near vision", "newspaper"], a: {
+            en: "📖 For reading comfort I suggest <b>Reading Glasses</b> after a quick eye test, so the power is exact. 👓",
+            hi: "📖 पढ़ने के लिए <b>Reading Glasses</b> सुझाता हूँ — पहले छोटा आई-टेस्ट ताकि पावर सही रहे। 👓",
+            gu: "📖 વાંચન માટે <b>Reading Glasses</b> સૂચવું — પહેલા નાનો આઇ-ટેસ્ટ જેથી પાવર સચોટ રહે. 👓" } },
+        { k: ["eye test", "eye check", "checkup", "check up", "power check", "number", "aankh", "vision test", "आँख", "आंख", "आँखों", "नंबर", "पावर", "આંખ", "આંખો", "નંબર", "પાવર"], a: {
+            en: "👁 <b>Computerized Eye Testing</b> is available in-store.<br>Accurate power check by our optometrist. Walk in or call to book. 📞 " + STORE.phone,
+            hi: "👁 स्टोर पर <b>कंप्यूटराइज़्ड आई-टेस्ट</b> उपलब्ध है।<br>हमारे ऑप्टोमेट्रिस्ट से सटीक पावर जाँच। आइए या कॉल करें। 📞 " + STORE.phone,
+            gu: "👁 સ્ટોર પર <b>કમ્પ્યુટરાઇઝ્ડ આઇ-ટેસ્ટ</b> ઉપલબ્ધ છે.<br>અમારા ઓપ્ટોમેટ્રિસ્ટ દ્વારા સચોટ પાવર તપાસ. આવો અથવા કૉલ કરો. 📞 " + STORE.phone } },
+        { k: ["sunglass", "sun glass", "goggle", "shades"], a: {
+            en: "🕶️ <b>Sunglasses Collection</b><br>• UV400 protection • Polarized options • Branded &amp; trendy styles for men, women &amp; kids.",
+            hi: "🕶️ <b>Sunglasses कलेक्शन</b><br>• UV400 सुरक्षा • Polarized विकल्प • पुरुष, महिला व बच्चों के ब्रांडेड ट्रेंडी स्टाइल।",
+            gu: "🕶️ <b>Sunglasses કલેક્શન</b><br>• UV400 સુરક્ષા • Polarized વિકલ્પ • પુરુષ, સ્ત્રી અને બાળકો માટે બ્રાન્ડેડ ટ્રેન્ડી સ્ટાઇલ." } },
+        { k: ["contact lens", "contact lenses", "color lens", "colour lens", "soft lens"], a: {
+            en: "👁 <b>Contact Lenses</b><br>• Daily / monthly • Clear &amp; colour options • Comfortable, branded.<br>We guide you on safe usage &amp; cleaning.",
+            hi: "👁 <b>Contact Lenses</b><br>• डेली / मंथली • क्लियर व कलर • आरामदायक, ब्रांडेड।<br>सुरक्षित उपयोग व सफ़ाई की पूरी जानकारी।",
+            gu: "👁 <b>Contact Lenses</b><br>• ડેઇલી / મંથલી • ક્લિયર અને કલર • આરામદાયક, બ્રાન્ડેડ.<br>સલામત વપરાશ અને સફાઈ માટે માર્ગદર્શન." } },
+        { k: ["anti glare", "antiglare", "ar coating", "anti reflective", "anti-reflective", "coating"], a: {
+            en: "✨ <b>Anti-Glare / AR coating</b> reduces reflections and improves night vision &amp; screen comfort. Recommended on most lenses.",
+            hi: "✨ <b>Anti-Glare / AR कोटिंग</b> रिफ्लेक्शन कम करती है, रात व स्क्रीन के लिए बेहतर। ज़्यादातर लेंस पर सुझावित।",
+            gu: "✨ <b>Anti-Glare / AR કોટિંગ</b> પ્રતિબિંબ ઘટાડે, રાત અને સ્ક્રીન માટે સારું. મોટાભાગના લેન્સ પર સૂચવેલ." } },
+        { k: ["progressive", "bifocal", "multifocal", "varifocal"], a: {
+            en: "🔭 <b>Progressive / Bifocal lenses</b> give clear near &amp; far vision in one lens. Best fitted after an eye test.",
+            hi: "🔭 <b>Progressive / Bifocal लेंस</b> एक ही लेंस में पास-दूर साफ़ दृष्टि देते हैं। आई-टेस्ट के बाद बेहतर फिटिंग।",
+            gu: "🔭 <b>Progressive / Bifocal લેન્સ</b> એક જ લેન્સમાં નજીક-દૂર સ્પષ્ટ દ્રષ્ટિ આપે. આઇ-ટેસ્ટ પછી શ્રેષ્ઠ ફિટિંગ." } },
+        { k: ["kids", "kid ", "child", "children", "baccha", "bachcha"], a: {
+            en: "👶 <b>Kids Eyewear</b><br>Light, durable &amp; flexible frames, plus blue-cut for screen time. Comfortable fits for school kids.",
+            hi: "👶 <b>बच्चों के चश्मे</b><br>हल्के, मज़बूत व लचीले फ्रेम, स्क्रीन के लिए ब्लू-कट भी। स्कूल बच्चों के लिए आरामदायक।",
+            gu: "👶 <b>બાળકોના ચશ્મા</b><br>હળવા, મજબૂત અને ફ્લેક્સિબલ ફ્રેમ, સ્ક્રીન માટે બ્લુ-કટ પણ. શાળાના બાળકો માટે આરામદાયક." } },
+        { k: ["women", "ladies", "girl", "female"], a: {
+            en: "👩 <b>Women's Collection</b><br>Trendy frames &amp; sunglasses — cat-eye, oversized, rimless &amp; more.",
+            hi: "👩 <b>महिला कलेक्शन</b><br>ट्रेंडी फ्रेम व सनग्लास — कैट-आई, ओवरसाइज़्ड, रिमलेस। नवीनतम फैशन।",
+            gu: "👩 <b>મહિલા કલેક્શન</b><br>ટ્રેન્ડી ફ્રેમ અને સનગ્લાસ — કેટ-આઇ, ઓવરસાઇઝ્ડ, રિમલેસ. નવીનતમ ફેશન." } },
+        { k: ["men", "gents", "male", "boys"], a: {
+            en: "🧔 <b>Men's Collection</b><br>Premium frames — full-rim, half-rim, rimless, titanium &amp; TR90. Stylish and durable.",
+            hi: "🧔 <b>पुरुष कलेक्शन</b><br>प्रीमियम फ्रेम — फुल-रिम, हाफ-रिम, रिमलेस, टाइटेनियम व TR90।",
+            gu: "🧔 <b>પુરુષ કલેક્શન</b><br>પ્રીમિયમ ફ્રેમ — ફુલ-રિમ, હાફ-રિમ, રિમલેસ, ટાઇટેનિયમ અને TR90." } },
+        { k: ["repair", "fix", "broken", "nose pad", "screw", "tuta", "frame repair", "adjust"], a: {
+            en: "🔧 <b>Repair Service</b><br>Frame fixing, nose-pad &amp; screw replacement, fitting &amp; adjustments. Quick service from <b>₹150</b>.",
+            hi: "🔧 <b>रिपेयर सर्विस</b><br>फ्रेम फिक्सिंग, नोज़-पैड व स्क्रू बदलना, फिटिंग। तेज़ सर्विस <b>₹150</b> से।",
+            gu: "🔧 <b>રિપેર સર્વિસ</b><br>ફ્રેમ ફિક્સિંગ, નોઝ-પેડ અને સ્ક્રૂ બદલવા, ફિટિંગ. ઝડપી સર્વિસ <b>₹150</b> થી." } },
+        { k: ["timing", "time", "open", "close", "hours", "samay", "working hours", "kitne baje", "समय", "टाइम", "खुला", "સમય", "ટાઇમ", "ખુલે"], a: {
+            en: "🕙 <b>Store Hours</b><br>" + STORE.hours + ".<br>Visit us anytime in these hours! 😊",
+            hi: "🕙 <b>स्टोर समय</b><br>सोम–रवि, सुबह 10 – रात 9 बजे।<br>इन घंटों में कभी भी आइए! 😊",
+            gu: "🕙 <b>સ્ટોર સમય</b><br>સોમ–રવિ, સવારે 10 – રાત્રે 9.<br>આ સમયમાં ગમે ત્યારે આવો! 😊" } },
+        { k: ["location", "address", "where", "kahan", "kaha", "map", "direction", "reach", "near me", "पता", "कहाँ", "कहां", "સરનામું", "ક્યાં", "ઠેકાણું"], a: {
+            en: "📍 <b>Shree Hari Chasma Ghar</b><br>5 Sun Residency, near Manki Circle, New Ranip, Ahmedabad.<br><a href='" + STORE.map + "' target='_blank' rel='noopener'>🗺 Open in Google Maps</a>",
+            hi: "📍 <b>Shree Hari Chasma Ghar</b><br>5 Sun Residency, मानकी सर्कल के पास, New Ranip, Ahmedabad.<br><a href='" + STORE.map + "' target='_blank' rel='noopener'>🗺 गूगल मैप खोलें</a>",
+            gu: "📍 <b>Shree Hari Chasma Ghar</b><br>5 Sun Residency, માંકી સર્કલ પાસે, New Ranip, Ahmedabad.<br><a href='" + STORE.map + "' target='_blank' rel='noopener'>🗺 ગૂગલ મેપ ખોલો</a>" } },
+        { k: ["contact", "phone", "mobile", "call", "sampark"], a: {
+            en: "📞 <b>Call us:</b> <a href='tel:+918732969601'>" + STORE.phone + "</a><br>We're happy to help! 😊",
+            hi: "📞 <b>कॉल करें:</b> <a href='tel:+918732969601'>" + STORE.phone + "</a><br>हम मदद के लिए तैयार हैं! 😊",
+            gu: "📞 <b>કૉલ કરો:</b> <a href='tel:+918732969601'>" + STORE.phone + "</a><br>અમે મદદ માટે તૈયાર છીએ! 😊" } },
+        { k: ["whatsapp", "whats app", "wa chat"], a: {
+            en: "💬 <b>WhatsApp us:</b> <a href='" + STORE.whatsapp + "' target='_blank' rel='noopener'>Start Chat</a> 📲",
+            hi: "💬 <b>WhatsApp करें:</b> <a href='" + STORE.whatsapp + "' target='_blank' rel='noopener'>चैट शुरू करें</a> 📲",
+            gu: "💬 <b>WhatsApp કરો:</b> <a href='" + STORE.whatsapp + "' target='_blank' rel='noopener'>ચેટ શરૂ કરો</a> 📲" } },
+        { k: ["payment", "upi", "paytm", "phonepe", "google pay", "gpay", "cash", "card", "emi"], a: {
+            en: "💳 <b>Payment Options</b><br>Cash • UPI • PhonePe • Google Pay • Paytm • Cards.",
+            hi: "💳 <b>भुगतान विकल्प</b><br>कैश • UPI • PhonePe • Google Pay • Paytm • कार्ड।",
+            gu: "💳 <b>ચુકવણી વિકલ્પ</b><br>કેશ • UPI • PhonePe • Google Pay • Paytm • કાર્ડ." } },
+        { k: ["offer", "discount", "sale", "scheme", "deal", "coupon"], a: {
+            en: "🎁 <b>Offers</b><br>We run seasonal discounts &amp; combo deals on frames + lenses. Visit or call for today's best offer!",
+            hi: "🎁 <b>ऑफर</b><br>फ्रेम + लेंस पर सीज़नल डिस्काउंट व कॉम्बो डील। आज का बेस्ट ऑफर जानने आइए या कॉल करें!",
+            gu: "🎁 <b>ઓફર</b><br>ફ્રેમ + લેન્સ પર સીઝનલ ડિસ્કાઉન્ટ અને કૉમ્બો ડીલ. આજનો બેસ્ટ ઓફર જાણવા આવો કે કૉલ કરો!" } },
+        { k: ["brand", "fastrack", "rayban", "ray ban", "titan", "vincent chase"], a: {
+            en: "🏷️ <b>Brands</b><br>Branded frames &amp; sunglasses including Fastrack and premium quality collections." } },
+        { k: ["warranty", "guarantee", "guaranty"], a: {
+            en: "🛡️ Genuine products come with brand warranty where applicable. Please ask in-store for product-specific warranty details." } },
+        { k: ["exchange", "return", "replace", "refund"], a: {
+            en: "🔄 For exchange/return please visit the store with your bill. Our team will guide you on the applicable policy for your product." } },
+        { k: ["delivery", "home delivery", "courier", "shipping"], a: {
+            en: "🚚 Visit our New Ranip store to pick your eyewear. For delivery options, please call us at " + STORE.phone + "." } },
+        { k: ["doctor", "optometrist", "specialist"], a: {
+            en: "👨‍⚕️ Our professional optometrist gives accurate testing &amp; guidance. For any serious eye symptoms, please consult an eye doctor.",
+            hi: "👨‍⚕️ हमारे प्रोफेशनल ऑप्टोमेट्रिस्ट सटीक जाँच व सलाह देते हैं। गंभीर लक्षणों में नेत्र चिकित्सक से सलाह लें।",
+            gu: "👨‍⚕️ અમારા પ્રોફેશનલ ઓપ્ટોમેટ્રિસ્ટ સચોટ તપાસ અને માર્ગદર્શન આપે. ગંભીર લક્ષણોમાં આંખના ડૉક્ટરની સલાહ લો." } },
+        { k: ["thank", "thanks", "dhanyavad", "aabhar", "aabhaar"], a: {
+            en: "🙏 You're welcome! Anything else about glasses, lenses or eye care? 😊",
+            hi: "🙏 आपका स्वागत है! चश्मा, लेंस या आई-केयर में और कुछ? 😊",
+            gu: "🙏 આપનું સ્વાગત છે! ચશ્મા, લેન્સ કે આઇ-કેરમાં બીજું કંઈ? 😊" } }
     ];
 
-    // ASK QUESTION
+    const FRAME_TRIGGERS = ["which frame", "frame suit", "suits me", "frame suggestion", "recommend frame", "frame recommendation", "best frame for me", "konsa frame", "kaunsa frame", "face shape", "suggest frame", "suggest a frame"];
 
-    window.askQuestion = function (question) {
+    const FALLBACK = {
+        en: "🤖 I'm your <b>Optical Assistant</b>. I can help with glasses, lenses, eye care &amp; store info.<br>Try: <i>price</i>, <i>eye test</i>, <i>blue cut</i>, <i>sunglasses</i>, or <i>which frame suits me</i>.<br>📞 " + STORE.phone,
+        hi: "🤖 मैं आपका <b>ऑप्टिकल असिस्टेंट</b> हूँ। चश्मा, लेंस, आई-केयर व स्टोर जानकारी में मदद कर सकता हूँ।<br>पूछें: <i>price</i>, <i>eye test</i>, <i>blue cut</i>, <i>sunglasses</i>।<br>📞 " + STORE.phone,
+        gu: "🤖 હું તમારો <b>ઓપ્ટિકલ આસિસ્ટન્ટ</b> છું. ચશ્મા, લેન્સ, આઇ-કેર અને સ્ટોર માહિતીમાં મદદ કરી શકું.<br>પૂછો: <i>price</i>, <i>eye test</i>, <i>blue cut</i>, <i>sunglasses</i>.<br>📞 " + STORE.phone
+    };
 
+    // ---- Face-shape recommendation ----
+    const FACE_REC = {
+        round: "angular rectangular or wayfarer frames",
+        square: "round or oval frames to soften features",
+        oval: "almost any style — aviator or rectangular look great",
+        heart: "bottom-heavy or aviator frames",
+        long: "tall, oversized or deep frames",
+        diamond: "oval, cat-eye or rimless frames"
+    };
+
+    // ---- Guided frame-finder flow ----
+    let aiFlow = null;
+    const FRAME_STEPS = [
+        { key: "who",    q: { en: "Great! Let's find your perfect frame. 👓<br>Who is it for?", hi: "बढ़िया! आइए सही फ्रेम चुनें। 👓<br>किसके लिए है?", gu: "સરસ! ચાલો યોગ્ય ફ્રેમ શોધીએ. 👓<br>કોના માટે છે?" }, chips: ["Male", "Female", "Kids"] },
+        { key: "age",    q: { en: "Got it 👍 What's the age group?", hi: "ठीक है 👍 उम्र क्या है?", gu: "સમજ્યું 👍 ઉંમર કેટલી છે?" }, chips: ["Under 18", "18–40", "40+"] },
+        { key: "face",   q: { en: "And your face shape?", hi: "आपके चेहरे का आकार?", gu: "તમારા ચહેરાનો આકાર?" }, chips: ["Round", "Square", "Oval", "Heart", "Long", "Diamond"] },
+        { key: "budget", q: { en: "Finally, your budget? 💰", hi: "आखिर में, बजट? 💰", gu: "છેલ્લે, બજેટ? 💰" }, chips: ["Under ₹1000", "₹1000–2500", "₹2500+"] }
+    ];
+    function startFrameFlow(lang) { aiFlow = { step: 0, data: {} }; askFrameStep(lang); }
+    function askFrameStep(lang) {
+        const s = FRAME_STEPS[aiFlow.step];
+        addBotMessage(L(s.q, lang));
+        renderChips(s.chips);
+    }
+    function handleFlow(answer, lang) {
+        const step = FRAME_STEPS[aiFlow.step];
+        if (step) aiFlow.data[step.key] = answer;
+        aiFlow.step++;
+        if (aiFlow.step < FRAME_STEPS.length) { askFrameStep(lang); return; }
+        const d = aiFlow.data;
+        const faceKey = Object.keys(FACE_REC).find(k => (d.face || "").toLowerCase().includes(k));
+        const rec = FACE_REC[faceKey] || "a versatile rectangular or oval frame";
+        const out = {
+            en: "✨ <b>My recommendation</b><br>For a <b>" + (d.face || "—") + "</b> face (" + (d.who || "—") + ", " + (d.age || "—") + "), try <b>" + rec + "</b>.<br>Budget " + (d.budget || "—") + ": we have great matches. 👓<br>Come in for a free try-on &amp; eye test, or call <a href='tel:+918732969601'>" + STORE.phone + "</a>.",
+            hi: "✨ <b>मेरी सलाह</b><br><b>" + (d.face || "—") + "</b> चेहरे के लिए (" + (d.who || "—") + ", " + (d.age || "—") + ") <b>" + rec + "</b> आज़माएँ।<br>बजट " + (d.budget || "—") + ": बढ़िया विकल्प मौजूद। 👓<br>फ्री ट्राय-ऑन व आई-टेस्ट के लिए आइए, या कॉल करें <a href='tel:+918732969601'>" + STORE.phone + "</a>।",
+            gu: "✨ <b>મારી ભલામણ</b><br><b>" + (d.face || "—") + "</b> ચહેરા માટે (" + (d.who || "—") + ", " + (d.age || "—") + ") <b>" + rec + "</b> અજમાવો.<br>બજેટ " + (d.budget || "—") + ": સરસ વિકલ્પ ઉપલબ્ધ. 👓<br>ફ્રી ટ્રાય-ઓન અને આઇ-ટેસ્ટ માટે આવો, અથવા કૉલ કરો <a href='tel:+918732969601'>" + STORE.phone + "</a>."
+        };
+        addBotMessage(L(out, lang));
+        aiFlow = null;
+    }
+
+    // ---- Quick-reply chips ----
+    function renderChips(options) {
+        if (!options || !options.length) return;
+        const wrap = document.createElement("div");
+        wrap.className = "ai-quick-chips";
+        options.forEach(o => {
+            const b = document.createElement("button");
+            b.type = "button";
+            b.className = "ai-chip";
+            b.textContent = o;
+            b.addEventListener("click", () => askQuestion(o));
+            wrap.appendChild(b);
+        });
+        chatBody.appendChild(wrap);
+        scrollBottom();
+    }
+
+    // ---- Intent matching (longest-key wins) ----
+    function matchIntent(ql) {
+        let best = null, score = 0;
+        for (const item of KB) {
+            let s = 0;
+            for (const k of item.k) { if (ql.includes(k)) s += k.trim().length; }
+            if (s > score) { score = s; best = item; }
+        }
+        return score > 0 ? best : null;
+    }
+
+    // ---- Main entry point ----
+    window.askQuestion = function (raw) {
+        const question = (raw == null ? "" : String(raw)).trim();
+        if (!question) return;
         addUserMessage(question);
-
         showTyping();
-
+        const lang = detectLang(question);
         setTimeout(() => {
-
             removeTyping();
-
-            let foundAnswer = false;
-
-            const lowerQuestion =
-                question.toLowerCase();
-
-            aiAnswers.forEach(item => {
-
-                item.keywords.forEach(keyword => {
-
-                    if (lowerQuestion.includes(keyword)) {
-
-                        addBotMessage(item.answer);
-
-                        foundAnswer = true;
-
-                    }
-
-                });
-
-            });
-
-            // DEFAULT
-
-            if (!foundAnswer) {
-
-                addBotMessage(`
-
-                🤖 <b>Optical AI Assistant</b>
-
-                Sorry 😄
-
-                Please contact shop for more details.
-
-                <br><br>
-
-                📞 +91 8732969601
-
-                `);
-
-            }
-
-        }, 900);
-
+            if (aiFlow) { handleFlow(question, lang); return; }
+            const ql = " " + question.toLowerCase() + " ";
+            if (FRAME_TRIGGERS.some(k => ql.includes(k))) { startFrameFlow(lang); return; }
+            const hit = matchIntent(ql);
+            addBotMessage(hit ? L(hit.a, lang) : L(FALLBACK, lang));
+        }, 650);
     }
 
 
@@ -518,13 +466,9 @@ document.addEventListener("click", function (e) {
     function showTyping() {
 
         chatBody.innerHTML += `
-
         <div class="typing" id="typingAnimation">
-
-            🤖 Typing...
-
+            <span></span><span></span><span></span>
         </div>
-
         `;
 
         scrollBottom();
@@ -1127,19 +1071,19 @@ if(servicesContainer){
 const isSunglassesCatalog = document.body?.dataset?.catalog === 'sunglasses' || window.location.pathname.includes('/sunglasses');
 
 const sunglassesTemplates = [
-    { category: 'Aviator', title: 'Aviator Sun Frame', meta: 'Polarized UV400', price: '₹2,199', image: '/assets/images/eyeglasss/Home.jpg', badge: 'Trending' },
-    { category: 'Wayfarer', title: 'Wayfarer Classic', meta: 'Premium Tinted Lens', price: '₹2,499', image: '/assets/images/eyeglasss/women.png', badge: 'New' },
-    { category: 'Round', title: 'Round Retro Frame', meta: 'Matte Finish', price: '₹1,899', image: '/assets/images/eyeglasss/men.png', badge: 'Best Seller' },
-    { category: 'Cat-Eye', title: 'Cat-Eye Glam Frame', meta: 'Fashion Sunglass', price: '₹2,699', image: '/assets/images/eyeglasss/feature.png', badge: 'Popular' },
-    { category: 'Sports', title: 'Sport Shield Frame', meta: 'Wraparound Protection', price: '₹2,999', image: '/assets/images/eyeglasss/kid.png', badge: 'Sports' }
+    { category: 'Aviator', title: 'Aviator Sun Frame', meta: 'Polarized UV400', price: '₹2,199', image: '/assets/images/Home.jpg', badge: 'Trending' },
+    { category: 'Wayfarer', title: 'Wayfarer Classic', meta: 'Premium Tinted Lens', price: '₹2,499', image: '/assets/images/women.png', badge: 'New' },
+    { category: 'Round', title: 'Round Retro Frame', meta: 'Matte Finish', price: '₹1,899', image: '/assets/images/men.png', badge: 'Best Seller' },
+    { category: 'Cat-Eye', title: 'Cat-Eye Glam Frame', meta: 'Fashion Sunglass', price: '₹2,699', image: '/assets/images/feature.png', badge: 'Popular' },
+    { category: 'Sports', title: 'Sport Shield Frame', meta: 'Wraparound Protection', price: '₹2,999', image: '/assets/images/kid.png', badge: 'Sports' }
 ];
 
 const eyeglassTemplates = isSunglassesCatalog ? sunglassesTemplates : [
-    { category: 'Women', title: 'Classic Women Frame', meta: 'Blue Cut Lens', price: '₹1,499', image: '/assets/images/eyeglasss/women.png', badge: 'New' },
-    { category: 'Men', title: 'Men Aviator Frame', meta: 'UV Protection', price: '₹1,699', image: '/assets/images/eyeglasss/men.png', badge: 'Best Seller' },
-    { category: 'Kids', title: 'Kids Fun Frame', meta: 'Lightweight Fit', price: '₹999', image: '/assets/images/eyeglasss/kid.png', badge: 'Kids' },
-    { category: 'Sunglasses', title: 'Gradient Sunglass Frame', meta: 'Polarized UV400', price: '₹2,199', image: '/assets/images/eyeglasss/Home.jpg', badge: 'Trending' },
-    { category: 'Blue Cut', title: 'Blue Cut Computer Frame', meta: 'Anti Glare', price: '₹1,599', image: '/assets/images/eyeglasss/feature.png', badge: 'Popular' }
+    { category: 'Women', title: 'Classic Women Frame', meta: 'Blue Cut Lens', price: '₹1,499', image: '/assets/images/women.png', badge: 'New' },
+    { category: 'Men', title: 'Men Aviator Frame', meta: 'UV Protection', price: '₹1,699', image: '/assets/images/men.png', badge: 'Best Seller' },
+    { category: 'Kids', title: 'Kids Fun Frame', meta: 'Lightweight Fit', price: '₹999', image: '/assets/images/kid.png', badge: 'Kids' },
+    { category: 'Sunglasses', title: 'Gradient Sunglass Frame', meta: 'Polarized UV400', price: '₹2,199', image: '/assets/images/Home.jpg', badge: 'Trending' },
+    { category: 'Blue Cut', title: 'Blue Cut Computer Frame', meta: 'Anti Glare', price: '₹1,599', image: '/assets/images/feature.png', badge: 'Popular' }
 ];
 
 const eyeglassFrames = Array.from({ length: isSunglassesCatalog ? 320 : 520 }, (_, index) => {
@@ -1234,76 +1178,21 @@ function setFrameCategory(category) {
     renderProductGrid();
 }
 
-window.openTryOn = function (id) {
-    const frame = eyeglassFrames.find(item => item.id === id);
-    if (!frame) return;
-    const modal = document.getElementById('tryOnModal');
-    const placeholder = document.getElementById('tryOnPlaceholder');
-    const video = document.getElementById('tryOnVideo');
+// Expose frame data for the virtual try-on engine (assets/js/tryon.js)
+window.eyeglassFrames = eyeglassFrames;
 
-    if (modal) {
-        modal.hidden = false;
-        placeholder.style.display = 'none';
-        startCamera(video, placeholder);
+// Delegate to the face-tracking try-on engine (falls back gracefully if unloaded)
+window.openTryOn = function (id) {
+    if (window.OptiTryOn && typeof window.OptiTryOn.open === 'function') {
+        window.OptiTryOn.open(id);
     }
 };
-
-function closeTryOn() {
-    const modal = document.getElementById('tryOnModal');
-    const video = document.getElementById('tryOnVideo');
-    if (modal) {
-        modal.hidden = true;
-    }
-    stopCamera(video);
-}
-
-function startCamera(videoElement, placeholder) {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        placeholder.style.display = 'flex';
-        return;
-    }
-
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
-        .then(stream => {
-            currentStream = stream;
-            videoElement.srcObject = stream;
-            videoElement.play();
-            placeholder.style.display = 'none';
-        })
-        .catch(() => {
-            placeholder.style.display = 'flex';
-        });
-}
-
-function stopCamera(videoElement) {
-    if (currentStream) {
-        currentStream.getTracks().forEach(track => track.stop());
-        currentStream = null;
-    }
-    if (videoElement) {
-        videoElement.srcObject = null;
-    }
-}
 
 function setupEyeglassesCatalog() {
     const filterButtons = document.querySelectorAll('.filter-btn');
     filterButtons.forEach(btn => {
         btn.addEventListener('click', () => setFrameCategory(btn.dataset.category));
     });
-
-    const closeButtons = document.querySelectorAll('#closeTryOn, #closeTryOnFooter');
-    closeButtons.forEach(btn => {
-        btn.addEventListener('click', closeTryOn);
-    });
-
-    const tryOnModal = document.getElementById('tryOnModal');
-    if (tryOnModal) {
-        tryOnModal.addEventListener('click', (event) => {
-            if (event.target === tryOnModal) {
-                closeTryOn();
-            }
-        });
-    }
 
     renderProductGrid();
 }
