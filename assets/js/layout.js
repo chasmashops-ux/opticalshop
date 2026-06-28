@@ -43,6 +43,50 @@ document.addEventListener("DOMContentLoaded", function () {
     </nav>
     `;
 
+    // Inject Service JSON-LD for pages under /services/
+    (function injectServiceSchema(){
+        try {
+            if (!window.location.pathname.includes('/services/')) return;
+
+            const titleEl = document.querySelector('h1');
+            const pageTitle = titleEl ? titleEl.innerText.trim() : document.title || '';
+            const metaDesc = document.querySelector('meta[name="description"]')?.getAttribute('content') || '';
+
+            const schema = {
+                "@context": "https://schema.org",
+                "@type": "Service",
+                "name": pageTitle || 'Optical Service',
+                "description": metaDesc || 'Professional optical service at Shree Hari Chasma Ghar in New Ranip, Ahmedabad.',
+                "provider": {
+                    "@type": "Optician",
+                    "name": "Shree Hari Chasma Ghar",
+                    "url": window.location.origin || (window.location.protocol + '//' + window.location.host),
+                    "telephone": "+918732969601",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "5 Sun Residency, Anand Party Plot Rd, near Manki Circle",
+                        "addressLocality": "New Ranip",
+                        "addressRegion": "Gujarat",
+                        "postalCode": "382470",
+                        "addressCountry": "IN"
+                    }
+                },
+                "areaServed": {
+                    "@type": "City",
+                    "name": "Ahmedabad"
+                }
+            };
+
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.text = JSON.stringify(schema);
+            document.head.appendChild(script);
+        } catch (e) {
+            // fail silently
+            console.error('InjectServiceSchema error', e);
+        }
+    })();
+
     // ===== FOOTER =====
     document.getElementById("site-footer").innerHTML = `
 
