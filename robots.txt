@@ -1,31 +1,42 @@
-# Production Robots.txt for Shree Hari Chasma Ghar
-# Optimized for Google Search Console
+# ============================================
+# robots.txt - Shree Hari Chasma Ghar
+# https://www.shreeharichasmaghar.com
+# ============================================
 
-# Default: Allow search engines to crawl everything
+# Default Rules
 User-agent: *
 Allow: /
 
-# Allow search engines to crawl important assets
+# Allow important assets
 Allow: /assets/css/
 Allow: /assets/js/
 Allow: /assets/images/
-Allow: /assets/data/
+Allow: /assets/fonts/
 
-# Disallow private files
+# Block private/system folders
 Disallow: /.git/
+Disallow: /.github/
 Disallow: /.env
 Disallow: /node_modules/
-Disallow: /*.json$
 Disallow: /admin/
 Disallow: /private/
 Disallow: /temp/
 Disallow: /test/
+Disallow: /backup/
+Disallow: /logs/
 
-# Block unnecessary bot crawlers - AI Training Bots
+# Optional: Block config/data files
+Disallow: /*.sql$
+Disallow: /*.bak$
+Disallow: /*.config$
+Disallow: /*.log$
+Disallow: /*.xml$
+
+# =====================================================
+# AI Crawlers (Block AI model training bots)
+# =====================================================
+
 User-agent: GPTBot
-Disallow: /
-
-User-agent: ChatGPT-User
 Disallow: /
 
 User-agent: Google-Extended
@@ -34,13 +45,22 @@ Disallow: /
 User-agent: ClaudeBot
 Disallow: /
 
+User-agent: Claude-Web
+Disallow: /
+
 User-agent: anthropic-ai
 Disallow: /
 
 User-agent: CCBot
 Disallow: /
 
+User-agent: PerplexityBot
+Disallow: /
+
 User-agent: Bytespider
+Disallow: /
+
+User-agent: Diffbot
 Disallow: /
 
 User-agent: Amazonbot
@@ -49,29 +69,32 @@ Disallow: /
 User-agent: Applebot-Extended
 Disallow: /
 
-User-agent: Diffbot
-Disallow: /
-
-User-agent: PerplexityBot
-Disallow: /
-
-User-agent: YouBot
-Disallow: /
-
 User-agent: Omgilibot
 Disallow: /
 
 User-agent: FacebookBot
 Disallow: /
 
-# Crawl-Delay (optional)
-Crawl-Delay: 1
+User-agent: ImagesiftBot
+Disallow: /
 
-# Reference sitemap
-Sitemap: https://www.shreeharichasmaghar.com/sitemap.xml
+User-agent: YouBot
+Disallow: /
 
-# Allow Search Engines
+User-agent: AI2Bot
+Disallow: /
+
+# =====================================================
+# Search Engines (Always Allow)
+# =====================================================
+
 User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-Mobile
 Allow: /
 
 User-agent: Bingbot
@@ -83,5 +106,14 @@ Allow: /
 User-agent: DuckDuckBot
 Allow: /
 
+User-agent: YandexBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+# =====================================================
 # Sitemap
+# =====================================================
+
 Sitemap: https://www.shreeharichasmaghar.com/sitemap.xml
