@@ -404,4 +404,392 @@
     <priority>0.75</priority>
   </url>
 
+
+  <!-- Blog Listing Page -->
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog.html</loc>
+    <lastmod>2026-07-08T00:00:00+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Blog Articles -->
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/best-optical-shop-new-ranip.html</loc>
+    <lastmod>2026-07-08T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/which-lens-is-best.html</loc>
+    <lastmod>2026-07-05T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/blue-cut-glasses-benefits.html</loc>
+    <lastmod>2026-07-02T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/computer-vision-syndrome.html</loc>
+    <lastmod>2026-06-28T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/kids-eye-care.html</loc>
+    <lastmod>2026-06-24T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/driving-glasses-guide.html</loc>
+    <lastmod>2026-06-20T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/polarized-sunglasses-benefits.html</loc>
+    <lastmod>2026-06-16T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/anti-glare-coating-explained.html</loc>
+    <lastmod>2026-06-12T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/progressive-vs-bifocal-lenses.html</loc>
+    <lastmod>2026-06-08T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/photochromic-lenses-guide.html</loc>
+    <lastmod>2026-06-04T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/high-index-lenses-explained.html</loc>
+    <lastmod>2026-05-30T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/single-vision-vs-multifocal.html</loc>
+    <lastmod>2026-05-26T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/polycarbonate-lenses-benefits.html</loc>
+    <lastmod>2026-05-22T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/lens-coatings-guide.html</loc>
+    <lastmod>2026-05-18T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/20-20-20-rule-eye-strain.html</loc>
+    <lastmod>2026-05-14T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/digital-eye-strain-tips.html</loc>
+    <lastmod>2026-05-10T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/dry-eyes-causes-remedies.html</loc>
+    <lastmod>2026-05-06T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/foods-for-healthy-eyes.html</loc>
+    <lastmod>2026-05-02T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/how-often-eye-test.html</loc>
+    <lastmod>2026-04-28T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/signs-you-need-glasses.html</loc>
+    <lastmod>2026-04-24T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/myopia-causes-prevention.html</loc>
+    <lastmod>2026-04-20T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/astigmatism-explained.html</loc>
+    <lastmod>2026-04-16T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/presbyopia-after-40.html</loc>
+    <lastmod>2026-04-12T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/protect-eyes-from-uv.html</loc>
+    <lastmod>2026-04-08T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/eye-care-tips-summer.html</loc>
+    <lastmod>2026-04-04T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/eye-care-tips-monsoon.html</loc>
+    <lastmod>2026-03-30T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/cataract-awareness.html</loc>
+    <lastmod>2026-03-26T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/common-eye-problems.html</loc>
+    <lastmod>2026-03-22T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/how-to-choose-frame-face-shape.html</loc>
+    <lastmod>2026-03-18T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/best-glasses-for-round-face.html</loc>
+    <lastmod>2026-03-14T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/best-glasses-for-oval-face.html</loc>
+    <lastmod>2026-03-10T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/frame-materials-guide.html</loc>
+    <lastmod>2026-03-06T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/titanium-frames-benefits.html</loc>
+    <lastmod>2026-03-02T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/rimless-vs-full-rim.html</loc>
+    <lastmod>2026-02-26T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/how-to-clean-glasses.html</loc>
+    <lastmod>2026-02-22T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/how-to-maintain-eyeglasses.html</loc>
+    <lastmod>2026-02-18T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/reading-glasses-guide.html</loc>
+    <lastmod>2026-02-14T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/first-time-glasses-tips.html</loc>
+    <lastmod>2026-02-10T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/uv-protection-sunglasses.html</loc>
+    <lastmod>2026-02-06T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/how-to-choose-sunglasses.html</loc>
+    <lastmod>2026-02-02T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/sports-sunglasses-guide.html</loc>
+    <lastmod>2026-01-28T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/sunglasses-for-face-shape.html</loc>
+    <lastmod>2026-01-24T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/contact-lens-beginners-guide.html</loc>
+    <lastmod>2026-01-20T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/contact-lens-care-tips.html</loc>
+    <lastmod>2026-01-16T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/daily-vs-monthly-lenses.html</loc>
+    <lastmod>2026-01-12T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/colored-contact-lenses-guide.html</loc>
+    <lastmod>2026-01-08T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/contact-lens-mistakes.html</loc>
+    <lastmod>2026-01-04T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/signs-child-needs-glasses.html</loc>
+    <lastmod>2025-12-28T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/kids-screen-time-eyes.html</loc>
+    <lastmod>2025-12-22T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/choosing-kids-glasses.html</loc>
+    <lastmod>2025-12-16T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/how-to-read-eye-prescription.html</loc>
+    <lastmod>2025-12-10T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/buying-glasses-online-vs-store.html</loc>
+    <lastmod>2025-12-04T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/eye-test-what-to-expect.html</loc>
+    <lastmod>2025-11-28T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.shreeharichasmaghar.com/blog/why-buy-from-local-optician.html</loc>
+    <lastmod>2025-11-22T00:00:00+05:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
 </urlset>

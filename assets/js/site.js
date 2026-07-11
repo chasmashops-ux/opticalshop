@@ -1115,6 +1115,7 @@ function getFilteredFrames() {
 
 function renderProductGrid() {
     const container = document.getElementById('productGrid');
+    if (!container) return;
     const filtered = getFilteredFrames();
     const total = filtered.length;
     const start = (currentFramePage - 1) * productsPerPage;
@@ -1124,7 +1125,7 @@ function renderProductGrid() {
         <div class="col-sm-6 col-lg-4 col-xl-3" data-aos="fade-up">
             <div class="product-card">
                 <div class="product-image">
-                    <img src="${frame.image}" alt="${frame.title}" loading="lazy">
+                    <img src="${frame.image}" alt="${frame.title}" loading="lazy" decoding="async" width="400" height="300">
                     <span class="product-badge">${frame.badge}</span>
                 </div>
                 <div class="product-details">
@@ -1205,3 +1206,501 @@ if (document.readyState === 'loading') {
 
 window.setFrameCategory = setFrameCategory;
 window.changeFramePage = changeFramePage;
+
+// ----------------------------------------------------------blog data (shared by listing + article pages)----------------------------------------------------
+
+const blogPosts = [
+        { url: 'best-optical-shop-new-ranip.html', img: 'about.jpg', cat: 'Local Guide', date: '8 Jul 2026', title: "Best Optical Shop in New Ranip, Ahmedabad", desc: "What makes an optical shop truly the best? A local guide to eye testing, frame range, honest pricing and after-sales care in New Ranip." },
+        { url: 'which-lens-is-best.html', img: 'blog1.png', cat: 'Lenses', date: '5 Jul 2026', title: "Which Lens is Best for Your Eyes? A Simple Guide", desc: "Single vision, blue cut, progressive or high-index? Learn how to choose the best lens for your prescription, lifestyle and budget." },
+        { url: 'blue-cut-glasses-benefits.html', img: 'feature.png', cat: 'Lenses', date: '2 Jul 2026', title: "Blue Cut Glasses Benefits You Should Know", desc: "The real benefits of blue light lenses for heavy screen users - less eye strain, better comfort and who actually needs them." },
+        { url: 'computer-vision-syndrome.html', img: 'blog3.png', cat: 'Eye Health', date: '28 Jun 2026', title: "Computer Vision Syndrome: Causes, Symptoms & Relief", desc: "What Computer Vision Syndrome is, why hours of screen time cause headaches and dry eyes, and simple ways to get lasting relief." },
+        { url: 'kids-eye-care.html', img: 'kid.png', cat: 'Kids', date: '24 Jun 2026', title: "Kids Eye Care: A Complete Parent's Guide", desc: "Protect your child's developing vision. Learn the early warning signs, screen-time habits and eyewear tips every parent should know." },
+        { url: 'driving-glasses-guide.html', img: 'banner2.png', cat: 'Sunglasses', date: '20 Jun 2026', title: "Best Glasses for Driving, Day and Night", desc: "Which lenses, tints and coatings help you see clearly and drive safely? A simple guide to daytime glare and night-time headlight dazzle." },
+        { url: 'polarized-sunglasses-benefits.html', img: 'Home.jpg', cat: 'Sunglasses', date: '16 Jun 2026', title: "Polarized Sunglasses Benefits Explained", desc: "How polarized lenses cut glare from roads, water and glass for sharper, more comfortable vision - and who really needs them." },
+        { url: 'anti-glare-coating-explained.html', img: 'blog2.png', cat: 'Lenses', date: '12 Jun 2026', title: "Anti-Glare Coating: Is It Worth It?", desc: "Learn how anti-glare (AR) coating cuts reflections, improves night driving and eases screen glare - and whether it is worth the extra cost." },
+        { url: 'progressive-vs-bifocal-lenses.html', img: 'blog1.png', cat: 'Lenses', date: '8 Jun 2026', title: "Progressive vs Bifocal Lenses: Which to Choose?", desc: "Both correct near and far vision, but they work differently. Compare progressive and bifocal lenses to find your best fit." },
+        { url: 'photochromic-lenses-guide.html', img: 'feature.png', cat: 'Lenses', date: '4 Jun 2026', title: "Photochromic Lenses: How They Work", desc: "One pair for sun and shade. Learn how light-adaptive photochromic lenses darken outdoors, clear indoors, and who they suit best." },
+        { url: 'high-index-lenses-explained.html', img: 'blog3.png', cat: 'Lenses', date: '30 May 2026', title: "High-Index Lenses for High Power Prescriptions", desc: "How high-index lenses make strong prescriptions thinner and lighter, who really needs them and how to choose the right index." },
+        { url: 'single-vision-vs-multifocal.html', img: 'blog1.png', cat: 'Lenses', date: '26 May 2026', title: "Single Vision vs Multifocal Lenses", desc: "Understand the difference between single vision and multifocal lenses so you can choose the right lens for your daily needs." },
+        { url: 'polycarbonate-lenses-benefits.html', img: 'feature.png', cat: 'Lenses', date: '22 May 2026', title: "Polycarbonate Lenses: Benefits & Uses", desc: "Lightweight, impact-resistant and UV-blocking, polycarbonate lenses are ideal for kids, sports and safety eyewear. Here is what makes them special." },
+        { url: 'lens-coatings-guide.html', img: 'blog2.png', cat: 'Lenses', date: '18 May 2026', title: "A Complete Guide to Lens Coatings", desc: "What anti-glare, scratch-resistant, UV, hydrophobic and blue cut coatings actually do - and which ones are worth paying for." },
+        { url: '20-20-20-rule-eye-strain.html', img: 'blog3.png', cat: 'Eye Health', date: '14 May 2026', title: "The 20-20-20 Rule for Eye Strain", desc: "A simple habit that protects your eyes from screen fatigue. Learn the 20-20-20 rule and other easy tips to keep your eyes fresh." },
+        { url: 'digital-eye-strain-tips.html', img: 'Home.jpg', cat: 'Eye Health', date: '10 May 2026', title: "How to Reduce Digital Eye Strain", desc: "From screen settings to blue cut lenses, here are practical ways to reduce digital eye strain at work and home." },
+        { url: 'dry-eyes-causes-remedies.html', img: 'about.jpg', cat: 'Eye Health', date: '6 May 2026', title: "Dry Eyes: Causes and Simple Remedies", desc: "Why eyes feel dry, gritty and tired - and the everyday habits and simple remedies that bring real relief." },
+        { url: 'foods-for-healthy-eyes.html', img: 'blog3.png', cat: 'Eye Health', date: '2 May 2026', title: "Best Foods for Healthy Eyes", desc: "The vitamins, nutrients and everyday Indian foods that help keep your eyes strong, healthy and comfortable." },
+        { url: 'how-often-eye-test.html', img: 'Home.jpg', cat: 'Eye Health', date: '28 Apr 2026', title: "How Often Should You Get an Eye Test?", desc: "Even with perfect vision, regular eye tests matter. Learn how often adults, kids and seniors should get their eyes checked." },
+        { url: 'signs-you-need-glasses.html', img: 'blog2.png', cat: 'Eye Health', date: '24 Apr 2026', title: "10 Signs You May Need Glasses", desc: "Blurry text, squinting, headaches and tired eyes are common clues. Learn 10 signs it may be time for an eye test." },
+        { url: 'myopia-causes-prevention.html', img: 'about.jpg', cat: 'Eye Health', date: '20 Apr 2026', title: "Myopia: Causes and Prevention", desc: "What causes short-sightedness, why it is rising in children, and the practical steps that help slow it down." },
+        { url: 'astigmatism-explained.html', img: 'blog1.png', cat: 'Eye Health', date: '16 Apr 2026', title: "What is Astigmatism? A Simple Explanation", desc: "Blurred or distorted vision at all distances can mean astigmatism. Learn what it is, why it happens and how it is corrected." },
+        { url: 'presbyopia-after-40.html', img: 'blog3.png', cat: 'Eye Health', date: '12 Apr 2026', title: "Presbyopia: Why Reading Gets Harder After 40", desc: "Presbyopia is a natural age-related change. Here is what it is, why it happens and how to fix it comfortably." },
+        { url: 'protect-eyes-from-uv.html', img: 'banner2.png', cat: 'Eye Health', date: '8 Apr 2026', title: "How to Protect Your Eyes from UV Rays", desc: "Sunlight can quietly harm your eyes over the years. Here are simple, practical ways to shield your vision from UV damage." },
+        { url: 'eye-care-tips-summer.html', img: 'Home.jpg', cat: 'Eye Health', date: '4 Apr 2026', title: "Summer Eye Care Tips for Ahmedabad Heat", desc: "Simple, practical tips to protect your eyes from harsh sun, dust and dryness through Ahmedabad's hot summer." },
+        { url: 'eye-care-tips-monsoon.html', img: 'about.jpg', cat: 'Eye Health', date: '30 Mar 2026', title: "Monsoon Eye Care: Preventing Infections", desc: "The rainy season brings a higher risk of eye infections. Learn simple habits to keep your eyes healthy through the monsoon." },
+        { url: 'cataract-awareness.html', img: 'blog3.png', cat: 'Eye Health', date: '26 Mar 2026', title: "Cataract: Symptoms, Causes and Awareness", desc: "Cloudy vision, glare and fading colours can signal a cataract. Understand the symptoms, causes and why early awareness matters." },
+        { url: 'common-eye-problems.html', img: 'blog1.png', cat: 'Eye Health', date: '22 Mar 2026', title: "Common Eye Problems and Their Solutions", desc: "A plain-English look at frequent eye problems - blur, dryness, redness and strain - with simple solutions and when to seek help." },
+        { url: 'how-to-choose-frame-face-shape.html', img: 'blog2.png', cat: 'Frames', date: '18 Mar 2026', title: "How to Choose Frames for Your Face Shape", desc: "Learn which glasses suit round, oval, square, heart and long face shapes so your frames look made for you." },
+        { url: 'best-glasses-for-round-face.html', img: 'women.png', cat: 'Frames', date: '14 Mar 2026', title: "Best Glasses for a Round Face", desc: "Angular and rectangular frames add definition to round faces. Discover the styles that balance and flatter your look." },
+        { url: 'best-glasses-for-oval-face.html', img: 'men.png', cat: 'Frames', date: '10 Mar 2026', title: "Best Glasses for an Oval Face", desc: "An oval face suits almost every frame. Here are the styles that look especially flattering and the few to steer clear of." },
+        { url: 'frame-materials-guide.html', img: 'blog2.png', cat: 'Frames', date: '6 Mar 2026', title: "A Guide to Eyeglass Frame Materials", desc: "Acetate, metal, titanium or TR90 - understand how frame material affects comfort, weight, style and durability, and which suits you best." },
+        { url: 'titanium-frames-benefits.html', img: 'men.png', cat: 'Frames', date: '2 Mar 2026', title: "Why Choose Titanium Frames?", desc: "Ultra-light, strong and hypoallergenic. Discover the benefits of titanium eyeglass frames and whether they suit you." },
+        { url: 'rimless-vs-full-rim.html', img: 'women.png', cat: 'Frames', date: '26 Feb 2026', title: "Rimless vs Full-Rim Frames", desc: "Minimal and light or bold and durable? Compare rimless and full-rim frames on style, comfort, strength and prescription fit." },
+        { url: 'how-to-clean-glasses.html', img: 'feature.png', cat: 'Frames', date: '22 Feb 2026', title: "How to Clean Your Glasses the Right Way", desc: "A simple, safe step-by-step method to clean your glasses without scratching the lenses or damaging the coatings." },
+        { url: 'how-to-maintain-eyeglasses.html', img: 'blog2.png', cat: 'Frames', date: '18 Feb 2026', title: "How to Maintain Your Eyeglasses", desc: "Good care makes your glasses last longer. Learn simple habits for storing, handling and maintaining your eyewear." },
+        { url: 'reading-glasses-guide.html', img: 'blog3.png', cat: 'Frames', date: '14 Feb 2026', title: "A Complete Guide to Reading Glasses", desc: "Learn how reading glasses work, how to pick the right power and why a proper eye test matters." },
+        { url: 'first-time-glasses-tips.html', img: 'women.png', cat: 'Frames', date: '10 Feb 2026', title: "First Time Wearing Glasses: What to Expect", desc: "Adjusting to your first pair of glasses? Mild dizziness is normal. Practical tips to get comfortable quickly and enjoy clear vision." },
+        { url: 'uv-protection-sunglasses.html', img: 'banner2.png', cat: 'Sunglasses', date: '6 Feb 2026', title: "Why UV Protection in Sunglasses Matters", desc: "Why UV400 protection is essential for eye health, how UV harms your eyes, and how to check if your sunglasses are truly safe." },
+        { url: 'how-to-choose-sunglasses.html', img: 'Home.jpg', cat: 'Sunglasses', date: '2 Feb 2026', title: "How to Choose the Right Sunglasses", desc: "Style, UV protection, lens colour and fit all matter. Follow this guide to pick sunglasses that protect and flatter." },
+        { url: 'sports-sunglasses-guide.html', img: 'men.png', cat: 'Sunglasses', date: '28 Jan 2026', title: "Choosing Sports Sunglasses", desc: "Grip, UV protection and shatter resistance matter for sport. Learn what to look for in sunglasses for cricket, cycling and running." },
+        { url: 'sunglasses-for-face-shape.html', img: 'women.png', cat: 'Sunglasses', date: '24 Jan 2026', title: "Best Sunglasses for Your Face Shape", desc: "Find your most flattering sunglasses - which frame styles suit round, oval, square and heart-shaped faces." },
+        { url: 'contact-lens-beginners-guide.html', img: 'blog1.png', cat: 'Contact Lenses', date: '20 Jan 2026', title: "Contact Lenses: A Beginner's Guide", desc: "Thinking of switching to contacts? Learn the types, how to wear them safely and what first-time users need to know." },
+        { url: 'contact-lens-care-tips.html', img: 'feature.png', cat: 'Contact Lenses', date: '16 Jan 2026', title: "Contact Lens Care and Hygiene Tips", desc: "Proper hygiene keeps contact lens wear safe and comfortable. Follow these essential care tips to protect your eyes." },
+        { url: 'daily-vs-monthly-lenses.html', img: 'blog1.png', cat: 'Contact Lenses', date: '12 Jan 2026', title: "Daily vs Monthly Contact Lenses", desc: "Comfort, cost, hygiene and convenience compared - how to choose between daily disposable and monthly contact lenses." },
+        { url: 'colored-contact-lenses-guide.html', img: 'women.png', cat: 'Contact Lenses', date: '8 Jan 2026', title: "Colored Contact Lenses: A Style Guide", desc: "How coloured contact lenses work, how to choose a shade that suits you and how to wear them safely and comfortably." },
+        { url: 'contact-lens-mistakes.html', img: 'blog3.png', cat: 'Contact Lenses', date: '4 Jan 2026', title: "Common Contact Lens Mistakes to Avoid", desc: "Sleeping in lenses or topping up old solution can harm your eyes. Avoid these common contact lens mistakes." },
+        { url: 'signs-child-needs-glasses.html', img: 'kid.png', cat: 'Kids', date: '28 Dec 2025', title: "Signs Your Child May Need Glasses", desc: "Kids rarely say they can't see well. Watch for squinting, sitting close to the TV and other signs your child may need glasses." },
+        { url: 'kids-screen-time-eyes.html', img: 'kid.png', cat: 'Kids', date: '22 Dec 2025', title: "Screen Time and Your Child's Eyes", desc: "Healthy screen limits, warning signs of eye strain, and simple ways to protect your child's developing vision." },
+        { url: 'choosing-kids-glasses.html', img: 'kid.png', cat: 'Kids', date: '16 Dec 2025', title: "How to Choose Glasses for Kids", desc: "Kids need durable, comfortable and safe frames. Here is how to pick eyeglasses your child will actually wear." },
+        { url: 'how-to-read-eye-prescription.html', img: 'blog2.png', cat: 'Buying Guide', date: '10 Dec 2025', title: "How to Read Your Eye Prescription", desc: "SPH, CYL, AXIS, ADD - what do they mean? Decode your eye prescription so you understand your own vision numbers." },
+        { url: 'buying-glasses-online-vs-store.html', img: 'blog2.png', cat: 'Buying Guide', date: '4 Dec 2025', title: "Buying Glasses Online vs In-Store", desc: "Price is not everything. Compare buying glasses online vs in-store on accuracy, fit, service and long-term value." },
+        { url: 'eye-test-what-to-expect.html', img: 'about.jpg', cat: 'Buying Guide', date: '28 Nov 2025', title: "Your First Eye Test: What to Expect", desc: "A friendly, step-by-step look at what happens during a computerized eye test, so your first visit feels easy and stress-free." },
+        { url: 'why-buy-from-local-optician.html', img: 'about.jpg', cat: 'Buying Guide', date: '22 Nov 2025', title: "Why Buy From a Local Optician?", desc: "A trusted local optician offers real fitting, advice and after-sales care. Discover why local beats a faceless website." }
+];
+
+// ----------------------------------------------------------blog listing page----------------------------------------------------
+
+const blogContainer = document.getElementById('blogContainer');
+
+if (blogContainer) {
+
+    const blogsPerPage = 10;
+    const blogCatOrder = ['All', 'Eye Health', 'Lenses', 'Frames', 'Sunglasses', 'Contact Lenses', 'Kids', 'Buying Guide', 'Local Guide'];
+    const blogCategories = blogCatOrder.filter(function (c) { return c === 'All' || blogPosts.some(function (p) { return p.cat === c; }); });
+
+    let blogCurrentPage = 1;
+    let blogActiveCat = 'All';
+
+    const blogFilter = document.getElementById('blogFilter');
+    const blogCount = document.getElementById('blogCount');
+    const blogPagination = document.getElementById('blogPagination');
+    const blogSearch = document.getElementById('blogSearch');
+
+    let blogSearchTerm = '';
+
+    function blogEscape(str) {
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function blogReadTime(post) {
+        return Math.max(4, Math.round((post.title.length + post.desc.length) / 40)) + ' min read';
+    }
+
+    function blogGetFiltered() {
+        let list = blogActiveCat === 'All' ? blogPosts : blogPosts.filter(function (p) { return p.cat === blogActiveCat; });
+        if (blogSearchTerm) {
+            const q = blogSearchTerm.toLowerCase();
+            list = list.filter(function (p) {
+                return (p.title + ' ' + p.desc + ' ' + p.cat).toLowerCase().indexOf(q) !== -1;
+            });
+        }
+        return list;
+    }
+
+    function blogStandardCard(post, index) {
+        return `
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="${(index % 3) * 90}">
+            <article class="blog-card">
+                <a href="/blog/${post.url}" class="blog-image" aria-label="${blogEscape(post.title)}">
+                    <img src="/assets/images/${post.img}" alt="${blogEscape(post.title)}" loading="lazy" width="400" height="250">
+                    <span class="blog-badge">${blogEscape(post.cat)}</span>
+                </a>
+                <div class="blog-content">
+                    <div class="blog-meta">
+                        <span><i class="far fa-calendar-alt"></i> ${post.date}</span>
+                        <span><i class="far fa-clock"></i> ${blogReadTime(post)}</span>
+                    </div>
+                    <h2 class="blog-title"><a href="/blog/${post.url}">${blogEscape(post.title)}</a></h2>
+                    <p class="blog-description">${blogEscape(post.desc)}</p>
+                    <a href="/blog/${post.url}" class="blog-link">Read Article <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </article>
+        </div>`;
+    }
+
+    function blogFeaturedCard(post) {
+        return `
+        <div class="col-12" data-aos="fade-up">
+            <article class="blog-card blog-card--featured">
+                <a href="/blog/${post.url}" class="blog-image" aria-label="${blogEscape(post.title)}">
+                    <img src="/assets/images/${post.img}" alt="${blogEscape(post.title)}" loading="lazy" width="640" height="420">
+                    <span class="blog-badge">${blogEscape(post.cat)}</span>
+                </a>
+                <div class="blog-content">
+                    <span class="blog-featured-tag"><i class="fas fa-star"></i> Featured Read</span>
+                    <div class="blog-meta">
+                        <span><i class="far fa-calendar-alt"></i> ${post.date}</span>
+                        <span><i class="far fa-clock"></i> ${blogReadTime(post)}</span>
+                    </div>
+                    <h2 class="blog-title"><a href="/blog/${post.url}">${blogEscape(post.title)}</a></h2>
+                    <p class="blog-description">${blogEscape(post.desc)}</p>
+                    <a href="/blog/${post.url}" class="blog-link">Read Article <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </article>
+        </div>`;
+    }
+
+    function renderBlogPosts() {
+        const filtered = blogGetFiltered();
+        const totalPages = Math.max(1, Math.ceil(filtered.length / blogsPerPage));
+        if (blogCurrentPage > totalPages) blogCurrentPage = 1;
+
+        const start = (blogCurrentPage - 1) * blogsPerPage;
+        const pageItems = filtered.slice(start, start + blogsPerPage);
+
+        if (!pageItems.length) {
+            blogContainer.innerHTML = `
+            <div class="col-12">
+                <div class="blog-empty">
+                    <i class="far fa-newspaper"></i>
+                    <p>No articles in this category yet. Please check another topic.</p>
+                </div>
+            </div>`;
+        } else {
+            blogContainer.innerHTML = pageItems.map(function (post, i) {
+                return i === 0 ? blogFeaturedCard(post) : blogStandardCard(post, i - 1);
+            }).join('');
+        }
+
+        if (blogCount) {
+            const showing = pageItems.length;
+            blogCount.textContent = showing
+                ? `Showing ${start + 1}-${start + showing} of ${filtered.length} article${filtered.length === 1 ? '' : 's'}`
+                : '0 articles';
+        }
+
+        if (typeof AOS !== 'undefined') AOS.refresh();
+    }
+
+    function renderBlogPagination() {
+        if (!blogPagination) return;
+        const filtered = blogGetFiltered();
+        const totalPages = Math.max(1, Math.ceil(filtered.length / blogsPerPage));
+
+        if (totalPages <= 1) { blogPagination.innerHTML = ''; return; }
+
+        let html = `<button class="page-btn page-nav" ${blogCurrentPage === 1 ? 'disabled' : ''} onclick="blogChangePage(${blogCurrentPage - 1})" aria-label="Previous page"><i class="fas fa-chevron-left"></i></button>`;
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<button class="page-btn ${i === blogCurrentPage ? 'active' : ''}" onclick="blogChangePage(${i})">${i}</button>`;
+        }
+        html += `<button class="page-btn page-nav" ${blogCurrentPage === totalPages ? 'disabled' : ''} onclick="blogChangePage(${blogCurrentPage + 1})" aria-label="Next page"><i class="fas fa-chevron-right"></i></button>`;
+        blogPagination.innerHTML = html;
+    }
+
+    function renderBlogFilters() {
+        if (!blogFilter) return;
+        blogFilter.innerHTML = blogCategories.map(function (cat) {
+            return `<button class="blog-chip ${cat === blogActiveCat ? 'active' : ''}" onclick="blogSetCategory('${cat.replace(/'/g, "\\'")}')">${blogEscape(cat)}</button>`;
+        }).join('');
+    }
+
+    function blogChangePage(page) {
+        blogCurrentPage = page;
+        renderBlogPosts();
+        renderBlogPagination();
+        const anchor = document.getElementById('blog');
+        if (anchor) window.scrollTo({ top: anchor.offsetTop - 90, behavior: 'smooth' });
+    }
+
+    function blogSetCategory(cat) {
+        blogActiveCat = cat;
+        blogCurrentPage = 1;
+        renderBlogFilters();
+        renderBlogPosts();
+        renderBlogPagination();
+    }
+
+    window.blogChangePage = blogChangePage;
+    window.blogSetCategory = blogSetCategory;
+
+    if (blogSearch) {
+        let searchTimer;
+        blogSearch.addEventListener('input', function () {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(function () {
+                blogSearchTerm = blogSearch.value.trim();
+                blogCurrentPage = 1;
+                renderBlogPosts();
+                renderBlogPagination();
+            }, 180);
+        });
+    }
+
+    renderBlogFilters();
+    renderBlogPosts();
+    renderBlogPagination();
+}
+
+// ----------------------------------------------------------blog article (detail) page----------------------------------------------------
+
+(function () {
+    const articleBody = document.querySelector('.blog-article-body');
+    const prose = document.querySelector('.blog-prose');
+    if (!articleBody || !prose) return;
+
+    const pageUrl = window.location.href.split('#')[0];
+    const shareUrl = encodeURIComponent(pageUrl);
+    const shareTitle = encodeURIComponent(document.title.split('|')[0].trim());
+
+    function slugify(text) {
+        return text.toLowerCase().replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-').slice(0, 60);
+    }
+
+    // ---- 1. Reading progress bar ----
+    const bar = document.createElement('div');
+    bar.className = 'reading-progress';
+    bar.setAttribute('aria-hidden', 'true');
+    bar.innerHTML = '<span id="readingBar"></span>';
+    document.body.insertBefore(bar, document.body.firstChild);
+    const barFill = bar.querySelector('#readingBar');
+
+    function updateProgress() {
+        const h = document.documentElement;
+        const scrolled = h.scrollTop || document.body.scrollTop;
+        const height = h.scrollHeight - h.clientHeight;
+        const pct = height > 0 ? Math.min(100, (scrolled / height) * 100) : 0;
+        barFill.style.width = pct + '%';
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+
+    // ---- 2. Auto Table of Contents (from h2 headings) ----
+    const headings = Array.from(prose.querySelectorAll('h2'));
+    const usedIds = {};
+    headings.forEach(function (h) {
+        if (!h.id) {
+            let base = slugify(h.textContent) || 'section';
+            let id = base;
+            let n = 2;
+            while (usedIds[id] || document.getElementById(id)) { id = base + '-' + n; n++; }
+            usedIds[id] = true;
+            h.id = id;
+        }
+    });
+
+    if (headings.length >= 3) {
+        const toc = document.createElement('aside');
+        toc.className = 'blog-toc-float';
+        toc.setAttribute('aria-label', 'Table of contents');
+        toc.innerHTML = '<p class="blog-toc-title"><i class="fas fa-list-ul"></i> On this page</p>' +
+            '<nav class="blog-toc-nav">' +
+            headings.map(function (h) {
+                return '<a class="blog-toc-link" href="#' + h.id + '">' + h.textContent + '</a>';
+            }).join('') +
+            '</nav>';
+        document.body.appendChild(toc);
+
+        const tocLinks = Array.from(toc.querySelectorAll('.blog-toc-link'));
+        tocLinks.forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.getElementById(link.getAttribute('href').slice(1));
+                if (target) {
+                    const y = target.getBoundingClientRect().top + window.pageYOffset - 96;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                }
+            });
+        });
+
+        if ('IntersectionObserver' in window) {
+            const spy = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        tocLinks.forEach(function (l) { l.classList.remove('active'); });
+                        const active = toc.querySelector('.blog-toc-link[href="#' + entry.target.id + '"]');
+                        if (active) active.classList.add('active');
+                    }
+                });
+            }, { rootMargin: '-90px 0px -70% 0px' });
+            headings.forEach(function (h) { spy.observe(h); });
+        }
+    }
+
+    // ---- 3. Share buttons ----
+    const shareLinks = {
+        wa: 'https://wa.me/?text=' + shareTitle + '%20' + shareUrl,
+        fb: 'https://www.facebook.com/sharer/sharer.php?u=' + shareUrl,
+        tw: 'https://twitter.com/intent/tweet?url=' + shareUrl + '&text=' + shareTitle
+    };
+
+    const shareFloat = document.createElement('div');
+    shareFloat.className = 'blog-share-float';
+    shareFloat.setAttribute('aria-label', 'Share this article');
+    shareFloat.innerHTML =
+        '<a class="share-btn share-wa" href="' + shareLinks.wa + '" target="_blank" rel="noopener" aria-label="Share on WhatsApp"><i class="fab fa-whatsapp"></i></a>' +
+        '<a class="share-btn share-fb" href="' + shareLinks.fb + '" target="_blank" rel="noopener" aria-label="Share on Facebook"><i class="fab fa-facebook-f"></i></a>' +
+        '<a class="share-btn share-tw" href="' + shareLinks.tw + '" target="_blank" rel="noopener" aria-label="Share on X"><i class="fab fa-x-twitter"></i></a>' +
+        '<button class="share-btn share-copy" type="button" aria-label="Copy link"><i class="fas fa-link"></i></button>';
+    document.body.appendChild(shareFloat);
+
+    function copyLink(btn) {
+        const done = function () {
+            const icon = btn.querySelector('i');
+            if (icon) { icon.className = 'fas fa-check'; setTimeout(function () { icon.className = 'fas fa-link'; }, 1600); }
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(pageUrl).then(done).catch(function () {});
+        }
+        const toast = document.querySelector('.blog-copy-toast');
+        if (toast) { toast.classList.add('show'); setTimeout(function () { toast.classList.remove('show'); }, 1800); }
+    }
+    shareFloat.querySelector('.share-copy').addEventListener('click', function () { copyLink(this); });
+
+    // ---- 4. Determine current post + siblings for prev/next & author/related ----
+    const fileName = window.location.pathname.split('/').pop();
+    const idx = (typeof blogPosts !== 'undefined') ? blogPosts.findIndex(function (p) { return p.url === fileName; }) : -1;
+    const prevPost = idx > 0 ? blogPosts[idx - 1] : null;
+    const nextPost = (idx !== -1 && idx < blogPosts.length - 1) ? blogPosts[idx + 1] : null;
+
+    // ---- 5. Build extras block (end share + author + prev/next) ----
+    const extras = document.createElement('section');
+    extras.className = 'blog-article-extras';
+
+    let extrasHtml = '<div class="container">';
+
+    // end share row
+    extrasHtml +=
+        '<div class="blog-share-end reveal">' +
+        '<span class="share-label"><i class="fas fa-share-alt"></i> Share this article</span>' +
+        '<a class="share-btn share-wa" href="' + shareLinks.wa + '" target="_blank" rel="noopener" aria-label="Share on WhatsApp"><i class="fab fa-whatsapp"></i></a>' +
+        '<a class="share-btn share-fb" href="' + shareLinks.fb + '" target="_blank" rel="noopener" aria-label="Share on Facebook"><i class="fab fa-facebook-f"></i></a>' +
+        '<a class="share-btn share-tw" href="' + shareLinks.tw + '" target="_blank" rel="noopener" aria-label="Share on X"><i class="fab fa-x-twitter"></i></a>' +
+        '<button class="share-btn share-copy" type="button" aria-label="Copy link"><i class="fas fa-link"></i></button>' +
+        '<span class="blog-copy-toast">Link copied!</span>' +
+        '</div>';
+
+    // author card
+    extrasHtml +=
+        '<div class="blog-author-card reveal">' +
+        '<div class="blog-author-avatar"><i class="fas fa-glasses"></i></div>' +
+        '<div class="blog-author-info">' +
+        '<h4>Shree Hari Chasma Ghar</h4>' +
+        '<p>Your trusted optical store in New Ranip, Ahmedabad, sharing honest eye care advice, lens guides and eyewear tips based on years of hands-on experience. <a href="/about-us.html">About us</a> &middot; <a href="/contact-us.html">Visit our store</a></p>' +
+        '</div></div>';
+
+    // prev / next
+    if (prevPost || nextPost) {
+        extrasHtml += '<nav class="blog-prevnext reveal" aria-label="More articles">';
+        if (prevPost) {
+            extrasHtml += '<a class="pn-prev" href="/blog/' + prevPost.url + '"><span class="pn-label"><i class="fas fa-arrow-left"></i> Previous</span><span class="pn-title">' + prevPost.title + '</span></a>';
+        } else {
+            extrasHtml += '<span></span>';
+        }
+        if (nextPost) {
+            extrasHtml += '<a class="pn-next" href="/blog/' + nextPost.url + '"><span class="pn-label">Next <i class="fas fa-arrow-right"></i></span><span class="pn-title">' + nextPost.title + '</span></a>';
+        } else {
+            extrasHtml += '<span></span>';
+        }
+        extrasHtml += '</nav>';
+    }
+
+    extrasHtml += '</div>';
+    extras.innerHTML = extrasHtml;
+
+    const relatedSection = document.querySelector('.blog-related-section');
+    const footerEl = document.getElementById('site-footer');
+    if (relatedSection) {
+        relatedSection.parentNode.insertBefore(extras, relatedSection);
+    } else if (footerEl) {
+        footerEl.parentNode.insertBefore(extras, footerEl);
+    } else {
+        document.body.appendChild(extras);
+    }
+
+    extras.querySelectorAll('.share-copy').forEach(function (btn) {
+        btn.addEventListener('click', function () { copyLink(this); });
+    });
+
+    // ---- 6. Newsletter band (after related) ----
+    const nl = document.createElement('section');
+    nl.className = 'blog-newsletter';
+    nl.innerHTML =
+        '<div class="container">' +
+        '<div class="nl-icon"><i class="far fa-envelope-open"></i></div>' +
+        '<h3>Eye Care Tips in Your Inbox</h3>' +
+        '<p>Join our readers and get practical eyewear guides, lens advice and seasonal eye care tips from New Ranip\'s trusted optical store.</p>' +
+        '<form class="blog-nl-form" novalidate>' +
+        '<input type="email" required placeholder="Enter your email address" aria-label="Email address">' +
+        '<button type="submit">Subscribe</button>' +
+        '</form>' +
+        '<p class="blog-nl-note">No spam. Unsubscribe anytime. Or just <a href="/contact-us.html" style="color:#93c5fd">contact us</a> directly.</p>' +
+        '</div>';
+
+    if (relatedSection) {
+        relatedSection.parentNode.insertBefore(nl, relatedSection.nextSibling);
+    } else if (footerEl) {
+        footerEl.parentNode.insertBefore(nl, footerEl);
+    }
+
+    const nlForm = nl.querySelector('.blog-nl-form');
+    if (nlForm) {
+        nlForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const input = nlForm.querySelector('input');
+            if (input && input.value && input.value.indexOf('@') > 0) {
+                nlForm.innerHTML = '<p style="width:100%;color:#a7f3d0;font-weight:600;margin:0"><i class="fas fa-check-circle"></i> Thank you! We will keep you posted with helpful eye care tips.</p>';
+            } else if (input) {
+                input.focus();
+                input.style.borderColor = '#f87171';
+            }
+        });
+    }
+
+    // ---- 7. Scroll reveal for headings, callouts, CTA & extras ----
+    const revealTargets = prose.querySelectorAll('h2, .blog-callout, .blog-tip, .blog-info, .blog-warning, .blog-inline-cta');
+    revealTargets.forEach(function (el) { el.classList.add('reveal'); });
+
+    if ('IntersectionObserver' in window) {
+        const revealObs = new IntersectionObserver(function (entries, obs) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+        document.querySelectorAll('.blog-prose .reveal, .blog-article-extras .reveal').forEach(function (el) { revealObs.observe(el); });
+    } else {
+        document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('revealed'); });
+    }
+})();
+
+// ----------------------------------------------------------count-up stats (data-count)----------------------------------------------------
+
+(function () {
+    const counters = document.querySelectorAll('[data-count]');
+    if (!counters.length) return;
+
+    function animate(el) {
+        const target = parseInt(el.getAttribute('data-count'), 10) || 0;
+        const duration = 1500;
+        const start = performance.now();
+        function tick(now) {
+            const p = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+            el.textContent = Math.round(target * eased).toLocaleString('en-IN');
+            if (p < 1) requestAnimationFrame(tick);
+            else el.textContent = target.toLocaleString('en-IN');
+        }
+        requestAnimationFrame(tick);
+    }
+
+    if ('IntersectionObserver' in window) {
+        const obs = new IntersectionObserver(function (entries, o) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) { animate(entry.target); o.unobserve(entry.target); }
+            });
+        }, { threshold: 0.4 });
+        counters.forEach(function (el) { obs.observe(el); });
+    } else {
+        counters.forEach(animate);
+    }
+})();

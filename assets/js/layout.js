@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <li class="nav-item">
                         <a class="nav-link" href="/services.html">Services</a>
                     </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link" href="/about-us.html">About Us</a>
                     </li>
@@ -87,6 +88,70 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     })();
 
+    // Inject site-wide Organization + WebSite JSON-LD (E-E-A-T / trust signals) on every page
+    (function injectOrgSchema(){
+        try {
+            const origin = "https://www.shreeharichasmaghar.com";
+            const graph = {
+                "@context": "https://schema.org",
+                "@graph": [
+                    {
+                        "@type": "Organization",
+                        "@id": origin + "/#organization",
+                        "name": "Shree Hari Chasma Ghar",
+                        "alternateName": "Shree Hari Chasma Ghar - Optical Shop New Ranip",
+                        "url": origin,
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": origin + "/assets/images/Logo.png",
+                            "width": 3493,
+                            "height": 688
+                        },
+                        "image": origin + "/assets/images/Logo.png",
+                        "telephone": "+918732969601",
+                        "email": "chasmashops@gmail.com",
+                        "foundingLocation": "New Ranip, Ahmedabad",
+                        "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "5 Sun Residency, Anand Party Plot Rd, near Manki Circle",
+                            "addressLocality": "New Ranip",
+                            "addressRegion": "Gujarat",
+                            "postalCode": "382470",
+                            "addressCountry": "IN"
+                        },
+                        "contactPoint": {
+                            "@type": "ContactPoint",
+                            "telephone": "+918732969601",
+                            "contactType": "customer service",
+                            "areaServed": "IN",
+                            "availableLanguage": ["en", "hi", "gu"]
+                        },
+                        "sameAs": [
+                            "https://www.instagram.com/shreeharichasmagharindia/",
+                            "https://twitter.com/hari_ghar",
+                            "https://www.facebook.com/shriharichasmaghar",
+                            "https://www.linkedin.com/in/shree-hari-chasma-ghar/"
+                        ]
+                    },
+                    {
+                        "@type": "WebSite",
+                        "@id": origin + "/#website",
+                        "url": origin,
+                        "name": "Shree Hari Chasma Ghar",
+                        "inLanguage": "en-IN",
+                        "publisher": { "@id": origin + "/#organization" }
+                    }
+                ]
+            };
+            const s = document.createElement('script');
+            s.type = 'application/ld+json';
+            s.text = JSON.stringify(graph);
+            document.head.appendChild(s);
+        } catch (e) {
+            console.error('InjectOrgSchema error', e);
+        }
+    })();
+
     // ===== FOOTER =====
     document.getElementById("site-footer").innerHTML = `
 
@@ -123,6 +188,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <li><a href="/sunglasses.html"><i class="fas fa-chevron-right"></i> Sunglasses</a></li>
                             <li><a href="/contactlenses.html"><i class="fas fa-chevron-right"></i> Contact Lenses</a></li>
                             <li><a href="/services.html"><i class="fas fa-chevron-right"></i> Services</a></li>
+                            <li><a href="/blog.html"><i class="fas fa-chevron-right"></i> Blog</a></li>
                             <li><a href="/about-us.html"><i class="fas fa-chevron-right"></i> About Us</a></li>
                             <li><a href="/contact-us.html"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
                         </ul>
@@ -254,10 +320,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
 </div>
 
-
-
- 
-
-  
+<!-- ===================================
+     MOBILE STICKY BOTTOM BAR (mobile view only)
+=================================== -->
+<nav class="mobile-bottom-bar" aria-label="Quick contact actions">
+    <a href="/" class="mbb-item" aria-label="Home">
+        <i class="fas fa-house"></i>
+        <span>Home</span>
+    </a>
+    <a href="tel:+918732969601" class="mbb-item" aria-label="Call us">
+        <i class="fas fa-phone"></i>
+        <span>Call</span>
+    </a>
+    <a href="https://wa.me/918732969601" target="_blank" rel="noopener" class="mbb-item mbb-wa" aria-label="Chat on WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+        <span>WhatsApp</span>
+    </a>
+    <a href="https://www.google.com/maps/place/Shree+Hari+Chasma+Ghar+-+Chasma+Shop,+Sunglasses+S/data=!3m1!4b1!4m2!3m1!1s0x395e830b7c13fa3d:0x66f048eaa31a8594" target="_blank" rel="noopener" class="mbb-item" aria-label="Store location">
+        <i class="fas fa-location-dot"></i>
+        <span>Location</span>
+    </a>
+    <button type="button" class="mbb-item mbb-ai" id="mbbAiButton" aria-label="Open OptiCare AI assistant">
+        <i class="fas fa-robot"></i>
+        <span>Assistant</span>
+    </button>
+</nav>
     `;
+
+    // Wire the bottom-bar assistant button to open the OptiCare AI chat.
+    // stopPropagation prevents site.js's outside-click handler from closing it instantly.
+    (function () {
+        const mbbAi = document.getElementById('mbbAiButton');
+        const aiBtn = document.getElementById('aiChatButton');
+        if (mbbAi && aiBtn) {
+            mbbAi.addEventListener('click', function (e) {
+                e.stopPropagation();
+                aiBtn.click();
+            });
+        }
+    })();
 });

@@ -43,13 +43,82 @@
 
     <!-- Schema Markup -->
     <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
         {
-            "@context": "https://schema.org",
-            "@type": "WebPage",
-            "name": "Eyeglasses Collection Ahmedabad",
-            "url": "https://www.shreeharichasmaghar.com/eyeglasses",
-            "description": "Stylish and affordable eyeglasses collection available at Shree Hari Chasma Ghar Ahmedabad."
+          "@type": "WebPage",
+          "@id": "https://www.shreeharichasmaghar.com/eyeglasses",
+          "url": "https://www.shreeharichasmaghar.com/eyeglasses",
+          "name": "Eyeglasses Collection in Ahmedabad",
+          "description": "Explore 500+ premium eyeglasses frames for men, women and kids at Shree Hari Chasma Ghar, New Ranip Ahmedabad, with blue cut, anti-glare and progressive lens options.",
+          "inLanguage": "en-IN",
+          "isPartOf": { "@id": "https://www.shreeharichasmaghar.com/#website" }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.shreeharichasmaghar.com/"},
+            {"@type": "ListItem", "position": 2, "name": "Eyeglasses", "item": "https://www.shreeharichasmaghar.com/eyeglasses"}
+          ]
+        },
+        {
+          "@type": "Product",
+          "name": "Eyeglasses Collection",
+          "image": "https://www.shreeharichasmaghar.com/assets/images/women.png",
+          "description": "Stylish and affordable eyeglasses frames for men, women and kids, including blue cut computer glasses, anti-glare, progressive and high-index lens options.",
+          "category": "Eyewear > Eyeglasses",
+          "brand": { "@type": "Brand", "name": "Shree Hari Chasma Ghar" },
+          "offers": {
+            "@type": "AggregateOffer",
+            "priceCurrency": "INR",
+            "lowPrice": "499",
+            "highPrice": "15000",
+            "offerCount": "500",
+            "availability": "https://schema.org/InStock",
+            "seller": { "@type": "Optician", "name": "Shree Hari Chasma Ghar" }
+          }
+        },
+        {
+          "@type": "Optician",
+          "@id": "https://www.shreeharichasmaghar.com/#localbusiness",
+          "name": "Shree Hari Chasma Ghar",
+          "url": "https://www.shreeharichasmaghar.com",
+          "image": "https://www.shreeharichasmaghar.com/assets/images/Logo.png",
+          "telephone": "+918732969601",
+          "priceRange": "₹₹",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "5 Sun Residency, Anand Party Plot Rd, near Manki Circle",
+            "addressLocality": "New Ranip",
+            "addressRegion": "Gujarat",
+            "postalCode": "382470",
+            "addressCountry": "IN"
+          },
+          "geo": { "@type": "GeoCoordinates", "latitude": 23.0858, "longitude": 72.5806 },
+          "sameAs": [
+            "https://www.instagram.com/shreeharichasmagharindia/",
+            "https://twitter.com/hari_ghar",
+            "https://www.facebook.com/shriharichasmaghar",
+            "https://www.linkedin.com/in/shree-hari-chasma-ghar/"
+          ],
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "250",
+            "bestRating": "5"
+          },
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+              "opens": "10:00",
+              "closes": "21:00"
+            }
+          ]
         }
+      ]
+    }
     </script>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XDNVNCRJKN"></script>
@@ -114,7 +183,7 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="eyeglasses-hero-image">
-                            <img src="/assets/images/Home.jpg" alt="Eyeglasses collection in Ahmedabad" loading="lazy">
+                            <img width="2000" height="1000" decoding="async" src="/assets/images/Home.jpg" alt="Eyeglasses collection in Ahmedabad" loading="lazy">
                         </div>
                     </div>
                 </div>
