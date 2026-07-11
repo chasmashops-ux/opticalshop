@@ -359,4 +359,36 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     })();
+
+    // ===== ACCESSIBILITY: <main> landmark + skip-to-content link (every page) =====
+    (function () {
+        const headerEl = document.getElementById('site-header');
+        const footerEl = document.getElementById('site-footer');
+
+        // Wrap page content between header and footer in a <main> landmark (if none exists)
+        let mainEl = document.querySelector('main');
+        if (!mainEl && headerEl && footerEl && headerEl.parentNode === footerEl.parentNode) {
+            mainEl = document.createElement('main');
+            let node = headerEl.nextSibling;
+            while (node && node !== footerEl) {
+                const next = node.nextSibling;
+                mainEl.appendChild(node);
+                node = next;
+            }
+            footerEl.parentNode.insertBefore(mainEl, footerEl);
+        }
+        if (mainEl) {
+            if (!mainEl.id) mainEl.id = 'main-content';
+            mainEl.setAttribute('tabindex', '-1');
+        }
+
+        // Skip link as the first focusable element in the page
+        if (!document.querySelector('.skip-link')) {
+            const skip = document.createElement('a');
+            skip.href = '#' + (mainEl && mainEl.id ? mainEl.id : 'main-content');
+            skip.className = 'skip-link';
+            skip.textContent = 'Skip to main content';
+            document.body.insertBefore(skip, document.body.firstChild);
+        }
+    })();
 });

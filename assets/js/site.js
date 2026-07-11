@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (itemPath === currentLocation) {
                 item.classList.add('active');
+                item.setAttribute('aria-current', 'page');
             }
 
         });
