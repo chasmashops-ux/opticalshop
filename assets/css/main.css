@@ -37,12 +37,29 @@ body {
     color: var(--primary-black);
     overflow-x: hidden;
     background: var(--primary-white);
+    font-size: 1rem;
     line-height: 1.6;
 }
 
 /* Smooth Scrolling */
 html {
     scroll-behavior: smooth;
+    /* Explicit desktop base font size (drives all rem-based type & spacing) */
+    font-size: 16px;
+    /* Stop mobile browsers from auto-inflating text sizes */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* Responsive base: gently scale all rem-based typography/spacing down on smaller screens */
+@media (max-width: 991px) {
+    html { font-size: 15.5px; }
+}
+@media (max-width: 767px) {
+    html { font-size: 15px; }
+}
+@media (max-width: 400px) {
+    html { font-size: 14.25px; }
 }
 
 /* Premium Navigation */
@@ -3577,7 +3594,8 @@ img {
     }
 
     .service-details-section {
-        padding: 80px 0;
+        /* extra top padding so content clears the fixed header on mobile */
+        padding: 104px 0 56px;
     }
 
     .service-features-grid {
@@ -7150,4 +7168,12 @@ a.cinfo-card:hover { transform: translateY(-6px); box-shadow: 0 28px 55px rgba(3
 
     /* Prevent the fixed bar from covering page/footer content */
     body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* When the highlights section follows the gradient hero (contact lenses page),
+   it no longer needs header clearance — tighten the gap. Service pages, where
+   .service-details-section is the first section, keep the full top padding. */
+.services-hero + .service-details-section { padding-top: 60px; }
+@media (max-width: 767px) {
+    .services-hero + .service-details-section { padding-top: 36px; }
 }
