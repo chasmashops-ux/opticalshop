@@ -173,28 +173,24 @@
     <div id="site-header"></div>
 
     <main>
-        <section class="section-padding eyeglasses-hero">
-            <div class="container position-relative">
-                <div class="eyeglasses-badge">500+ Style-Ready Frames</div>
-                <div class="row align-items-center gy-5">
-                    <div class="col-lg-6">
-                        <span class="eyeglasses-label">Eyeglasses & Sunglasses Collection</span>
-                        <h1 class="eyeglasses-title">Shop premium eyewear in New Ranip Ahmedabad</h1>
-                        <p class="eyeglasses-subtitle">Explore designer frames, blue cut lenses, anti-glare glasses and kids eyewear with virtual try-on support through your device camera.</p>
-                        <div class="eyeglasses-actions">
-                            <button class="filter-btn active" data-category="All">All Frames</button>
-                            <button class="filter-btn" data-category="Men">Men</button>
-                            <button class="filter-btn" data-category="Women">Women</button>
-                            <button class="filter-btn" data-category="Kids">Kids</button>
-                            <button class="filter-btn" data-category="Sunglasses">Sunglasses</button>
-                            <button class="filter-btn" data-category="Blue Cut">Blue Cut</button>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="eyeglasses-hero-image">
-                            <img width="2000" height="1000" decoding="async" src="/assets/images/Home.jpg" alt="Eyeglasses collection in Ahmedabad" loading="lazy">
-                        </div>
-                    </div>
+        <!-- ===== EYEGLASSES HERO (consistent with About / Contact / Services) ===== -->
+        <section class="services-hero">
+            <div class="container">
+                <nav class="services-breadcrumb" aria-label="Breadcrumb">
+                    <a href="/">Home</a><span>/</span>Eyeglasses
+                </nav>
+                <span class="services-hero-tag" data-aos="fade-up"><i class="fas fa-glasses"></i> 500+ Style-Ready Frames</span>
+                <h1 data-aos="fade-up" data-aos-delay="60">
+                    Eyeglasses Store in New Ranip, Ahmedabad
+                    <span>Designer Frames, Blue Cut &amp; Anti-Glare Lenses</span>
+                </h1>
+                <p data-aos="fade-up" data-aos-delay="120">
+                    Explore designer frames for men, women and kids with blue cut, anti-glare and progressive lens
+                    options — plus a camera-based virtual try-on to see how each frame looks on you.
+                </p>
+                <div class="services-hero-actions" data-aos="fade-up" data-aos-delay="180">
+                    <a href="tel:+918732969601" class="ahero-btn ahero-btn-primary"><i class="fas fa-calendar-check"></i> Book Eye Test</a>
+                    <a href="https://wa.me/918732969601" target="_blank" rel="noopener" class="ahero-btn ahero-btn-wa"><i class="fab fa-whatsapp"></i> WhatsApp Us</a>
                 </div>
             </div>
         </section>
@@ -207,6 +203,15 @@
                         <p class="section-description">Showing <span id="visibleCount">15</span> of <strong id="totalCount">520+</strong> premium eyewear products.</p>
                     </div>
                     <div class="collection-status">Category: <span id="activeCategory">All</span></div>
+                </div>
+
+                <div class="eyeglasses-actions catalog-filter-bar" role="group" aria-label="Filter frames by category">
+                    <button class="filter-btn active" data-category="All">All Frames</button>
+                    <button class="filter-btn" data-category="Men">Men</button>
+                    <button class="filter-btn" data-category="Women">Women</button>
+                    <button class="filter-btn" data-category="Kids">Kids</button>
+                    <button class="filter-btn" data-category="Sunglasses">Sunglasses</button>
+                    <button class="filter-btn" data-category="Blue Cut">Blue Cut</button>
                 </div>
 
                 <div class="row g-4" id="productGrid"></div>

@@ -177,28 +177,24 @@
     <div id="site-header"></div>
 
     <main>
-        <section class="section-padding eyeglasses-hero">
-            <div class="container position-relative">
-                <div class="eyeglasses-badge">UV400 • Polarized • Premium</div>
-                <div class="row align-items-center gy-5">
-                    <div class="col-lg-6">
-                        <span class="eyeglasses-label"><i class="fas fa-sun"></i> Sunglasses Collection</span>
-                        <h1 class="eyeglasses-title">Discover stylish sunglasses in Ahmedabad</h1>
-                        <p class="eyeglasses-subtitle">Shop aviators, wayfarers, round frames, cat-eye styles and sports sunglasses with expert fitting, UV protection and camera-based try-on support.</p>
-                        <div class="eyeglasses-actions">
-                            <button class="filter-btn active" data-category="All">All Styles</button>
-                            <button class="filter-btn" data-category="Aviator">Aviator</button>
-                            <button class="filter-btn" data-category="Wayfarer">Wayfarer</button>
-                            <button class="filter-btn" data-category="Round">Round</button>
-                            <button class="filter-btn" data-category="Cat-Eye">Cat-Eye</button>
-                            <button class="filter-btn" data-category="Sports">Sports</button>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="eyeglasses-hero-image">
-                            <img width="2000" height="1000" decoding="async" src="/assets/images/eyeglasss/Home.jpg" alt="Premium sunglasses collection in Ahmedabad" loading="lazy">
-                        </div>
-                    </div>
+        <!-- ===== SUNGLASSES HERO (consistent with About / Contact / Services) ===== -->
+        <section class="services-hero">
+            <div class="container">
+                <nav class="services-breadcrumb" aria-label="Breadcrumb">
+                    <a href="/">Home</a><span>/</span>Sunglasses
+                </nav>
+                <span class="services-hero-tag" data-aos="fade-up"><i class="fas fa-sun"></i> UV400 &middot; Polarized &middot; Premium</span>
+                <h1 data-aos="fade-up" data-aos-delay="60">
+                    Sunglasses Store in New Ranip, Ahmedabad
+                    <span>Aviator, Wayfarer, Round, Cat-Eye &amp; Sports Styles</span>
+                </h1>
+                <p data-aos="fade-up" data-aos-delay="120">
+                    Shop premium sunglasses with genuine UV400 and polarized protection, expert fitting and a
+                    camera-based virtual try-on to find the style that suits your face.
+                </p>
+                <div class="services-hero-actions" data-aos="fade-up" data-aos-delay="180">
+                    <a href="tel:+918732969601" class="ahero-btn ahero-btn-primary"><i class="fas fa-calendar-check"></i> Book Eye Test</a>
+                    <a href="https://wa.me/918732969601" target="_blank" rel="noopener" class="ahero-btn ahero-btn-wa"><i class="fab fa-whatsapp"></i> WhatsApp Us</a>
                 </div>
             </div>
         </section>
@@ -231,6 +227,15 @@
                         <p class="section-description">Showing <span id="visibleCount">15</span> of <strong id="totalCount">320+</strong> premium sunglasses.</p>
                     </div>
                     <div class="collection-status">Category: <span id="activeCategory">All</span></div>
+                </div>
+
+                <div class="eyeglasses-actions catalog-filter-bar" role="group" aria-label="Filter sunglasses by style">
+                    <button class="filter-btn active" data-category="All">All Styles</button>
+                    <button class="filter-btn" data-category="Aviator">Aviator</button>
+                    <button class="filter-btn" data-category="Wayfarer">Wayfarer</button>
+                    <button class="filter-btn" data-category="Round">Round</button>
+                    <button class="filter-btn" data-category="Cat-Eye">Cat-Eye</button>
+                    <button class="filter-btn" data-category="Sports">Sports</button>
                 </div>
 
                 <div class="row g-4" id="productGrid"></div>

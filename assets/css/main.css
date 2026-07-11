@@ -7203,3 +7203,12 @@ a.cinfo-card:hover { transform: translateY(-6px); box-shadow: 0 28px 55px rgba(3
 }
 /* main landmark should not add layout quirks; remove focus ring on programmatic focus */
 main:focus { outline: none; }
+
+/* ---- Catalog filter bar (moved below the section header, above the product grid) ---- */
+.catalog-filter-bar {
+    margin: 4px 0 30px;
+}
+@media (max-width: 767px) {
+    .catalog-filter-bar { gap: 8px; margin-bottom: 22px; }
+    .catalog-filter-bar .filter-btn { padding: 0.7rem 1.05rem; font-size: 0.9rem; }
+}
