@@ -31,7 +31,41 @@
     <meta name="geo.position" content="23.0858;72.5806">
     <meta name="ICBM" content="23.0858, 72.5806">
 
-    <link rel="canonical" href="https://www.shreeharichasmaghar.com/services/radsiss">
+
+    <script>
+(function () {
+
+    const BASE_URL = "https://www.shreeharichasmaghar.com";
+
+    let path = window.location.pathname;
+
+    // Remove index.html
+    path = path.replace(/\/index\.html$/i, "/");
+
+    // Remove duplicate slashes
+    path = path.replace(/\/{2,}/g, "/");
+
+    // Remove trailing slash (except home)
+    if (path.length > 1 && path.endsWith("/")) {
+        path = path.slice(0, -1);
+    }
+
+    // Build canonical URL
+    const canonicalUrl = BASE_URL + path;
+
+    // Remove old canonical if exists
+    document.querySelectorAll('link[rel="canonical"]').forEach(e => e.remove());
+
+    // Create canonical
+    const link = document.createElement("link");
+    link.rel = "canonical";
+    link.href = canonicalUrl;
+
+    document.head.appendChild(link);
+
+})();
+</script>
+  
     <link rel="alternate" hreflang="en-in" href="https://www.shreeharichasmaghar.com/services/reading-glasses-shop-in-ranip">
     <link rel="alternate" hreflang="x-default" href="https://www.shreeharichasmaghar.com/services/reading-glasses-shop-in-ranip">
 
