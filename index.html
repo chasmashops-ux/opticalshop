@@ -24,7 +24,41 @@
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <meta name="theme-color" content="#0f172a">
     <meta name="format-detection" content="telephone=yes">
-   <link rel="canonical" href="@($"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}")" />
+
+	<script>
+(function () {
+
+    const BASE_URL = "https://www.shreeharichasmaghar.com";
+
+    let path = window.location.pathname;
+
+    // Remove index.html
+    path = path.replace(/\/index\.html$/i, "/");
+
+    // Remove duplicate slashes
+    path = path.replace(/\/{2,}/g, "/");
+
+    // Remove trailing slash (except home)
+    if (path.length > 1 && path.endsWith("/")) {
+        path = path.slice(0, -1);
+    }
+
+    // Build canonical URL
+    const canonicalUrl = BASE_URL + path;
+
+    // Remove old canonical if exists
+    document.querySelectorAll('link[rel="canonical"]').forEach(e => e.remove());
+
+    // Create canonical
+    const link = document.createElement("link");
+    link.rel = "canonical";
+    link.href = canonicalUrl;
+
+    document.head.appendChild(link);
+
+})();
+</script>
+	
 
 
     <!-- Open Graph Tags -->
