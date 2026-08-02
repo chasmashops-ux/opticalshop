@@ -6,14 +6,11 @@
 # Default Rules
 User-agent: *
 Allow: /
+Allow: /assets/
+Allow: /blog/
+Allow: /services/
 
-# Allow important assets
-Allow: /assets/css/
-Allow: /assets/js/
-Allow: /assets/images/
-Allow: /assets/fonts/
-
-# Block private/system folders
+# Block private/system folders only
 Disallow: /.git/
 Disallow: /.github/
 Disallow: /.env
@@ -25,7 +22,7 @@ Disallow: /test/
 Disallow: /backup/
 Disallow: /logs/
 
-# Optional: Block config/data files
+# Block non-public files
 Disallow: /*.sql$
 Disallow: /*.bak$
 Disallow: /*.config$

@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // ===== HEADER =====
     document.getElementById("site-header").innerHTML = `
      <!-- Premium Navigation -->
-    <nav class="navbar navbar-expand-lg" role="navigation" aria-label="Primary navigation">
+    <nav class="navbar navbar-expand-lg" role="navigation" aria-label="Primary navigation" aria-label="Primary site navigation">
         <div class="container">
             <a href="/" class="navbar-brand" aria-label="Shree Hari Chasma Ghar home">
                 <img src="/assets/images/Logo.png" alt="Shree Hari Chasma Ghar logo" title="Shree Hari Chasma Ghar" class="shcg-logo">
@@ -17,23 +17,23 @@ document.addEventListener("DOMContentLoaded", function () {
                         <a class="nav-link" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/eyeglasses.html">Eyeglasses</a>
+                        <a class="nav-link" href="/eyeglasses">Eyeglasses</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/sunglasses.html">Sunglasses</a>
+                        <a class="nav-link" href="/sunglasses">Sunglasses</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/contactlenses.html">Contact Lenses</a>
+                        <a class="nav-link" href="/contactlenses">Contact Lenses</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/services.html">Services</a>
+                        <a class="nav-link" href="/services">Services</a>
                     </li>
                     
                     <li class="nav-item">
-                        <a class="nav-link" href="/about-us.html">About Us</a>
+                        <a class="nav-link" href="/about-us">About Us</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/contact-us.html">Contact</a>
+                        <a class="nav-link" href="/contact-us">Contact</a>
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-book" href="tel:+918732969601">Book Eye Test</a>
@@ -184,39 +184,39 @@ document.addEventListener("DOMContentLoaded", function () {
                         <h4 class="footer-title">Quick Links</h4>
                         <ul class="footer-links">
                             <li><a href="/"><i class="fas fa-chevron-right"></i> Home</a></li>
-                            <li><a href="/eyeglasses.html"><i class="fas fa-chevron-right"></i> Eyeglasses</a></li>
-                            <li><a href="/sunglasses.html"><i class="fas fa-chevron-right"></i> Sunglasses</a></li>
-                            <li><a href="/contactlenses.html"><i class="fas fa-chevron-right"></i> Contact Lenses</a></li>
-                            <li><a href="/services.html"><i class="fas fa-chevron-right"></i> Services</a></li>
-                            <li><a href="/blog.html"><i class="fas fa-chevron-right"></i> Blog</a></li>
-                            <li><a href="/about-us.html"><i class="fas fa-chevron-right"></i> About Us</a></li>
-                            <li><a href="/contact-us.html"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
+                            <li><a href="/eyeglasses"><i class="fas fa-chevron-right"></i> Eyeglasses</a></li>
+                            <li><a href="/sunglasses"><i class="fas fa-chevron-right"></i> Sunglasses</a></li>
+                            <li><a href="/contactlenses"><i class="fas fa-chevron-right"></i> Contact Lenses</a></li>
+                            <li><a href="/services"><i class="fas fa-chevron-right"></i> Services</a></li>
+                            <li><a href="/blog"><i class="fas fa-chevron-right"></i> Blog</a></li>
+                            <li><a href="/about-us"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                            <li><a href="/contact-us"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
                         </ul>
                     </div>
                     
                     <div class="col-lg-2 col-md-6">
                         <h4 class="footer-title">Popular Links</h4>
                         <ul class="footer-links">
-                            <li><a href="/services/professional-optometry-service.html"><i class="fas fa-chevron-right"></i> Professional Optometry</a></li>
-                            <li><a href="/services/best-optician-in-new-ranip.html"><i class="fas fa-chevron-right"></i> Best Optician</a></li>
-                            <li><a href="/services/blue-cut-glasses-store-ahmedabad.html"><i class="fas fa-chevron-right"></i> Blue Cut Glasses</a></li>
-                            <li><a href="/services/computer-glasses-in-ranip.html"><i class="fas fa-chevron-right"></i> Computer Glasses</a></li>
-                            <li><a href="/services/premium-optical-store-in-new-ranip.html"><i class="fas fa-chevron-right"></i> Premium Store</a></li>
-                            <li><a href="/services/digital-eye-test-center-ahmedabad.html"><i class="fas fa-chevron-right"></i> Eye Testing</a></li>
-                            <li><a href="/faq.html"><i class="fas fa-chevron-right"></i> FAQ</a></li>
-                            <li><a href="/googlereviews.html"><i class="fas fa-chevron-right"></i> Google Reviews</a></li>
+                            <li><a href="/services/professional-optometry-service"><i class="fas fa-chevron-right"></i> Professional Optometry</a></li>
+                            <li><a href="/services/best-optician-in-new-ranip"><i class="fas fa-chevron-right"></i> Best Optician</a></li>
+                            <li><a href="/services/blue-cut-glasses-store-ahmedabad"><i class="fas fa-chevron-right"></i> Blue Cut Glasses</a></li>
+                            <li><a href="/services/computer-glasses-in-ranip"><i class="fas fa-chevron-right"></i> Computer Glasses</a></li>
+                            <li><a href="/services/premium-optical-store-in-new-ranip"><i class="fas fa-chevron-right"></i> Premium Store</a></li>
+                            <li><a href="/services/digital-eye-test-center-ahmedabad"><i class="fas fa-chevron-right"></i> Eye Testing</a></li>
+                            <li><a href="/faq"><i class="fas fa-chevron-right"></i> FAQ</a></li>
+                            <li><a href="/googlereviews"><i class="fas fa-chevron-right"></i> Google Reviews</a></li>
                         </ul>
                     </div>
                     
                     <div class="col-lg-2 col-md-6">
                         <h4 class="footer-title">Categories</h4>
                         <ul class="footer-links">
-                            <li><a href="/services/men-spectacle-frames-ahmedabad.html"><i class="fas fa-chevron-right"></i> Men Frames</a></li>
-                            <li><a href="/services/women-spectacle-frames-ranip.html"><i class="fas fa-chevron-right"></i> Women Frames</a></li>
-                            <li><a href="/services/kids-eyeglasses-store-in-new-ranip.html"><i class="fas fa-chevron-right"></i> Kids Glasses</a></li>
-                            <li><a href="/services/designer-sunglasses-shop-ahmedabad.html"><i class="fas fa-chevron-right"></i> Designer Sunglasses</a></li>
-                            <li><a href="/services/sports-sunglasses-ahmedabad.html"><i class="fas fa-chevron-right"></i> Sports Sunglasses</a></li>
-                            <li><a href="/services/reading-glasses-shop-in-ranip.html"><i class="fas fa-chevron-right"></i> Reading Glasses</a></li>
+                            <li><a href="/services/men-spectacle-frames-ahmedabad"><i class="fas fa-chevron-right"></i> Men Frames</a></li>
+                            <li><a href="/services/women-spectacle-frames-ranip"><i class="fas fa-chevron-right"></i> Women Frames</a></li>
+                            <li><a href="/services/kids-eyeglasses-store-in-new-ranip"><i class="fas fa-chevron-right"></i> Kids Glasses</a></li>
+                            <li><a href="/services/designer-sunglasses-shop-ahmedabad"><i class="fas fa-chevron-right"></i> Designer Sunglasses</a></li>
+                            <li><a href="/services/sports-sunglasses-ahmedabad"><i class="fas fa-chevron-right"></i> Sports Sunglasses</a></li>
+                            <li><a href="/services/reading-glasses-shop-in-ranip"><i class="fas fa-chevron-right"></i> Reading Glasses</a></li>
                         </ul>
                     </div>
                     
@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="footer-bottom">
                 <p class="mb-0">
                     Copyright &copy; 2026 All Rights Reserved.
-                    <a href="/privacypolicy.html" class="me-2">Privacy Policy</a><br>
+                    <a href="/privacypolicy" class="me-2">Privacy Policy</a><br>
                     For Eyewear Shop In New Ranip Ahmedabad <a href="/">Shree Hari Chasma Ghar</a>
                 </p>
             </div>

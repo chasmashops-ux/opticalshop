@@ -1584,7 +1584,7 @@ if (blogContainer) {
         '<div class="blog-author-avatar"><i class="fas fa-glasses"></i></div>' +
         '<div class="blog-author-info">' +
         '<h4>Shree Hari Chasma Ghar</h4>' +
-        '<p>Your trusted optical store in New Ranip, Ahmedabad, sharing honest eye care advice, lens guides and eyewear tips based on years of hands-on experience. <a href="/about-us.html">About us</a> &middot; <a href="/contact-us.html">Visit our store</a></p>' +
+        '<p>Your trusted optical store in New Ranip, Ahmedabad, sharing honest eye care advice, lens guides and eyewear tips based on years of hands-on experience. <a href="/about-us">About us</a> &middot; <a href="/contact-us">Visit our store</a></p>' +
         '</div></div>';
 
     // prev / next
@@ -1632,7 +1632,7 @@ if (blogContainer) {
         '<input type="email" required placeholder="Enter your email address" aria-label="Email address">' +
         '<button type="submit">Subscribe</button>' +
         '</form>' +
-        '<p class="blog-nl-note">No spam. Unsubscribe anytime. Or just <a href="/contact-us.html" style="color:#93c5fd">contact us</a> directly.</p>' +
+        '<p class="blog-nl-note">No spam. Unsubscribe anytime. Or just <a href="/contact-us" style="color:#93c5fd">contact us</a> directly.</p>' +
         '</div>';
 
     if (relatedSection) {
