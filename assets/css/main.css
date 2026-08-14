@@ -1688,6 +1688,35 @@ body {
     }
 }
 
+/* Collapsible chips container (mobile) */
+.ai-chips-container {
+    width: 100%;
+    overflow: hidden;
+    max-height: 9999px;
+    transition: max-height 260ms ease, padding 200ms ease;
+    padding-top: 8px;
+}
+.ai-chips-container .ai-chips-toggle {
+    display: none;
+    margin: 0 auto 6px auto;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.06);
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 14px rgba(16,24,40,0.06);
+}
+.ai-chips-toggle .ai-chips-toggle-icon { font-size: 14px; line-height: 36px; display:block; text-align:center; }
+
+@media (max-width: 767px) {
+    .ai-chips-container { max-height: 0; padding-top: 0; }
+    .ai-chips-container .ai-chips-toggle { display: flex; }
+    .ai-chips-container.expanded { max-height: 260px; padding-top: 8px; }
+}
+
 /* HEADER */
 .premium-ai-header {
     background: linear-gradient(135deg, #2563eb, #3b82f6);

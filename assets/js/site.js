@@ -380,6 +380,34 @@ document.addEventListener("click", function (e) {
     // ---- Quick-reply chips ----
     function renderChips(options) {
         if (!options || !options.length) return;
+        // Create or reuse a chips container that can collapse on mobile
+        let container = chatBody.querySelector('.ai-chips-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'ai-chips-container';
+
+            const toggle = document.createElement('button');
+            toggle.type = 'button';
+            toggle.className = 'ai-chips-toggle';
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.innerHTML = '<span class="ai-chips-toggle-icon">▼</span>';
+            toggle.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const expanded = container.classList.toggle('expanded');
+                toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                const icon = toggle.querySelector('.ai-chips-toggle-icon');
+                if (icon) icon.textContent = expanded ? '▲' : '▼';
+                setTimeout(scrollBottom, 120);
+            });
+
+            container.appendChild(toggle);
+            chatBody.appendChild(container);
+        } else {
+            // remove previous chips if present
+            const prev = container.querySelector('.ai-quick-chips');
+            if (prev) prev.remove();
+        }
+
         const wrap = document.createElement("div");
         wrap.className = "ai-quick-chips";
         options.forEach(o => {
@@ -390,7 +418,19 @@ document.addEventListener("click", function (e) {
             b.addEventListener("click", () => handleChipClick(o));
             wrap.appendChild(b);
         });
-        chatBody.appendChild(wrap);
+        container.appendChild(wrap);
+
+        // Collapse by default on small screens; expand on larger screens
+        if (window.innerWidth < 768) {
+            container.classList.remove('expanded');
+            const t = container.querySelector('.ai-chips-toggle'); if (t) t.setAttribute('aria-expanded', 'false');
+            const icon = container.querySelector('.ai-chips-toggle-icon'); if (icon) icon.textContent = '▼';
+        } else {
+            container.classList.add('expanded');
+            const t = container.querySelector('.ai-chips-toggle'); if (t) t.setAttribute('aria-expanded', 'true');
+            const icon = container.querySelector('.ai-chips-toggle-icon'); if (icon) icon.textContent = '▲';
+        }
+
         scrollBottom();
     }
 
