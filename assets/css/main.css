@@ -1657,14 +1657,16 @@ body {
 /* Mobile: make AI chat mobile-friendly and sit above bottom bar */
 @media (max-width: 767px) {
     .premium-ai-chat {
-        left: 50%;
-        right: auto;
-        transform: translateX(-50%);
-        width: calc(100% - 32px);
-        height: calc(72vh);
-        bottom: calc(64px + env(safe-area-inset-bottom, 0px) + 8px);
-        border-radius: 16px;
-        box-shadow: 0 12px 40px rgba(0,0,0,0.16);
+        /* Use safe insets to keep the chat inside the viewport on all devices */
+        left: 16px !important;
+        right: 16px !important;
+        transform: none !important;
+        width: auto !important;
+        max-width: calc(100% - 32px) !important;
+        height: calc(72vh) !important;
+        bottom: calc(64px + env(safe-area-inset-bottom, 0px) + 8px) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.16) !important;
     }
     .ai-hover-message { display: none; }
     .premium-ai-button { width: 64px; height: 64px; }
