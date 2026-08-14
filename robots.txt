@@ -27,7 +27,8 @@ Disallow: /*.sql$
 Disallow: /*.bak$
 Disallow: /*.config$
 Disallow: /*.log$
-Disallow: /*.xml$
+# Note: sitemap.xml must be reachable by search engines. Do not block XML sitemaps.
+# Disallow: /*.xml$
 
 # =====================================================
 # AI Crawlers (Block AI model training bots)
