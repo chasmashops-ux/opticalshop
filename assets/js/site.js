@@ -1177,8 +1177,8 @@ const eyeglassFrames = Array.from({ length: isSunglassesCatalog ? 320 : 520 }, (
     };
 });
 
-// Default products per page is computed dynamically to produce 2 pages
-let productsPerPage = 15;
+// Show 10 frames per page (user preference)
+let productsPerPage = 10;
 let currentFramePage = 1;
 let activeFrameCategory = 'All';
 let currentStream = null;
@@ -1195,15 +1195,19 @@ function renderProductGrid() {
     if (!container) return;
     const filtered = getFilteredFrames();
     const total = filtered.length;
-    // Force catalogs into 2 pages for easier navigation (per user request)
-    const pagesWanted = 2;
-    const perPage = Math.max(1, Math.ceil(total / pagesWanted));
-    productsPerPage = perPage; // update global so pagination uses same value
+    const perPage = productsPerPage;
     const start = (currentFramePage - 1) * perPage;
     const pageItems = filtered.slice(start, start + perPage);
 
-    container.innerHTML = pageItems.map(frame => `
-        <div class="col-sm-6 col-lg-4 col-xl-3" data-aos="fade-up">
+    // For consistent 3-column layout, use Bootstrap col-12 col-md-4
+    // If last row has 1 or 2 items, add offsets to center them
+    const remainder = pageItems.length % 3;
+    container.innerHTML = pageItems.map((frame, idx) => {
+        let extra = '';
+        if (idx === 0 && remainder === 1) extra = ' offset-md-4';
+        if (idx === 0 && remainder === 2) extra = ' offset-md-2';
+        return `
+        <div class="col-12 col-md-4${extra}" data-aos="fade-up">
             <div class="product-card">
                 <div class="product-image">
                     <img src="${frame.image}" alt="${frame.title}" loading="lazy" decoding="async" width="400" height="300">
@@ -1220,7 +1224,8 @@ function renderProductGrid() {
                 </div>
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
 
     document.getElementById('visibleCount').textContent = pageItems.length;
     document.getElementById('totalCount').textContent = total;
