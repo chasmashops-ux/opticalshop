@@ -1195,7 +1195,17 @@ function renderProductGrid() {
     if (!container) return;
     const filtered = getFilteredFrames();
     const total = filtered.length;
-    const perPage = productsPerPage;
+    // User request: Page 1 should show 9 items; total pages = 2 (if more than 9 items)
+    const firstPageCount = 9;
+    let totalPages = total <= firstPageCount ? 1 : 2;
+    // determine per-page count for the current page
+    let perPage;
+    if (totalPages === 1) {
+        perPage = total;
+    } else {
+        if (currentFramePage === 1) perPage = firstPageCount;
+        else perPage = Math.max(1, total - firstPageCount);
+    }
     const start = (currentFramePage - 1) * perPage;
     const pageItems = filtered.slice(start, start + perPage);
 
@@ -1230,14 +1240,13 @@ function renderProductGrid() {
     document.getElementById('visibleCount').textContent = pageItems.length;
     document.getElementById('totalCount').textContent = total;
     document.getElementById('activeCategory').textContent = activeFrameCategory;
-    renderFramesPagination(total, perPage);
+    renderFramesPagination(total, totalPages);
 }
 
 function renderFramesPagination(totalFrames) {
     const pagination = document.getElementById('paginationControls');
-    // perPage may be passed (mobile page split) — fallback to global productsPerPage
-    const perPage = arguments.length > 1 ? arguments[1] : productsPerPage;
-    const totalPages = Math.max(1, Math.ceil(totalFrames / perPage));
+    // second argument is totalPages (when caller computed a custom split)
+    const totalPages = arguments.length > 1 ? arguments[1] : Math.max(1, Math.ceil(totalFrames / productsPerPage));
     let html = '';
 
     for (let page = 1; page <= totalPages; page++) {
