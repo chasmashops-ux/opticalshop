@@ -1654,6 +1654,22 @@ body {
     box-shadow: 0 20px 60px rgba(0, 0, 0, .18);
 }
 
+/* Mobile: make AI chat mobile-friendly and sit above bottom bar */
+@media (max-width: 767px) {
+    .premium-ai-chat {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        width: calc(100% - 32px);
+        height: calc(72vh);
+        bottom: calc(64px + env(safe-area-inset-bottom, 0px) + 8px);
+        border-radius: 16px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.16);
+    }
+    .ai-hover-message { display: none; }
+    .premium-ai-button { width: 64px; height: 64px; }
+}
+
 /* HEADER */
 .premium-ai-header {
     background: linear-gradient(135deg, #2563eb, #3b82f6);
@@ -7171,6 +7187,26 @@ a.cinfo-card:hover { transform: translateY(-6px); box-shadow: 0 28px 55px rgba(3
         background-clip: text;
         -webkit-text-fill-color: transparent;
     }
+
+    /* Modern colored icons: set distinct colors per action and soft hover backgrounds */
+    .mobile-bottom-bar .mbb-item { position: relative; }
+    .mobile-bottom-bar .mbb-item i { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease; }
+
+    .mobile-bottom-bar .mbb-item:nth-child(1) i { color: var(--royal-blue); }
+    .mobile-bottom-bar .mbb-item:nth-child(2) i { color: var(--gold-accent); }
+    .mobile-bottom-bar .mbb-item:nth-child(3) i { color: #25d366; }
+    .mobile-bottom-bar .mbb-item:nth-child(4) i { color: var(--royal-blue-light); }
+    .mobile-bottom-bar .mbb-item:nth-child(5) i { background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .mobile-bottom-bar .mbb-item:hover i,
+    .mobile-bottom-bar .mbb-item:focus-visible i { transform: translateY(-3px); }
+
+    /* Soft circular hover background matching the icon color at low opacity */
+    .mobile-bottom-bar .mbb-item:nth-child(1):hover { background: rgba(30,64,175,0.06); }
+    .mobile-bottom-bar .mbb-item:nth-child(2):hover { background: rgba(212,175,55,0.06); }
+    .mobile-bottom-bar .mbb-item:nth-child(3):hover { background: rgba(37,211,102,0.06); }
+    .mobile-bottom-bar .mbb-item:nth-child(4):hover { background: rgba(59,130,246,0.06); }
+    .mobile-bottom-bar .mbb-item:nth-child(5):hover { background: rgba(30,64,175,0.06); }
 
     /* Move the floating WhatsApp + AI button off mobile (now in the bottom bar) */
     .whatsapp-float,

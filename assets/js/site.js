@@ -147,6 +147,16 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
 
             aiContainer.style.display = "flex";
+            // On open: ensure messages are visible and input focused (mobile-friendly)
+            setTimeout(function () {
+                try {
+                    if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
+                    const input = document.getElementById('aiMessageInput');
+                    if (input) {
+                        input.focus({ preventScroll: true });
+                    }
+                } catch (err) { /* ignore */ }
+            }, 80);
 
         }
 
