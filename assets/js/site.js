@@ -1177,7 +1177,8 @@ const eyeglassFrames = Array.from({ length: isSunglassesCatalog ? 320 : 520 }, (
     };
 });
 
-const productsPerPage = 15;
+// Default products per page is computed dynamically to produce 2 pages
+let productsPerPage = 15;
 let currentFramePage = 1;
 let activeFrameCategory = 'All';
 let currentStream = null;
@@ -1194,8 +1195,12 @@ function renderProductGrid() {
     if (!container) return;
     const filtered = getFilteredFrames();
     const total = filtered.length;
-    const start = (currentFramePage - 1) * productsPerPage;
-    const pageItems = filtered.slice(start, start + productsPerPage);
+    // Force catalogs into 2 pages for easier navigation (per user request)
+    const pagesWanted = 2;
+    const perPage = Math.max(1, Math.ceil(total / pagesWanted));
+    productsPerPage = perPage; // update global so pagination uses same value
+    const start = (currentFramePage - 1) * perPage;
+    const pageItems = filtered.slice(start, start + perPage);
 
     container.innerHTML = pageItems.map(frame => `
         <div class="col-sm-6 col-lg-4 col-xl-3" data-aos="fade-up">
@@ -1220,12 +1225,14 @@ function renderProductGrid() {
     document.getElementById('visibleCount').textContent = pageItems.length;
     document.getElementById('totalCount').textContent = total;
     document.getElementById('activeCategory').textContent = activeFrameCategory;
-    renderFramesPagination(total);
+    renderFramesPagination(total, perPage);
 }
 
 function renderFramesPagination(totalFrames) {
     const pagination = document.getElementById('paginationControls');
-    const totalPages = Math.max(1, Math.ceil(totalFrames / productsPerPage));
+    // perPage may be passed (mobile page split) — fallback to global productsPerPage
+    const perPage = arguments.length > 1 ? arguments[1] : productsPerPage;
+    const totalPages = Math.max(1, Math.ceil(totalFrames / perPage));
     let html = '';
 
     for (let page = 1; page <= totalPages; page++) {
