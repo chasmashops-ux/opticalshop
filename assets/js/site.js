@@ -1271,6 +1271,14 @@ function setupEyeglassesCatalog() {
         btn.addEventListener('click', () => setFrameCategory(btn.dataset.category));
     });
 
+    // If URL contains ?p=2 or ?page=2, jump to that page on load
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const p = params.get('p') || params.get('page');
+        const requested = parseInt(p, 10);
+        if (!isNaN(requested) && requested > 0) currentFramePage = requested;
+    } catch (e) { /* ignore */ }
+
     renderProductGrid();
 }
 
