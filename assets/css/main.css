@@ -1670,6 +1670,22 @@ body {
     }
     .ai-hover-message { display: none; }
     .premium-ai-button { width: 64px; height: 64px; }
+    /* Quick-reply chips: more compact on mobile */
+    .ai-quick-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 8px 12px 0 12px;
+        align-items: center;
+    }
+    .ai-quick-chips .ai-chip {
+        padding: 6px 10px;
+        font-size: 13px;
+        border-radius: 20px;
+        background: #fff;
+        border: 1px solid rgba(0,0,0,0.06);
+        box-shadow: 0 6px 14px rgba(16,24,40,0.06);
+    }
 }
 
 /* HEADER */

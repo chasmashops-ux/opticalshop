@@ -387,11 +387,36 @@ document.addEventListener("click", function (e) {
             b.type = "button";
             b.className = "ai-chip";
             b.textContent = o;
-            b.addEventListener("click", () => askQuestion(o));
+            b.addEventListener("click", () => handleChipClick(o));
             wrap.appendChild(b);
         });
         chatBody.appendChild(wrap);
         scrollBottom();
+    }
+
+    // Handle chip clicks: on mobile show answer immediately (no typing delay), on desktop use normal flow
+    function handleChipClick(option) {
+        try {
+            const isMobile = window.innerWidth < 768;
+            const question = String(option || "").trim();
+            if (!question) return;
+            if (!isMobile) {
+                askQuestion(question);
+                return;
+            }
+            // Mobile: immediate response for faster UX
+            addUserMessage(question);
+            const lang = detectLang(question);
+            if (aiFlow) { handleFlow(question, lang); return; }
+            const ql = " " + question.toLowerCase() + " ";
+            if (FRAME_TRIGGERS.some(k => ql.includes(k))) { startFrameFlow(lang); return; }
+            const hit = matchIntent(ql);
+            addBotMessage(hit ? L(hit.a, lang) : L(FALLBACK, lang));
+            // ensure visible and input focused
+            setTimeout(() => {
+                try { if (chatBody) chatBody.scrollTop = chatBody.scrollHeight; const input = document.getElementById('aiMessageInput'); if (input) input.focus({ preventScroll: true }); } catch (e) { }
+            }, 30);
+        } catch (err) { /* ignore */ }
     }
 
     // ---- Intent matching (longest-key wins) ----
