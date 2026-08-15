@@ -4,6 +4,11 @@
  * Sends the credentials to the real Cloudflare Worker (URL comes from
  * assets/js/config.js — never hardcoded here, never a relative /api/login).
  * The password is only read from the input, posted, and discarded.
+ *
+ * Owns the API call and its result ONLY. Animation is a presentational
+ * concern that lives in assets/js/login-scene.js (window.SHCG_SCENE);
+ * this file just calls into it after the real result is already known —
+ * a successful redirect never depends on the animation working.
  */
 document.addEventListener('DOMContentLoaded', function () {
   var form = document.getElementById('loginForm');
@@ -49,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!submitButton) return;
     submitButton.disabled = loading;
     submitButton.classList.toggle('is-loading', loading);
-    if (buttonLabel) buttonLabel.textContent = loading ? 'Logging in...' : 'Login';
+    if (buttonLabel) buttonLabel.textContent = loading ? 'Signing in...' : 'Sign In';
   }
 
   form.addEventListener('submit', async function (event) {
@@ -83,7 +88,9 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!response.ok || result.success !== true) {
         setLoading(false);
         passwordInput.value = '';
-        showMessage(result.message || 'Invalid username or password', 'error');
+        // Fixed, user-facing copy — never show the backend's raw message here.
+        showMessage('Invalid login details. Please try again.', 'error');
+        if (window.SHCG_SCENE) window.SHCG_SCENE.playError();
         return;
       }
 
@@ -102,11 +109,21 @@ document.addEventListener('DOMContentLoaded', function () {
       // Clear the password field before leaving the page.
       passwordInput.value = '';
       showMessage('Login successful. Redirecting...', 'success');
-      window.location.replace(nextTarget());
+
+      var goToDashboard = function () {
+        window.location.replace(nextTarget());
+      };
+
+      if (window.SHCG_SCENE) {
+        window.SHCG_SCENE.playSuccessAndNavigate(goToDashboard);
+      } else {
+        goToDashboard();
+      }
     } catch (error) {
       setLoading(false);
       // Deliberately does not log the request body — no password reaches the console.
-      showMessage('Could not reach the server. Please check your connection and try again.', 'error');
+      showMessage('Unable to connect to the server. Please try again.', 'error');
+      if (window.SHCG_SCENE) window.SHCG_SCENE.playError();
     }
   });
 });

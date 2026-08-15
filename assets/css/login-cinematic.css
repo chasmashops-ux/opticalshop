@@ -1,0 +1,751 @@
+/**
+ * Cinematic login scene for login.html.
+ *
+ * Character is a hand-built flat SVG figure (head/torso/arms/legs as
+ * separate <g> groups), not a raster asset — the project has no character
+ * art, and this keeps the page free of external/broken image dependencies.
+ * Every pose (standing/walking/sitting/idle/exiting) is a CSS class on
+ * #characterTrack; assets/js/login-scene.js only ever toggles those classes,
+ * so a real illustrated/3D character can later drop in by replacing the
+ * <svg class="character-figure"> markup without touching the animation logic.
+ *
+ * All motion state changes read/write the --tx custom property so there is
+ * only ever one `transform` declaration per element — no specificity fights
+ * between competing pose classes.
+ */
+
+:root {
+  --lc-primary: #2563eb;
+  --lc-primary-dark: #1d4ed8;
+  --lc-dark: #0f172a;
+  --lc-bg: #f8fafc;
+  --lc-card: rgba(255, 255, 255, 0.92);
+  --lc-card-border: rgba(255, 255, 255, 0.6);
+  --lc-text: #0f172a;
+  --lc-text-muted: #64748b;
+  --lc-danger: #dc2626;
+  --lc-danger-soft: #fef2f2;
+  --lc-success: #16a34a;
+  --lc-radius: 22px;
+
+  --char-skin: #e7b48c;
+  --char-hair: #1e2733;
+  --char-suit: #14213d;
+  --char-trouser: #1c2942;
+  --char-shoe: #0b1220;
+  --char-shirt: #f8fafc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.login-page {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--lc-text);
+  background: var(--lc-bg);
+  overflow-x: hidden;
+}
+
+/* ------------------------------------------------------------------ *
+ * Scene shell
+ * ------------------------------------------------------------------ */
+
+.login-scene {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  opacity: 0;
+  animation: sceneFadeIn 0.9s ease forwards;
+}
+
+@keyframes sceneFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.scene-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: linear-gradient(160deg, #eaf1ff 0%, #f6f9ff 45%, #ffffff 100%);
+}
+
+.scene-glow {
+  position: absolute;
+  top: -10%;
+  right: -6%;
+  width: 55vw;
+  height: 55vw;
+  max-width: 700px;
+  max-height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.14), transparent 68%);
+  filter: blur(2px);
+}
+
+.scene-glow--secondary {
+  top: auto;
+  right: auto;
+  bottom: -14%;
+  left: -8%;
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.08), transparent 70%);
+}
+
+.scene-floor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 22%;
+  background: linear-gradient(180deg, rgba(37, 99, 235, 0.05), rgba(37, 99, 235, 0.1));
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.scene-frame-decor {
+  position: absolute;
+  opacity: 0.14;
+  stroke: var(--lc-primary);
+  fill: none;
+  stroke-width: 1.6;
+}
+
+.scene-frame-decor--a {
+  width: 220px;
+  top: 10%;
+  left: 4%;
+  transform: rotate(-12deg);
+}
+
+.scene-frame-decor--b {
+  width: 160px;
+  bottom: 16%;
+  right: 6%;
+  transform: rotate(8deg);
+}
+
+.scene-signage {
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 1;
+}
+
+.scene-signage-name {
+  display: block;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  font-size: clamp(0.8rem, 1.4vw, 1.05rem);
+  color: var(--lc-dark);
+  opacity: 0.55;
+  text-transform: uppercase;
+}
+
+.scene-signage-loc {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  color: var(--lc-primary);
+  opacity: 0.6;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------------ *
+ * Stage — sofa + character + card share this coordinate space
+ * ------------------------------------------------------------------ */
+
+.scene-stage {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, 100%);
+  min-height: 560px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ------------------------------------------------------------------ *
+ * Sofa
+ * ------------------------------------------------------------------ */
+
+.scene-sofa {
+  position: absolute;
+  left: 2%;
+  bottom: 6%;
+  width: min(300px, 26vw);
+  z-index: 2;
+  opacity: 0;
+  animation: sofaFadeIn 0.8s ease 0.3s forwards;
+}
+
+@keyframes sofaFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scene-sofa svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 18px 26px rgba(15, 23, 42, 0.1));
+}
+
+/* ------------------------------------------------------------------ *
+ * Character
+ * ------------------------------------------------------------------ */
+
+.character-track {
+  position: absolute;
+  left: 6%;
+  bottom: 7%;
+  width: min(160px, 15vw);
+  z-index: 5;
+  --tx: 58vw;
+  transform: translateX(var(--tx));
+  opacity: 0;
+  transition: transform 1.7s cubic-bezier(0.65, 0.05, 0.36, 1), opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.character-track.is-visible {
+  opacity: 1;
+}
+
+.character-track.at-sofa {
+  --tx: 6vw;
+}
+
+.character-track.exiting {
+  --tx: 62vw;
+  opacity: 0;
+  transition: transform 1s cubic-bezier(0.55, 0, 0.85, 0.35), opacity 0.6s ease 0.35s;
+}
+
+.character {
+  transform: translateY(0);
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.character-track.sitting .character {
+  transform: translateY(42px);
+}
+
+@keyframes idleBreathe {
+  0%,
+  100% {
+    transform: translateY(42px) scale(1);
+  }
+  50% {
+    transform: translateY(39px) scale(1.008);
+  }
+}
+
+.character-track.sitting-idle .character {
+  animation: idleBreathe 3.6s ease-in-out infinite;
+}
+
+@keyframes walkBob {
+  0%,
+  50%,
+  100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-5px);
+  }
+  75% {
+    transform: translateY(-3px);
+  }
+}
+
+.character-track.walking .character {
+  animation: walkBob 0.58s ease-in-out infinite;
+}
+
+.character-figure {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.char-limb {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  transform: rotate(0deg);
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Sitting pose: legs fold forward, arms relax onto the lap */
+
+.character-track.sitting .char-leg-left,
+.character-track.sitting-idle .char-leg-left,
+.character-track.sitting .char-leg-right,
+.character-track.sitting-idle .char-leg-right {
+  transform: rotate(76deg);
+}
+
+.character-track.sitting .char-arm-left,
+.character-track.sitting-idle .char-arm-left {
+  transform: rotate(10deg);
+}
+
+.character-track.sitting .char-arm-right,
+.character-track.sitting-idle .char-arm-right {
+  transform: rotate(-10deg);
+}
+
+/* Walking pose: alternating leg/arm swing, overrides the transition above */
+
+@keyframes walkLegA {
+  0%,
+  100% {
+    transform: rotate(18deg);
+  }
+  50% {
+    transform: rotate(-18deg);
+  }
+}
+
+@keyframes walkLegB {
+  0%,
+  100% {
+    transform: rotate(-18deg);
+  }
+  50% {
+    transform: rotate(18deg);
+  }
+}
+
+@keyframes walkArmA {
+  0%,
+  100% {
+    transform: rotate(-16deg);
+  }
+  50% {
+    transform: rotate(16deg);
+  }
+}
+
+@keyframes walkArmB {
+  0%,
+  100% {
+    transform: rotate(16deg);
+  }
+  50% {
+    transform: rotate(-16deg);
+  }
+}
+
+.character-track.walking .char-leg-left {
+  animation: walkLegA 0.58s ease-in-out infinite;
+}
+
+.character-track.walking .char-leg-right {
+  animation: walkLegB 0.58s ease-in-out infinite;
+}
+
+.character-track.walking .char-arm-left {
+  animation: walkArmB 0.58s ease-in-out infinite;
+}
+
+.character-track.walking .char-arm-right {
+  animation: walkArmA 0.58s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------------ *
+ * Login card
+ * ------------------------------------------------------------------ */
+
+.login-card-wrap {
+  position: relative;
+  z-index: 6;
+  width: min(420px, 92vw);
+  margin-left: clamp(0px, 8vw, 160px);
+}
+
+.login-card {
+  background: var(--lc-card);
+  border: 1px solid var(--lc-card-border);
+  border-radius: var(--lc-radius);
+  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.16);
+  backdrop-filter: blur(14px);
+  padding: 38px 34px;
+  opacity: 0;
+  transform: translateY(30px) scale(0.97);
+  animation: cardEnter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.25s forwards;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+@keyframes cardEnter {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.login-card.is-leaving {
+  opacity: 0;
+  transform: translateY(-14px) scale(0.96);
+}
+
+.login-card.is-shaking {
+  animation: cardShake 0.42s ease;
+}
+
+@keyframes cardShake {
+  10%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  80% {
+    transform: translateX(4px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-7px);
+  }
+  40%,
+  60% {
+    transform: translateX(7px);
+  }
+}
+
+.login-brand-logo {
+  height: 40px;
+  width: auto;
+  display: block;
+  margin: 0 auto 20px;
+}
+
+.login-card h1 {
+  margin: 0 0 6px;
+  font-size: 1.7rem;
+  text-align: center;
+  color: var(--lc-dark);
+}
+
+.login-sub {
+  margin: 0 0 26px;
+  text-align: center;
+  color: var(--lc-text-muted);
+  font-size: 0.92rem;
+}
+
+#loginForm {
+  display: grid;
+  gap: 16px;
+}
+
+.field {
+  position: relative;
+}
+
+.field svg.field-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  width: 19px;
+  height: 19px;
+  transform: translateY(-50%);
+  stroke: #7b88a3;
+  fill: none;
+  stroke-width: 1.8;
+  pointer-events: none;
+}
+
+.field input {
+  width: 100%;
+  height: 54px;
+  border-radius: 13px;
+  border: 1.5px solid rgba(122, 136, 163, 0.28);
+  background: rgba(255, 255, 255, 0.85);
+  padding: 14px 16px 14px 44px;
+  font-size: 0.98rem;
+  outline: none;
+  transition: 0.25s ease;
+  font-family: inherit;
+}
+
+.field input#password {
+  padding-right: 46px;
+}
+
+.field input:focus {
+  border-color: rgba(37, 99, 235, 0.9);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #7b88a3;
+}
+
+.toggle-password:hover {
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--lc-primary);
+}
+
+.toggle-password svg {
+  width: 19px;
+  height: 19px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+}
+
+.toggle-password .icon-eye-off {
+  display: none;
+}
+
+.toggle-password[aria-pressed="true"] .icon-eye {
+  display: none;
+}
+
+.toggle-password[aria-pressed="true"] .icon-eye-off {
+  display: block;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.9rem;
+}
+
+.remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #586887;
+}
+
+.remember input {
+  accent-color: var(--lc-primary);
+}
+
+.forgot {
+  color: var(--lc-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+button[type="submit"] {
+  height: 54px;
+  border: 0;
+  border-radius: 13px;
+  background: linear-gradient(135deg, var(--lc-primary), var(--lc-primary-dark));
+  color: #fff;
+  font-size: 0.98rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
+}
+
+button[type="submit"]:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button[type="submit"]:focus-visible,
+.field input:focus-visible,
+.toggle-password:focus-visible,
+.forgot:focus-visible {
+  outline: 2.5px solid var(--lc-primary);
+  outline-offset: 2px;
+}
+
+button[type="submit"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+  transform: none;
+  box-shadow: none;
+}
+
+button[type="submit"] .btn-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.spinner {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: spin 0.7s linear infinite;
+}
+
+button[type="submit"].is-loading .spinner {
+  display: inline-block;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#loginMessage {
+  min-height: 22px;
+  margin-top: 4px;
+  text-align: center;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+#loginMessage.error {
+  color: var(--lc-danger);
+}
+
+#loginMessage.success {
+  color: var(--lc-success);
+}
+
+/* ------------------------------------------------------------------ *
+ * Exit veil — full-page fade right before navigating to the dashboard
+ * ------------------------------------------------------------------ */
+
+.scene-exit-veil {
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50;
+  transition: opacity 0.4s ease;
+}
+
+.scene-exit-veil.is-active {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------ *
+ * Reduced motion — static scene, no walking/sitting choreography
+ * ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .login-scene,
+  .login-card,
+  .scene-sofa {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .character-track {
+    transition: none !important;
+    opacity: 1 !important;
+    --tx: 6vw !important;
+  }
+
+  .character-track .character,
+  .character-track .char-limb {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .character-track.sitting .char-leg-left,
+  .character-track.sitting-idle .char-leg-left,
+  .character-track.sitting .char-leg-right,
+  .character-track.sitting-idle .char-leg-right,
+  .character-track.sitting .character,
+  .character-track.sitting-idle .character {
+    transform: none !important;
+  }
+
+  .login-card.is-shaking {
+    animation: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Responsive
+ * ------------------------------------------------------------------ */
+
+@media (max-width: 980px) {
+  .scene-stage {
+    justify-content: center;
+  }
+
+  .login-card-wrap {
+    margin-left: 0;
+  }
+
+  .character-track {
+    width: min(120px, 12vw);
+  }
+
+  .scene-sofa {
+    width: min(220px, 22vw);
+  }
+}
+
+@media (max-width: 720px) {
+  .scene-sofa,
+  .character-track {
+    display: none;
+  }
+
+  .scene-signage {
+    top: 4%;
+  }
+
+  .login-card {
+    padding: 30px 24px;
+  }
+}
+
+@media (max-width: 420px) {
+  .login-scene {
+    padding: 24px 14px;
+  }
+}
