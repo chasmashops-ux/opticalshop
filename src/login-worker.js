@@ -772,7 +772,7 @@ async function handleDashboard(request, env) {
     const w = combineWhere([periodWhere]);
     add(
       'periodOrders',
-      `SELECT COUNT(1) AS c, COALESCE(SUM(amount),0) AS s, COALESCE(MAX(amount),0) AS mx, COALESCE(MIN(amount),0) AS mn
+      `SELECT COUNT(1) AS c, COALESCE(SUM(amount),0) AS s, COALESCE(MAX(amount),0) AS mx, MIN(NULLIF(amount,0)) AS mn
        FROM ${ORDER_TABLE} ${w.sql}`,
       w.params
     );
@@ -1023,7 +1023,10 @@ async function handleDashboard(request, env) {
       totalSales: periodSales,
       averageOrderValue: periodOrders > 0 ? Math.round((periodSales / periodOrders) * 100) / 100 : 0,
       maxOrderAmount: periodOrders > 0 ? toNumber(periodOrdersRow.mx) : null,
-      minOrderAmount: periodOrders > 0 ? toNumber(periodOrdersRow.mn) : null,
+      // NULLIF(amount,0) above excludes ₹0 orders from the minimum — a real
+      // ₹0 order previously made this KPI misleadingly show ₹0 regardless
+      // of what every other order actually cost.
+      minOrderAmount: periodOrdersRow.mn !== null && periodOrdersRow.mn !== undefined ? toNumber(periodOrdersRow.mn) : null,
       billedOrders: schema.hasBillNo ? toNumber(row('billedOrders').c) : null,
       noBillOrders: schema.hasBillNo ? toNumber(row('noBillOrders').c) : null,
       repeatCustomers: schema.hasOrderDate ? toNumber(row('repeatCustomers').c) : 0,
@@ -1078,12 +1081,7 @@ async function handleDashboard(request, env) {
       sales: toNumber(r.s)
     })),
     customerAnalytics: {
-      newToday: schema.hasEnterDate ? toNumber(row('custNewToday').c) : 0,
-      newThisMonth: schema.hasEnterDate ? toNumber(row('custNewMonth').c) : 0,
-      newThisYear: schema.hasEnterDate ? toNumber(row('custNewYear').c) : 0,
-      totalCustomers: totalCustomersAllTime,
-      customersWithOrders,
-      customersWithoutOrders: Math.max(0, totalCustomersAllTime - customersWithOrders)
+      newThisMonth: schema.hasEnterDate ? toNumber(row('custNewMonth').c) : 0
     },
     recentActivity: activity.slice(0, 5)
   });
@@ -1194,13 +1192,21 @@ async function handleListCustomers(request, env) {
 
   const OD = schema.hasOrderDate ? dateExpr('o.orderdate', schema.orderDateFormat) : null;
 
+  // A correlated EXISTS subquery here re-scanned order_details once PER
+  // CUSTOMER ROW (O(customers x orders) — the single most expensive query
+  // in this app by a wide margin per real D1 profiling: ~49% of all
+  // measured runtime, 25M+ rows read for a 3-character search). Rewritten
+  // as a plain (non-correlated) UNION of matching userids, computed once,
+  // that the outer query does a single semi-join lookup against instead.
   let where = '';
   let params = [];
   if (query) {
     const like = `%${query}%`;
-    where = `WHERE u.name LIKE ? OR u.mobile LIKE ?
-      OR EXISTS (SELECT 1 FROM ${ORDER_TABLE} o2 WHERE o2.userid = u.userid
-                 AND (o2.billno LIKE ? OR CAST(o2.orderid AS TEXT) LIKE ?))`;
+    where = `WHERE u.userid IN (
+      SELECT userid FROM ${CUSTOMER_TABLE} WHERE name LIKE ? OR mobile LIKE ?
+      UNION
+      SELECT userid FROM ${ORDER_TABLE} WHERE billno LIKE ? OR CAST(orderid AS TEXT) LIKE ?
+    )`;
     params = [like, like, like, like];
   }
 

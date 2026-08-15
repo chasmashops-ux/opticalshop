@@ -98,7 +98,7 @@
           }
 
           var totalPages = Math.max(1, Math.ceil(state.total / LIMIT));
-          pageInfo.textContent = 'Page ' + state.page + ' of ' + totalPages + ' · ' + state.total + ' customer(s)';
+          pageInfo.textContent = 'Page ' + state.page + ' of ' + totalPages;
           prevButton.disabled = state.page <= 1;
           nextButton.disabled = state.page >= totalPages;
           setMessage('');
@@ -127,16 +127,22 @@
       load();
     });
 
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     prevButton.addEventListener('click', function () {
       if (state.page > 1) {
         state.page -= 1;
         load();
+        scrollToTop();
       }
     });
 
     nextButton.addEventListener('click', function () {
       state.page += 1;
       load();
+      scrollToTop();
     });
 
     load();

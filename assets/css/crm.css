@@ -1040,6 +1040,27 @@
   .crm-search input {
     font-size: 0.86rem;
   }
+
+  /* Keep Previous / page X of Y / Next on one row instead of wrapping. */
+  .pager {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .pager button {
+    height: 36px;
+    padding: 0 10px;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .pager .page-info {
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 /* ---------------------------- Customer profile / order detail ---------------------------- */
