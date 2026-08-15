@@ -43,8 +43,6 @@
 
     var orderId = new URLSearchParams(window.location.search).get('id');
     var errorBanner = document.getElementById('crmError');
-    var generateBtn = document.getElementById('generateBillBtn');
-    var currentOrderDate = null;
 
     if (!orderId) {
       errorBanner.textContent = 'No order selected.';
@@ -52,24 +50,11 @@
       return;
     }
 
-    function renderBillState(billNo) {
-      if (billNo) {
-        set('infoBillNo', billNo);
-        generateBtn.textContent = 'Bill Generated';
-        generateBtn.disabled = true;
-      } else {
-        set('infoBillNo', 'Direct Order / No Bill Generated');
-        generateBtn.textContent = 'Generate Bill';
-        generateBtn.disabled = false;
-      }
-    }
-
     function renderOrder(order) {
       document.querySelectorAll('[data-skeleton]').forEach(function (el) {
         el.classList.remove('skeleton');
       });
 
-      currentOrderDate = order.orderDate;
       document.title = 'Order #' + order.orderId + ' | Shree Hari Chasma Ghar';
       set('orderTitle', 'Order #' + order.orderId);
       set('orderSub', fmtDate(order.orderDate) + (order.billNo ? ' · Bill ' + order.billNo : ' · No Bill'));
@@ -80,13 +65,13 @@
       set('infoCustomerAddress', order.customer.address || 'Not on file');
 
       set('infoOrderDate', fmtDate(order.orderDate));
+      set('infoBillNo', order.billNo || 'Direct Order / No Bill Generated');
       set('infoProduct', order.product || '—');
       set('infoFrameType', order.frameType || '—');
       set('infoFrameSize', order.frameSize || '—');
       set('infoDescFrame', order.descriptionFrame || '—');
       set('infoDescGlass', order.descriptionGlass || '—');
       set('infoAmount', fmtMoney(order.amount));
-      renderBillState(order.billNo);
 
       var rx = document.getElementById('prescriptionContainer');
       if (order.eyewearDetail && String(order.eyewearDetail).trim()) {
@@ -135,21 +120,5 @@
         errorBanner.textContent = err.message;
         errorBanner.classList.add('show');
       });
-
-    generateBtn.addEventListener('click', function () {
-      generateBtn.disabled = true;
-      generateBtn.textContent = 'Generating...';
-      AUTH.authFetch(CONFIG.orderBillPath(orderId), { method: 'POST' })
-        .then(function (result) {
-          renderBillState(result.billNo);
-          set('orderSub', fmtDate(currentOrderDate) + ' · Bill ' + result.billNo);
-        })
-        .catch(function (err) {
-          errorBanner.textContent = err.message;
-          errorBanner.classList.add('show');
-          generateBtn.disabled = false;
-          generateBtn.textContent = 'Generate Bill';
-        });
-    });
   });
 })();

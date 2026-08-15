@@ -1091,6 +1091,58 @@
   margin-top: 8px;
 }
 
+/*
+ * eyewearDetail is rendered as whatever HTML is actually stored (historical
+ * records and new ones may not share an exact markup shape) — these rules
+ * restyle any table/th/td found inside it to match the app's design system,
+ * without needing to control or assume the source markup.
+ */
+#prescriptionContainer table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#prescriptionContainer th,
+#prescriptionContainer td {
+  padding: 11px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  border-right: none;
+  background: #fff;
+}
+
+#prescriptionContainer tr:last-child th,
+#prescriptionContainer tr:last-child td {
+  border-bottom: none;
+}
+
+#prescriptionContainer thead th,
+#prescriptionContainer tr:first-child th {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-weight: 800;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--border);
+}
+
+#prescriptionContainer tbody tr:nth-child(even) td,
+#prescriptionContainer tr:nth-child(even) td {
+  background: var(--bg);
+}
+
+#prescriptionContainer td:first-child {
+  font-weight: 700;
+  color: var(--dark);
+  white-space: nowrap;
+}
+
 .price-breakdown {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));

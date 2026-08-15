@@ -82,28 +82,13 @@
           <div class="kpi-label">This Month Sales</div>
           <div class="kpi-value" id="kpiMonthSales">₹0</div>
         </div>
-      </section>
-
-      <section class="crm-card">
-        <div class="crm-card-head">
-          <div>
-            <h3>Quick Actions</h3>
-            <p>Jump straight into common tasks.</p>
-          </div>
+        <div class="kpi-card kpi-accent-green" data-skeleton>
+          <div class="kpi-label">Max Order Amount</div>
+          <div class="kpi-value" id="kpiMaxOrder">—</div>
         </div>
-        <div class="quick-actions">
-          <a class="quick-action-btn" href="/crm/new-order.html">
-            <svg viewBox="0 0 24 24"><path d="M4 8h16l-1.4 11.2a1.5 1.5 0 0 1-1.5 1.3H6.9a1.5 1.5 0 0 1-1.5-1.3L4 8Z"/><path d="M8 8V6a4 4 0 1 1 8 0v2M12 11v5M9.5 13.5h5"/></svg>
-            + New Order
-          </a>
-          <button class="quick-action-btn" data-open="add-customer" type="button">
-            <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M18 8v6M15 11h6"/></svg>
-            + New Customer
-          </button>
-          <a class="quick-action-btn" href="/crm/search.html">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-            Search Customer
-          </a>
+        <div class="kpi-card kpi-accent-amber" data-skeleton>
+          <div class="kpi-label">Min Order Amount</div>
+          <div class="kpi-value" id="kpiMinOrder">—</div>
         </div>
       </section>
 
@@ -250,32 +235,6 @@
         </div>
         <div class="timeline" id="activityTimeline"></div>
       </section>
-    </div>
-
-    <!-- Add Customer modal (quick action) -->
-    <div class="modal-overlay" id="addCustomerModal">
-      <div class="modal-box">
-        <div class="modal-head">
-          <h3>New Customer</h3>
-          <button class="modal-close" type="button" data-close>&times;</button>
-        </div>
-        <form id="addCustomerForm" class="form-grid">
-          <div class="form-field">
-            <label for="custName">Name</label>
-            <input type="text" id="custName" required minlength="2" />
-          </div>
-          <div class="form-field">
-            <label for="custMobile">Mobile (optional)</label>
-            <input type="tel" id="custMobile" pattern="\d{7,15}" placeholder="9876543210" />
-          </div>
-          <div class="form-field">
-            <label for="custAddress">Address (optional)</label>
-            <input type="text" id="custAddress" />
-          </div>
-          <button class="primary-btn" type="submit" id="addCustomerSubmit">Add Customer</button>
-          <div class="form-message" id="addCustomerMessage"></div>
-        </form>
-      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>

@@ -707,7 +707,12 @@ async function handleDashboard(request, env) {
   // ---- headline KPIs, period-scoped ----
   if (schema.hasOrderDate) {
     const w = combineWhere([periodWhere]);
-    add('periodOrders', `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} ${w.sql}`, w.params);
+    add(
+      'periodOrders',
+      `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s, COALESCE(MAX(amount),0) AS mx, COALESCE(MIN(amount),0) AS mn
+       FROM ${ORDER_TABLE} ${w.sql}`,
+      w.params
+    );
     add(
       'periodActiveCustomers',
       `SELECT COUNT(DISTINCT userid) AS c FROM ${ORDER_TABLE} ${w.sql}`,
@@ -947,6 +952,8 @@ async function handleDashboard(request, env) {
       totalOrders: periodOrders,
       totalSales: periodSales,
       averageOrderValue: periodOrders > 0 ? Math.round((periodSales / periodOrders) * 100) / 100 : 0,
+      maxOrderAmount: periodOrders > 0 ? toNumber(periodOrdersRow.mx) : null,
+      minOrderAmount: periodOrders > 0 ? toNumber(periodOrdersRow.mn) : null,
       billedOrders: schema.hasBillNo ? toNumber(row('billedOrders').c) : null,
       noBillOrders: schema.hasBillNo ? toNumber(row('noBillOrders').c) : null,
       repeatCustomers: schema.hasOrderDate ? toNumber(row('repeatCustomers').c) : 0,

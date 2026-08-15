@@ -117,6 +117,8 @@
           document.getElementById('sBilled').textContent = data.kpis.billedOrders === null ? '—' : fmtNumber(data.kpis.billedOrders);
           document.getElementById('sNoBill').textContent = data.kpis.noBillOrders === null ? '—' : fmtNumber(data.kpis.noBillOrders);
           document.getElementById('sRepeat').textContent = fmtNumber(data.kpis.repeatCustomers);
+          document.getElementById('sMaxOrder').textContent = data.kpis.maxOrderAmount === null ? '—' : fmtMoney(data.kpis.maxOrderAmount);
+          document.getElementById('sMinOrder').textContent = data.kpis.minOrderAmount === null ? '—' : fmtMoney(data.kpis.minOrderAmount);
 
           document.getElementById('monthlyLabel').textContent = 'January through December, ' + year + '.';
           ensureChart('monthly', 'statMonthlyChart', {

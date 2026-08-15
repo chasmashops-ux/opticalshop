@@ -117,6 +117,8 @@
       document.getElementById('kpiNoBillOrders').textContent = fmtNumber(kpis.noBillOrders);
     }
     document.getElementById('kpiRepeatCustomers').textContent = fmtNumber(kpis.repeatCustomers);
+    document.getElementById('kpiMaxOrder').textContent = kpis.maxOrderAmount === null ? '—' : fmtMoney(kpis.maxOrderAmount);
+    document.getElementById('kpiMinOrder').textContent = kpis.minOrderAmount === null ? '—' : fmtMoney(kpis.minOrderAmount);
   }
 
   function growthBadge(pct) {
@@ -409,65 +411,6 @@
     });
   }
 
-  /* ---------------------------- Add Customer modal ---------------------------- */
-
-  function initAddCustomerModal(onSaved) {
-    var overlay = document.getElementById('addCustomerModal');
-    document.querySelectorAll('[data-open="add-customer"]').forEach(function (btn) {
-      btn.addEventListener('click', function (e) {
-        e.preventDefault();
-        overlay.classList.add('open');
-      });
-    });
-    overlay.querySelectorAll('[data-close]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        overlay.classList.remove('open');
-      });
-    });
-    overlay.addEventListener('click', function (e) {
-      if (e.target === overlay) overlay.classList.remove('open');
-    });
-
-    var form = document.getElementById('addCustomerForm');
-    var message = document.getElementById('addCustomerMessage');
-    var button = document.getElementById('addCustomerSubmit');
-
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var name = document.getElementById('custName').value.trim();
-      var mobile = document.getElementById('custMobile').value.trim();
-      var address = document.getElementById('custAddress').value.trim();
-
-      message.textContent = '';
-      message.className = 'form-message';
-      button.disabled = true;
-      button.textContent = 'Saving...';
-
-      AUTH.authFetch(CONFIG.endpoints.customers, {
-        method: 'POST',
-        body: JSON.stringify({ name: name, mobile: mobile, address: address })
-      })
-        .then(function (result) {
-          message.textContent = result.message;
-          message.className = 'form-message success';
-          form.reset();
-          onSaved();
-          setTimeout(function () {
-            overlay.classList.remove('open');
-            message.textContent = '';
-          }, 900);
-        })
-        .catch(function (err) {
-          message.textContent = err.message;
-          message.className = 'form-message error';
-        })
-        .finally(function () {
-          button.disabled = false;
-          button.textContent = 'Add Customer';
-        });
-    });
-  }
-
   /* ---------------------------- load + render ---------------------------- */
 
   function load() {
@@ -518,7 +461,6 @@
       state.range = range;
       load();
     });
-    initAddCustomerModal(load);
 
     load();
   });
