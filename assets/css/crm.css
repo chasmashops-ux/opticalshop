@@ -806,6 +806,25 @@
   gap: 14px;
 }
 
+#orderCustomerResults {
+  margin-top: 6px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+#orderCustomerResults:empty {
+  border: 0;
+}
+
+#orderCustomerResults .crm-search-row {
+  cursor: pointer;
+}
+
+#orderCustomerResults .crm-search-row:hover {
+  background: var(--primary-soft);
+}
+
 /* Backdrop for the sidebar drawer on mobile */
 
 .crm-backdrop {
