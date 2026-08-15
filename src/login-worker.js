@@ -8,17 +8,21 @@
  *   CRM tables  : user_details, order_details (existing tables — not created or renamed here)
  *
  * Routes
- *   GET  /                  service info
- *   GET  /api/health        D1 connectivity check
- *   POST /api/login         authenticate against login_mst
- *   GET  /api/users         search users              (requires Bearer token)
- *   POST /api/users         add user                  (requires Bearer token)
- *   GET  /api/stats         login_mst totals          (requires Bearer token)
- *   GET  /api/stats/yearly  login_mst year-wise stats (requires Bearer token)
- *   GET  /api/dashboard     CRM dashboard (KPIs, charts, tables) (requires Bearer token)
- *   GET  /api/search        global search: customers/orders/frame types (requires Bearer token)
- *   POST /api/customers     add a customer to user_details        (requires Bearer token)
- *   POST /api/orders        add an order to order_details         (requires Bearer token)
+ *   GET  /                          service info
+ *   GET  /api/health                D1 connectivity check
+ *   POST /api/login                 authenticate against login_mst
+ *   GET  /api/users                 search login_mst accounts        (Bearer)
+ *   POST /api/users                 add a login_mst account           (Bearer)
+ *   GET  /api/stats                 login_mst totals                  (Bearer)
+ *   GET  /api/stats/yearly          login_mst year-wise stats         (Bearer)
+ *   GET  /api/dashboard             CRM dashboard, period-scoped      (Bearer)
+ *   GET  /api/search                quick global search               (Bearer)
+ *   GET  /api/customers             list/search customers              (Bearer)
+ *   POST /api/customers             add a customer                    (Bearer)
+ *   GET  /api/customers/:id         customer profile + full order history (Bearer)
+ *   POST /api/orders                add an order                      (Bearer)
+ *   GET  /api/orders/:id            single order, full detail         (Bearer)
+ *   POST /api/orders/:id/bill       generate a bill number for an order (Bearer)
  */
 
 const AUTH_TABLE = 'login_mst';
@@ -272,6 +276,7 @@ async function getCrmSchema(env) {
   const hasOrderTable = orderCols.length > 0;
   const hasEnterDate = hasCustomerTable && customerCols.includes('enterdate');
   const hasOrderDate = hasOrderTable && orderCols.includes('orderdate');
+  const hasBillNo = hasOrderTable && orderCols.includes('billno');
 
   crmSchemaCache = {
     hasCustomerTable,
@@ -280,6 +285,7 @@ async function getCrmSchema(env) {
     orderCols,
     hasEnterDate,
     hasOrderDate,
+    hasBillNo,
     enterDateFormat: hasEnterDate ? await detectDateFormat(env, CUSTOMER_TABLE, 'enterdate') : 'no-column',
     orderDateFormat: hasOrderDate ? await detectDateFormat(env, ORDER_TABLE, 'orderdate') : 'no-column'
   };
@@ -307,25 +313,62 @@ function addDays(d, n) {
   return copy;
 }
 
+function firstOfMonth(year, month) {
+  return new Date(Date.UTC(year, month, 1));
+}
+
+function lastOfMonth(year, month) {
+  return new Date(Date.UTC(year, month + 1, 0));
+}
+
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
-/** Resolves a range token (today/7d/30d/month/year/custom) into a bounded, groupable window. */
+/**
+ * Resolves the top-level dashboard period selector into a bounded window,
+ * or `null` bounds for 'all' (no date filter at all).
+ *
+ *   week        this ISO week (Monday) through today
+ *   month       1st of this month through today
+ *   prev-month  the full previous calendar month
+ *   6m          rolling 6 months up to today
+ *   year        1st of this year through today
+ *   all         unbounded — every record
+ *   custom      explicit from/to (also used by callers that still want a
+ *               plain start/end window, e.g. a future custom-range picker)
+ */
 function computeRange(range, fromParam, toParam) {
   const now = istNow();
   const today = isoDate(now);
-  const KNOWN = ['today', '7d', '30d', 'month', 'year', 'custom'];
-  const normalized = KNOWN.includes(range) ? range : '30d';
+  const KNOWN = ['week', 'month', 'prev-month', '6m', 'year', 'all', 'custom'];
+  const normalized = KNOWN.includes(range) ? range : 'all';
 
-  if (normalized === 'today') return { range: normalized, start: today, end: today, groupBy: 'day' };
-  if (normalized === '7d') return { range: normalized, start: isoDate(addDays(now, -6)), end: today, groupBy: 'day' };
-  if (normalized === '30d') return { range: normalized, start: isoDate(addDays(now, -29)), end: today, groupBy: 'day' };
-  if (normalized === 'month') {
-    const first = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
-    return { range: normalized, start: isoDate(first), end: today, groupBy: 'day' };
+  if (normalized === 'all') return { range: normalized, start: null, end: null, groupBy: 'month' };
+
+  if (normalized === 'week') {
+    const dow = now.getUTCDay(); // 0 = Sunday
+    const sinceMonday = (dow + 6) % 7;
+    return { range: normalized, start: isoDate(addDays(now, -sinceMonday)), end: today, groupBy: 'day' };
   }
+
+  if (normalized === 'month') {
+    return { range: normalized, start: isoDate(firstOfMonth(now.getUTCFullYear(), now.getUTCMonth())), end: today, groupBy: 'day' };
+  }
+
+  if (normalized === 'prev-month') {
+    const y = now.getUTCMonth() === 0 ? now.getUTCFullYear() - 1 : now.getUTCFullYear();
+    const m = now.getUTCMonth() === 0 ? 11 : now.getUTCMonth() - 1;
+    return { range: normalized, start: isoDate(firstOfMonth(y, m)), end: isoDate(lastOfMonth(y, m)), groupBy: 'day' };
+  }
+
+  if (normalized === '6m') {
+    const y = now.getUTCFullYear();
+    const m = now.getUTCMonth();
+    const startMonth = new Date(Date.UTC(y, m - 5, 1));
+    return { range: normalized, start: isoDate(startMonth), end: today, groupBy: 'week' };
+  }
+
   if (normalized === 'year') {
-    const first = new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
-    return { range: normalized, start: isoDate(first), end: today, groupBy: 'month' };
+    return { range: normalized, start: isoDate(firstOfMonth(now.getUTCFullYear(), 0)), end: today, groupBy: 'month' };
   }
 
   // custom
@@ -335,6 +378,18 @@ function computeRange(range, fromParam, toParam) {
   if (start > end) [start, end] = [end, start];
   const spanDays = Math.round((new Date(end) - new Date(start)) / 86400000);
   return { range: normalized, start, end, groupBy: spanDays > 62 ? 'month' : 'day' };
+}
+
+/** WHERE-clause fragment (with leading space) + bind params for a date range, or '' for all-time. */
+function dateWhere(dateExprSql, start, end) {
+  if (!start || !end) return { clause: '', params: [] };
+  return { clause: `${dateExprSql} BETWEEN ? AND ?`, params: [start, end] };
+}
+
+function combineWhere(parts) {
+  const clauses = parts.map((p) => p.clause).filter(Boolean);
+  const params = parts.flatMap((p) => p.params);
+  return { sql: clauses.length ? `WHERE ${clauses.join(' AND ')}` : '', params };
 }
 
 function firstRow(result) {
@@ -604,9 +659,11 @@ function crmUnavailable(schema) {
 }
 
 /**
- * GET /api/dashboard?range=today|7d|30d|month|year|custom&from=YYYY-MM-DD&to=YYYY-MM-DD
+ * GET /api/dashboard?range=week|month|prev-month|6m|year|all&from=&to=
  *
  * One D1 batch round trip for every KPI/chart/table the dashboard needs.
+ * Headline KPIs (customers/orders/sales/billed/repeat) are scoped to the
+ * selected period — 'all' (the default) means unbounded, all-time.
  */
 async function handleDashboard(request, env) {
   const auth = await requireAuth(request, env);
@@ -633,6 +690,12 @@ async function handleDashboard(request, env) {
   const monthPrefix = today.slice(0, 7);
   const yearPrefix = today.slice(0, 4);
 
+  // Period WHERE fragment shared by every order_details-scoped query below.
+  const periodWhere = schema.hasOrderDate ? dateWhere(OD, start, end) : { clause: '', params: [] };
+  const periodWhereO = schema.hasOrderDate ? dateWhere(O_OD, start, end) : { clause: '', params: [] };
+  const billedExpr = schema.hasBillNo ? "billno IS NOT NULL AND TRIM(billno) <> ''" : null;
+  const noBillExpr = schema.hasBillNo ? "(billno IS NULL OR TRIM(billno) = '')" : null;
+
   const stmts = [];
   const at = {};
   const add = (key, sql, params = []) => {
@@ -640,46 +703,81 @@ async function handleDashboard(request, env) {
     stmts.push(env.DB.prepare(sql).bind(...params));
   };
 
-  add('totalCustomers', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE}`);
-  add('totalOrders', `SELECT COUNT(*) AS c FROM ${ORDER_TABLE}`);
-  add('totalSales', `SELECT COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE}`);
+  // ---- headline KPIs, period-scoped ----
+  if (schema.hasOrderDate) {
+    const w = combineWhere([periodWhere]);
+    add('periodOrders', `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} ${w.sql}`, w.params);
+    add(
+      'periodActiveCustomers',
+      `SELECT COUNT(DISTINCT userid) AS c FROM ${ORDER_TABLE} ${w.sql}`,
+      w.params
+    );
+    if (schema.hasBillNo) {
+      const billedWhere = combineWhere([periodWhere, { clause: billedExpr, params: [] }]);
+      add('billedOrders', `SELECT COUNT(*) AS c FROM ${ORDER_TABLE} ${billedWhere.sql}`, billedWhere.params);
+      const noBillWhere = combineWhere([periodWhere, { clause: noBillExpr, params: [] }]);
+      add('noBillOrders', `SELECT COUNT(*) AS c FROM ${ORDER_TABLE} ${noBillWhere.sql}`, noBillWhere.params);
+    }
+    add(
+      'repeatCustomers',
+      `SELECT COUNT(*) AS c FROM (SELECT userid FROM ${ORDER_TABLE} ${w.sql} GROUP BY userid HAVING COUNT(*) > 1)`,
+      w.params
+    );
+  }
+  add('totalCustomersAllTime', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE}`);
+
+  // ---- supplementary always-on KPIs (independent of the period selector) ----
+  const categoryWhere = combineWhere([periodWhere]);
   add(
     'category',
     `SELECT COALESCE(SUM(frameprice),0) AS frame, COALESCE(SUM(glassprice),0) AS glass,
             COALESCE(SUM(lensprice),0) AS lens, COALESCE(SUM(sunglassprice),0) AS sunglass,
             COALESCE(SUM(repairprice),0) AS repair
-     FROM ${ORDER_TABLE}`
+     FROM ${ORDER_TABLE} ${categoryWhere.sql}`,
+    categoryWhere.params
   );
+
+  const productWhere = combineWhere([periodWhere]);
   add(
     'productAnalytics',
     `SELECT COALESCE(NULLIF(TRIM(product),''),'Unspecified') AS product, COUNT(*) AS c, COALESCE(SUM(amount),0) AS s
-     FROM ${ORDER_TABLE} GROUP BY product ORDER BY c DESC LIMIT 12`
+     FROM ${ORDER_TABLE} ${productWhere.sql} GROUP BY product ORDER BY c DESC LIMIT 12`,
+    productWhere.params
   );
+  const frameWhere = combineWhere([periodWhere]);
   add(
     'frameAnalytics',
     `SELECT COALESCE(NULLIF(TRIM(frametype),''),'Unspecified') AS frametype, COUNT(*) AS c, COALESCE(SUM(frameprice),0) AS s
-     FROM ${ORDER_TABLE} GROUP BY frametype ORDER BY c DESC LIMIT 10`
+     FROM ${ORDER_TABLE} ${frameWhere.sql} GROUP BY frametype ORDER BY c DESC LIMIT 10`,
+    frameWhere.params
   );
+
+  const topCustWhere = combineWhere([periodWhereO]);
   add(
     'topCustomers',
     `SELECT u.userid, u.name, u.mobile, COUNT(o.orderid) AS total_orders, COALESCE(SUM(o.amount),0) AS total_spending,
             MAX(${schema.hasOrderDate ? O_OD : 'NULL'}) AS last_order_date
      FROM ${CUSTOMER_TABLE} u
-     LEFT JOIN ${ORDER_TABLE} o ON u.userid = o.userid
+     JOIN ${ORDER_TABLE} o ON u.userid = o.userid
+     ${topCustWhere.sql}
      GROUP BY u.userid, u.name, u.mobile
      ORDER BY total_spending DESC
-     LIMIT 10`
+     LIMIT 10`,
+    topCustWhere.params
   );
+
+  const recentWhere = combineWhere([periodWhereO]);
   add(
     'recentOrders',
     `SELECT o.orderid, o.billno, u.name AS customer_name, u.mobile AS customer_mobile, o.orderdate, o.product,
             o.frametype, o.descriptionframe, o.descriptionglass, o.amount
      FROM ${ORDER_TABLE} o
      LEFT JOIN ${CUSTOMER_TABLE} u ON o.userid = u.userid
+     ${recentWhere.sql}
      ORDER BY ${schema.hasOrderDate ? O_OD : 'o.orderid'} DESC, o.orderid DESC
-     LIMIT 10`
+     LIMIT 8`,
+    recentWhere.params
   );
-  add('custWithOrders', `SELECT COUNT(DISTINCT userid) AS c FROM ${ORDER_TABLE} WHERE userid IS NOT NULL`);
 
   if (schema.hasOrderDate) {
     add('today', `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${OD} = ?`, [today]);
@@ -687,24 +785,32 @@ async function handleDashboard(request, env) {
       yesterday
     ]);
     add(
-      'month',
+      'monthToDate',
       `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE substr(${OD},1,7) = ?`,
       [monthPrefix]
     );
-    add('year', `SELECT COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE substr(${OD},1,4) = ?`, [yearPrefix]);
+    add('yearToDate', `SELECT COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE substr(${OD},1,4) = ?`, [
+      yearPrefix
+    ]);
     add(
       'monthly',
       `SELECT substr(${OD},6,2) AS m, COUNT(*) AS c, COALESCE(SUM(amount),0) AS s
        FROM ${ORDER_TABLE} WHERE substr(${OD},1,4) = ? GROUP BY m`,
       [yearPrefix]
     );
-    const groupExpr = groupBy === 'month' ? `substr(${OD},1,7)` : OD;
+
+    // Sales Overview chart — grouped by the granularity computeRange chose.
+    let groupExpr = OD;
+    if (groupBy === 'month') groupExpr = `substr(${OD},1,7)`;
+    else if (groupBy === 'week') groupExpr = `date(${OD},'weekday 0','-6 days')`;
+    const overviewWhere = combineWhere([periodWhere]);
     add(
       'overview',
       `SELECT ${groupExpr} AS d, COUNT(*) AS c, COALESCE(SUM(amount),0) AS s
-       FROM ${ORDER_TABLE} WHERE ${OD} BETWEEN ? AND ? GROUP BY d ORDER BY d ASC`,
-      [start, end]
+       FROM ${ORDER_TABLE} ${overviewWhere.sql} GROUP BY d ORDER BY d ASC`,
+      overviewWhere.params
     );
+
     add(
       'biggestOrderMonth',
       `SELECT o.orderid, o.billno, o.amount, o.orderdate, u.name AS customer_name
@@ -727,6 +833,8 @@ async function handleDashboard(request, env) {
     add('recentCustomers', `SELECT userid, name, NULL AS enterdate FROM ${CUSTOMER_TABLE} ORDER BY userid DESC LIMIT 5`);
   }
 
+  add('custWithOrders', `SELECT COUNT(DISTINCT userid) AS c FROM ${ORDER_TABLE} WHERE userid IS NOT NULL`);
+
   let results;
   try {
     results = await env.DB.batch(stmts);
@@ -737,9 +845,13 @@ async function handleDashboard(request, env) {
   const row = (key) => firstRow(results[at[key]]);
   const rows = (key) => rowsOf(results[at[key]]);
 
-  const totalOrders = toNumber(row('totalOrders').c);
-  const totalSales = toNumber(row('totalSales').s);
-  const monthRow = schema.hasOrderDate ? row('month') : {};
+  const isAllTime = range === 'all' || !schema.hasOrderDate;
+  const periodOrdersRow = schema.hasOrderDate ? row('periodOrders') : {};
+  const periodOrders = toNumber(periodOrdersRow.c);
+  const periodSales = toNumber(periodOrdersRow.s);
+  const periodCustomers = isAllTime ? toNumber(row('totalCustomersAllTime').c) : toNumber(row('periodActiveCustomers').c);
+
+  const monthRow = schema.hasOrderDate ? row('monthToDate') : {};
   const todayRow = schema.hasOrderDate ? row('today') : {};
   const yesterdayRow = schema.hasOrderDate ? row('yesterday') : {};
 
@@ -761,10 +873,10 @@ async function handleDashboard(request, env) {
     return { month: label, sales: toNumber(r && r.s), orders: toNumber(r && r.c) };
   });
 
-  const totalCustomers = toNumber(row('totalCustomers').c);
+  const totalCustomersAllTime = toNumber(row('totalCustomersAllTime').c);
   const customersWithOrders = toNumber(row('custWithOrders').c);
-
   const category = row('category');
+
   const recentOrders = rows('recentOrders').map((r) => ({
     orderId: r.orderid,
     billNo: r.billno || null,
@@ -793,7 +905,7 @@ async function handleDashboard(request, env) {
   recentOrders.slice(0, 3).forEach((o) => {
     activity.push({
       type: 'order',
-      text: `New order${o.billNo ? ` · Bill #${o.billNo}` : ''} for ${o.customerName} — ₹${o.amount.toLocaleString(
+      text: `New order${o.billNo ? ` · Bill #${o.billNo}` : ' · No Bill'} for ${o.customerName} — ₹${o.amount.toLocaleString(
         'en-IN'
       )}`,
       at: o.orderDate
@@ -816,19 +928,27 @@ async function handleDashboard(request, env) {
     schema: {
       hasOrderDate: schema.hasOrderDate,
       hasEnterDate: schema.hasEnterDate,
+      hasBillNo: schema.hasBillNo,
       orderDateFormat: schema.orderDateFormat,
       enterDateFormat: schema.enterDateFormat
     },
     kpis: {
-      totalCustomers,
-      totalOrders,
-      totalSales,
-      averageOrderValue: totalOrders > 0 ? Math.round((totalSales / totalOrders) * 100) / 100 : 0,
+      range,
+      periodStart: start,
+      periodEnd: end,
+      totalCustomers: periodCustomers,
+      totalOrders: periodOrders,
+      totalSales: periodSales,
+      averageOrderValue: periodOrders > 0 ? Math.round((periodSales / periodOrders) * 100) / 100 : 0,
+      billedOrders: schema.hasBillNo ? toNumber(row('billedOrders').c) : null,
+      noBillOrders: schema.hasBillNo ? toNumber(row('noBillOrders').c) : null,
+      repeatCustomers: schema.hasOrderDate ? toNumber(row('repeatCustomers').c) : 0,
       todayOrders,
       todaySales,
       monthOrders: toNumber(monthRow.c),
       monthSales: toNumber(monthRow.s),
-      yearSales: schema.hasOrderDate ? toNumber(row('year').s) : 0
+      yearSales: schema.hasOrderDate ? toNumber(row('yearToDate').s) : 0,
+      totalCustomersAllTime
     },
     dailyPerformance: {
       todaySales,
@@ -878,9 +998,9 @@ async function handleDashboard(request, env) {
       newToday: schema.hasEnterDate ? toNumber(row('custNewToday').c) : 0,
       newThisMonth: schema.hasEnterDate ? toNumber(row('custNewMonth').c) : 0,
       newThisYear: schema.hasEnterDate ? toNumber(row('custNewYear').c) : 0,
-      totalCustomers,
+      totalCustomers: totalCustomersAllTime,
       customersWithOrders,
-      customersWithoutOrders: Math.max(0, totalCustomers - customersWithOrders)
+      customersWithoutOrders: Math.max(0, totalCustomersAllTime - customersWithOrders)
     },
     recentActivity: activity.slice(0, 8)
   });
@@ -889,6 +1009,7 @@ async function handleDashboard(request, env) {
 /**
  * GET /api/search?q=... — customers (name/mobile), orders (bill no/order id),
  * and frame types. Every branch is LIMITed; nothing loads the full tables.
+ * Used by the dashboard's quick global search box.
  */
 async function handleSearch(request, env) {
   const auth = await requireAuth(request, env);
@@ -935,6 +1056,75 @@ async function handleSearch(request, env) {
   });
 }
 
+/**
+ * GET /api/customers?q=&page=&limit= — the dedicated Search/Customers page.
+ * A single query box matches name, mobile, bill number OR order id: typing
+ * a bill number surfaces the customer that order belongs to.
+ */
+async function handleListCustomers(request, env) {
+  const auth = await requireAuth(request, env);
+  if (auth.error) return auth.error;
+
+  const schema = await getCrmSchema(env);
+  const unavailable = crmUnavailable(schema);
+  if (unavailable) return unavailable;
+
+  const url = new URL(request.url);
+  const query = String(url.searchParams.get('q') || '').trim();
+  const page = Math.max(1, parseInt(url.searchParams.get('page') || '1', 10) || 1);
+  const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get('limit') || '15', 10) || 15));
+  const offset = (page - 1) * limit;
+
+  const OD = schema.hasOrderDate ? dateExpr('o.orderdate', schema.orderDateFormat) : null;
+
+  let where = '';
+  let params = [];
+  if (query) {
+    const like = `%${query}%`;
+    where = `WHERE u.name LIKE ? OR u.mobile LIKE ?
+      OR EXISTS (SELECT 1 FROM ${ORDER_TABLE} o2 WHERE o2.userid = u.userid
+                 AND (o2.billno LIKE ? OR CAST(o2.orderid AS TEXT) LIKE ?))`;
+    params = [like, like, like, like];
+  }
+
+  let results;
+  try {
+    results = await env.DB.batch([
+      env.DB.prepare(`SELECT COUNT(*) AS total FROM ${CUSTOMER_TABLE} u ${where}`).bind(...params),
+      env.DB.prepare(
+        `SELECT u.userid, u.name, u.mobile, u.enterdate,
+                COUNT(o.orderid) AS total_orders, COALESCE(SUM(o.amount),0) AS total_spending,
+                MAX(${schema.hasOrderDate ? OD : 'NULL'}) AS last_order_date
+         FROM ${CUSTOMER_TABLE} u
+         LEFT JOIN ${ORDER_TABLE} o ON o.userid = u.userid
+         ${where}
+         GROUP BY u.userid, u.name, u.mobile, u.enterdate
+         ORDER BY u.userid DESC
+         LIMIT ? OFFSET ?`
+      ).bind(...params, limit, offset)
+    ]);
+  } catch (error) {
+    return json({ success: false, message: 'Could not search customers.' }, 500);
+  }
+
+  return json({
+    success: true,
+    query,
+    page,
+    limit,
+    total: toNumber(firstRow(results[0]).total),
+    customers: rowsOf(results[1]).map((r) => ({
+      userId: r.userid,
+      name: r.name || 'Unnamed',
+      mobile: r.mobile || null,
+      totalOrders: toNumber(r.total_orders),
+      totalSpending: toNumber(r.total_spending),
+      lastOrderDate: r.last_order_date || null,
+      customerSince: r.enterdate || null
+    }))
+  });
+}
+
 /** POST /api/customers — add a row to user_details. */
 async function handleAddCustomer(request, env) {
   const auth = await requireAuth(request, env);
@@ -956,10 +1146,16 @@ async function handleAddCustomer(request, env) {
   const address = String(payload.address || '').trim();
 
   if (name.length < 2) return json({ success: false, message: 'Customer name is required.' }, 400);
-  if (!/^\d{7,15}$/.test(mobile)) return json({ success: false, message: 'Enter a valid mobile number.' }, 400);
+  if (mobile && !/^\d{7,15}$/.test(mobile)) {
+    return json({ success: false, message: 'Enter a valid mobile number, or leave it blank.' }, 400);
+  }
 
-  const columns = ['name', 'mobile'];
-  const values = [name, mobile];
+  const columns = ['name'];
+  const values = [name];
+  if (mobile && schema.customerCols.includes('mobile')) {
+    columns.push('mobile');
+    values.push(mobile);
+  }
   if (schema.customerCols.includes('address')) {
     columns.push('address');
     values.push(address);
@@ -984,6 +1180,85 @@ async function handleAddCustomer(request, env) {
     { success: true, message: 'Customer added successfully', customer: { userId: result.meta?.last_row_id ?? null, name, mobile } },
     201
   );
+}
+
+/** GET /api/customers/:id — profile summary + the customer's FULL order history. */
+async function handleCustomerProfile(request, env, userId) {
+  const auth = await requireAuth(request, env);
+  if (auth.error) return auth.error;
+
+  const schema = await getCrmSchema(env);
+  const unavailable = crmUnavailable(schema);
+  if (unavailable) return unavailable;
+
+  const customer = await env.DB.prepare(`SELECT * FROM ${CUSTOMER_TABLE} WHERE userid = ? LIMIT 1`)
+    .bind(userId)
+    .first();
+  if (!customer) return json({ success: false, message: 'Customer not found.' }, 404);
+
+  const OD = schema.hasOrderDate ? dateExpr('orderdate', schema.orderDateFormat) : null;
+  const orderCols = [
+    'orderid',
+    'orderdate',
+    'billno',
+    'product',
+    'descriptionframe',
+    'descriptionglass',
+    'eyeweardetail',
+    'amount',
+    'frametype',
+    'framesize',
+    'frameprice',
+    'glassprice',
+    'lensprice',
+    'sunglassprice',
+    'repairprice'
+  ].filter((c) => schema.orderCols.includes(c));
+
+  const orders = await env.DB.prepare(
+    `SELECT ${orderCols.join(', ')} FROM ${ORDER_TABLE} WHERE userid = ?
+     ORDER BY ${schema.hasOrderDate ? OD : 'orderid'} DESC, orderid DESC`
+  )
+    .bind(userId)
+    .all();
+
+  const orderRows = rowsOf(orders).map((r) => ({
+    orderId: r.orderid,
+    orderDate: r.orderdate || null,
+    billNo: r.billno && String(r.billno).trim() ? r.billno : null,
+    product: r.product || null,
+    descriptionFrame: r.descriptionframe || null,
+    descriptionGlass: r.descriptionglass || null,
+    eyewearDetail: r.eyeweardetail || null,
+    amount: toNumber(r.amount),
+    frameType: r.frametype || null,
+    frameSize: r.framesize || null,
+    framePrice: r.frameprice === undefined ? null : toNumber(r.frameprice),
+    glassPrice: r.glassprice === undefined ? null : toNumber(r.glassprice),
+    lensPrice: r.lensprice === undefined ? null : toNumber(r.lensprice),
+    sunglassPrice: r.sunglassprice === undefined ? null : toNumber(r.sunglassprice),
+    repairPrice: r.repairprice === undefined ? null : toNumber(r.repairprice)
+  }));
+
+  const totalSpending = orderRows.reduce((sum, o) => sum + o.amount, 0);
+
+  return json({
+    success: true,
+    customer: {
+      userId: customer.userid,
+      name: customer.name || 'Unnamed',
+      mobile: customer.mobile || null,
+      address: customer.address || null,
+      customerSince: customer.enterdate || null
+    },
+    stats: {
+      totalOrders: orderRows.length,
+      totalPurchase: totalSpending,
+      lastOrderDate: orderRows[0] ? orderRows[0].orderDate : null,
+      averageOrderValue: orderRows.length ? Math.round((totalSpending / orderRows.length) * 100) / 100 : 0
+    },
+    orders: orderRows
+  });
 }
 
 /** POST /api/orders — add a row to order_details for an existing customer. */
@@ -1012,18 +1287,30 @@ async function handleAddOrder(request, env) {
     .first();
   if (!customer) return json({ success: false, message: 'Customer not found.' }, 400);
 
-  const amount = toNumber(payload.amount);
-  if (amount <= 0) return json({ success: false, message: 'Enter a valid order amount.' }, 400);
-
   const priceField = (key) => (payload[key] === undefined || payload[key] === '' ? null : toNumber(payload[key]));
   const textField = (key) => {
     const v = payload[key];
     return v === undefined || v === null || v === '' ? null : String(v).trim();
   };
 
+  // Bill number is always optional — a blank/omitted value stays NULL.
+  const billNo = textField('billno');
+
+  // Prefer an explicit total; otherwise derive it from the category prices,
+  // matching how the existing quick-add flow already computed it.
+  const priceSum =
+    (priceField('frameprice') || 0) +
+    (priceField('glassprice') || 0) +
+    (priceField('lensprice') || 0) +
+    (priceField('sunglassprice') || 0) +
+    (priceField('repairprice') || 0);
+  const amount = payload.amount !== undefined && payload.amount !== '' ? toNumber(payload.amount) : priceSum;
+
+  if (amount <= 0) return json({ success: false, message: 'Enter a valid order amount.' }, 400);
+
   const record = {
     userid: userId,
-    billno: textField('billno'),
+    billno: billNo,
     product: textField('product'),
     descriptionframe: textField('descriptionframe'),
     descriptionglass: textField('descriptionglass'),
@@ -1058,9 +1345,91 @@ async function handleAddOrder(request, env) {
   }
 
   return json(
-    { success: true, message: 'Order added successfully', order: { orderId: result.meta?.last_row_id ?? null, amount } },
+    {
+      success: true,
+      message: 'Order added successfully',
+      order: { orderId: result.meta?.last_row_id ?? null, amount, billNo }
+    },
     201
   );
+}
+
+/** GET /api/orders/:id — full order detail, joined with the customer. */
+async function handleOrderDetail(request, env, orderId) {
+  const auth = await requireAuth(request, env);
+  if (auth.error) return auth.error;
+
+  const schema = await getCrmSchema(env);
+  const unavailable = crmUnavailable(schema);
+  if (unavailable) return unavailable;
+
+  const row = await env.DB.prepare(
+    `SELECT o.*, u.name AS customer_name, u.mobile AS customer_mobile, u.address AS customer_address
+     FROM ${ORDER_TABLE} o LEFT JOIN ${CUSTOMER_TABLE} u ON o.userid = u.userid
+     WHERE o.orderid = ? LIMIT 1`
+  )
+    .bind(orderId)
+    .first();
+
+  if (!row) return json({ success: false, message: 'Order not found.' }, 404);
+
+  return json({
+    success: true,
+    order: {
+      orderId: row.orderid,
+      userId: row.userid,
+      orderDate: row.orderdate || null,
+      billNo: row.billno && String(row.billno).trim() ? row.billno : null,
+      product: row.product || null,
+      descriptionFrame: row.descriptionframe || null,
+      descriptionGlass: row.descriptionglass || null,
+      eyewearDetail: row.eyeweardetail || null,
+      amount: toNumber(row.amount),
+      frameType: row.frametype || null,
+      frameSize: row.framesize || null,
+      framePrice: row.frameprice === undefined ? null : toNumber(row.frameprice),
+      glassPrice: row.glassprice === undefined ? null : toNumber(row.glassprice),
+      lensPrice: row.lensprice === undefined ? null : toNumber(row.lensprice),
+      sunglassPrice: row.sunglassprice === undefined ? null : toNumber(row.sunglassprice),
+      repairPrice: row.repairprice === undefined ? null : toNumber(row.repairprice),
+      customer: {
+        userId: row.userid,
+        name: row.customer_name || 'Unnamed',
+        mobile: row.customer_mobile || null,
+        address: row.customer_address || null
+      }
+    }
+  });
+}
+
+/** POST /api/orders/:id/bill — assigns a bill number to an order that doesn't have one yet. */
+async function handleGenerateBill(request, env, orderId) {
+  const auth = await requireAuth(request, env);
+  if (auth.error) return auth.error;
+
+  const schema = await getCrmSchema(env);
+  const unavailable = crmUnavailable(schema);
+  if (unavailable) return unavailable;
+  if (!schema.hasBillNo) return json({ success: false, message: 'This database has no billno column.' }, 500);
+
+  const existing = await env.DB.prepare(`SELECT orderid, billno FROM ${ORDER_TABLE} WHERE orderid = ? LIMIT 1`)
+    .bind(orderId)
+    .first();
+  if (!existing) return json({ success: false, message: 'Order not found.' }, 404);
+
+  if (existing.billno && String(existing.billno).trim()) {
+    return json({ success: true, message: 'This order already has a bill number.', billNo: existing.billno });
+  }
+
+  const billNo = `SHCG-${String(orderId).padStart(5, '0')}`;
+
+  try {
+    await env.DB.prepare(`UPDATE ${ORDER_TABLE} SET billno = ? WHERE orderid = ?`).bind(billNo, orderId).run();
+  } catch (error) {
+    return json({ success: false, message: 'Could not generate the bill.' }, 500);
+  }
+
+  return json({ success: true, message: 'Bill generated successfully.', billNo });
 }
 
 /**
@@ -1080,6 +1449,7 @@ async function handleHealth(env) {
         orderTable: crm.hasOrderTable,
         hasOrderDate: crm.hasOrderDate,
         hasEnterDate: crm.hasEnterDate,
+        hasBillNo: crm.hasBillNo,
         orderDateFormat: crm.orderDateFormat,
         enterDateFormat: crm.enterDateFormat
       }
@@ -1114,8 +1484,12 @@ export default {
             'GET  /api/stats/yearly',
             'GET  /api/dashboard',
             'GET  /api/search',
+            'GET  /api/customers',
             'POST /api/customers',
-            'POST /api/orders'
+            'GET  /api/customers/:id',
+            'POST /api/orders',
+            'GET  /api/orders/:id',
+            'POST /api/orders/:id/bill'
           ]
         });
       }
@@ -1138,12 +1512,32 @@ export default {
         return handleSearch(request, env);
       }
       if (path === '/api/customers') {
-        if (request.method !== 'POST') return json({ success: false, message: 'Only POST is allowed.' }, 405);
-        return handleAddCustomer(request, env);
+        if (request.method === 'GET') return handleListCustomers(request, env);
+        if (request.method === 'POST') return handleAddCustomer(request, env);
+        return json({ success: false, message: 'Only GET and POST are allowed.' }, 405);
       }
+
+      const customerMatch = path.match(/^\/api\/customers\/([^/]+)$/);
+      if (customerMatch) {
+        if (request.method !== 'GET') return json({ success: false, message: 'Only GET is allowed.' }, 405);
+        return handleCustomerProfile(request, env, decodeURIComponent(customerMatch[1]));
+      }
+
       if (path === '/api/orders') {
         if (request.method !== 'POST') return json({ success: false, message: 'Only POST is allowed.' }, 405);
         return handleAddOrder(request, env);
+      }
+
+      const billMatch = path.match(/^\/api\/orders\/([^/]+)\/bill$/);
+      if (billMatch) {
+        if (request.method !== 'POST') return json({ success: false, message: 'Only POST is allowed.' }, 405);
+        return handleGenerateBill(request, env, decodeURIComponent(billMatch[1]));
+      }
+
+      const orderMatch = path.match(/^\/api\/orders\/([^/]+)$/);
+      if (orderMatch) {
+        if (request.method !== 'GET') return json({ success: false, message: 'Only GET is allowed.' }, 405);
+        return handleOrderDetail(request, env, decodeURIComponent(orderMatch[1]));
       }
 
       return json({ success: false, message: 'Not found.' }, 404);
