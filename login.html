@@ -4,129 +4,96 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shree Hari Chasma Ghar | Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/account.css" />
-    <link rel="stylesheet" href="/assets/css/login-cinematic.css" />
+    <link rel="stylesheet" href="/assets/css/login-premium.css" />
   </head>
   <!-- Worker API URL lives in assets/js/config.js only. -->
   <body class="login-page">
-    <div class="login-scene">
-      <div class="scene-bg" aria-hidden="true">
-        <div class="scene-glow"></div>
-        <div class="scene-glow scene-glow--secondary"></div>
-        <div class="scene-floor"></div>
+    <div class="bg-glow bg-glow-a" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-b" aria-hidden="true"></div>
 
-        <svg class="scene-frame-decor scene-frame-decor--a" viewBox="0 0 200 90" aria-hidden="true">
-          <rect x="8" y="18" width="70" height="50" rx="18"/>
-          <rect x="122" y="18" width="70" height="50" rx="18"/>
-          <path d="M78 42h44"/>
-          <path d="M0 42h8M192 42h8"/>
-        </svg>
-        <svg class="scene-frame-decor scene-frame-decor--b" viewBox="0 0 200 90" aria-hidden="true">
-          <rect x="8" y="18" width="70" height="50" rx="18"/>
-          <rect x="122" y="18" width="70" height="50" rx="18"/>
-          <path d="M78 42h44"/>
-          <path d="M0 42h8M192 42h8"/>
-        </svg>
-
-        <div class="scene-signage">
-          <span class="scene-signage-name">Shree Hari Chasma Ghar</span>
-          <span class="scene-signage-loc">New Ranip · Optical Shop CRM</span>
-        </div>
-      </div>
-
-      <div class="scene-stage">
-        <!-- Sofa (left) -->
-        <div class="scene-sofa" aria-hidden="true">
-          <svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg">
-            <rect x="10" y="30" width="300" height="90" rx="26" fill="#dbe6fb"/>
-            <rect x="10" y="30" width="34" height="110" rx="17" fill="#c3d6f7"/>
-            <rect x="276" y="30" width="34" height="110" rx="17" fill="#c3d6f7"/>
-            <rect x="30" y="52" width="120" height="58" rx="18" fill="#eef4ff"/>
-            <rect x="168" y="52" width="120" height="58" rx="18" fill="#eef4ff"/>
-            <rect x="14" y="118" width="292" height="30" rx="14" fill="#b9cef4"/>
-            <rect x="24" y="146" width="14" height="18" rx="4" fill="#9fb6e0"/>
-            <rect x="282" y="146" width="14" height="18" rx="4" fill="#9fb6e0"/>
-          </svg>
-        </div>
-
-        <!-- Character: entrance from right, walks to sofa, sits -->
-        <div class="character-track" id="characterTrack">
-          <div class="character">
-            <svg class="character-figure" viewBox="0 0 160 320" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <g class="char-limb char-leg-left">
-                <rect x="46" y="176" width="26" height="112" rx="13" fill="var(--char-trouser)"/>
-                <ellipse cx="59" cy="294" rx="18" ry="9" fill="var(--char-shoe)"/>
-              </g>
-              <g class="char-limb char-leg-right">
-                <rect x="88" y="176" width="26" height="112" rx="13" fill="var(--char-trouser)"/>
-                <ellipse cx="101" cy="294" rx="18" ry="9" fill="var(--char-shoe)"/>
-              </g>
-
-              <g class="char-limb char-arm-left">
-                <rect x="30" y="82" width="20" height="88" rx="10" fill="var(--char-suit)"/>
-                <ellipse cx="40" cy="176" rx="11" ry="11" fill="var(--char-skin)"/>
-              </g>
-              <g class="char-limb char-arm-right">
-                <rect x="110" y="82" width="20" height="88" rx="10" fill="var(--char-suit)"/>
-                <ellipse cx="120" cy="176" rx="11" ry="11" fill="var(--char-skin)"/>
-              </g>
-
-              <g class="char-body">
-                <rect x="38" y="70" width="84" height="110" rx="30" fill="var(--char-suit)"/>
-                <path d="M66 72 L94 72 L80 98 Z" fill="var(--char-shirt)"/>
-                <rect x="74" y="72" width="12" height="42" rx="3" fill="var(--lc-primary)"/>
-                <rect x="72" y="58" width="16" height="16" rx="4" fill="var(--char-skin)"/>
-                <circle cx="80" cy="38" r="23" fill="var(--char-skin)"/>
-                <path d="M57 32 Q57 13 80 13 Q103 13 103 32 L103 22 Q103 14 80 14 Q57 14 57 22 Z" fill="var(--char-hair)"/>
-              </g>
-            </svg>
+    <div class="login-shell">
+      <!-- LEFT: branding (hidden below 900px) -->
+      <aside class="brand-panel" aria-hidden="true">
+        <div class="brand-panel-inner">
+          <div class="brand-mark">
+            <img src="/assets/images/Logo.png" alt="Shree Hari Chasma Ghar" />
           </div>
+          <h1>Manage your optical business with clarity.</h1>
+          <p class="brand-tagline">The all-in-one CRM for Shree Hari Chasma Ghar, New Ranip — customers, orders, billing and insights in one place.</p>
+
+          <ul class="feature-list">
+            <li>
+              <span class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/></svg></span>
+              Customer Management
+            </li>
+            <li>
+              <span class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16l-1.4 11.2a1.5 1.5 0 0 1-1.5 1.3H6.9a1.5 1.5 0 0 1-1.5-1.3L4 8Z"/><path d="M8 8V6a4 4 0 1 1 8 0v2"/></svg></span>
+              Order Management
+            </li>
+            <li>
+              <span class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M4 20h16"/></svg></span>
+              Sales Tracking
+            </li>
+            <li>
+              <span class="feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6.5" cy="12" r="3.2"/><circle cx="17.5" cy="12" r="3.2"/><path d="M9.7 12h4.6M2 11l1.5 1M22 11l-1.5 1"/></svg></span>
+              Inventory Insights
+            </li>
+          </ul>
         </div>
+      </aside>
 
-        <!-- Login card -->
-        <div class="login-card-wrap">
-          <div class="login-card" id="loginCard">
-            <img class="login-brand-logo" src="/assets/images/Logo.png" alt="Shree Hari Chasma Ghar" />
-            <h1>Welcome Back</h1>
-            <p class="login-sub">Sign in to your Optical Shop CRM</p>
+      <!-- RIGHT: glass login card -->
+      <main class="form-panel">
+        <div class="login-card" id="loginCard">
+          <img class="login-card-logo" src="/assets/images/Logo.png" alt="Shree Hari Chasma Ghar" />
+          <h2>Welcome back</h2>
+          <p class="login-card-sub">Sign in to your Optical Shop CRM</p>
 
-            <form id="loginForm" novalidate>
-              <div class="field">
-                <label for="username" class="sr-only">Username or email</label>
-                <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <input type="text" id="username" name="username" autocomplete="username" placeholder="Username or email" required />
-              </div>
+          <form id="loginForm" novalidate>
+            <div class="field">
+              <label for="username" class="sr-only">Username or email</label>
+              <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <input type="text" id="username" name="username" autocomplete="username" placeholder="Username or email" required />
+            </div>
 
-              <div class="field">
-                <label for="password" class="sr-only">Password</label>
-                <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 1 1 8 0v3"/></svg>
-                <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Password" required />
-                <button type="button" class="toggle-password" id="togglePassword" aria-label="Show password" aria-pressed="false">
-                  <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3.2"/></svg>
-                  <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 10.7a3.2 3.2 0 0 0 4.5 4.5M7.4 7.5C4.7 9 2.9 11.4 1.5 12c0 0 3.5 7 10.5 7 2 0 3.7-.5 5.1-1.3M16.6 16.6C19 15 20.5 12 20.5 12s-1.6-3.2-4.7-5.2A12 12 0 0 0 12 5c-.8 0-1.6.1-2.3.3"/></svg>
-                </button>
-              </div>
-
-              <div class="form-row">
-                <label class="remember"><input type="checkbox" id="rememberMe" /> Remember me</label>
-                <a href="#" class="forgot">Forgot password?</a>
-              </div>
-
-              <button type="submit" id="loginButton">
-                <span class="btn-inner"><span class="spinner" aria-hidden="true"></span><span class="btn-text">Sign In</span></span>
+            <div class="field">
+              <label for="password" class="sr-only">Password</label>
+              <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 1 1 8 0v3"/></svg>
+              <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Password" required />
+              <button type="button" class="toggle-password" id="togglePassword" aria-label="Show password" aria-pressed="false">
+                <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3.2"/></svg>
+                <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 10.7a3.2 3.2 0 0 0 4.5 4.5M7.4 7.5C4.7 9 2.9 11.4 1.5 12c0 0 3.5 7 10.5 7 2 0 3.7-.5 5.1-1.3M16.6 16.6C19 15 20.5 12 20.5 12s-1.6-3.2-4.7-5.2A12 12 0 0 0 12 5c-.8 0-1.6.1-2.3.3"/></svg>
               </button>
-              <div id="loginMessage" aria-live="polite"></div>
-            </form>
-          </div>
+            </div>
+
+            <div class="form-row">
+              <label class="remember"><input type="checkbox" id="rememberMe" /> Remember me</label>
+              <a href="#" class="forgot">Forgot password?</a>
+            </div>
+
+            <button type="submit" id="loginButton">
+              <span class="btn-inner"><span class="spinner" aria-hidden="true"></span><span class="btn-text">Sign In</span></span>
+            </button>
+            <div id="loginMessage" aria-live="polite"></div>
+          </form>
+
+          <p class="login-footer-note">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 3 6.5V12c0 5 3.8 8.7 9 10 5.2-1.3 9-5 9-10V6.5L12 2Z"/></svg>
+            Secured connection · Your data is protected
+          </p>
         </div>
-      </div>
+      </main>
     </div>
 
-    <div class="scene-exit-veil" id="sceneExitVeil" aria-hidden="true"></div>
+    <div class="login-exit-veil" id="sceneExitVeil" aria-hidden="true"></div>
 
     <script src="/assets/js/config.js"></script>
     <script src="/assets/js/session.js"></script>
-    <script src="/assets/js/login-scene.js"></script>
+    <script src="/assets/js/login-ui.js"></script>
     <script src="/assets/js/auth.js"></script>
   </body>
 </html>

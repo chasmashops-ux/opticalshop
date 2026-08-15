@@ -6,7 +6,7 @@
  * The password is only read from the input, posted, and discarded.
  *
  * Owns the API call and its result ONLY. Animation is a presentational
- * concern that lives in assets/js/login-scene.js (window.SHCG_SCENE);
+ * concern that lives in assets/js/login-ui.js (window.SHCG_SCENE);
  * this file just calls into it after the real result is already known —
  * a successful redirect never depends on the animation working.
  */

@@ -1,0 +1,639 @@
+/**
+ * Premium SaaS login page (login.html).
+ *
+ * Two-column composition: a dark indigo brand panel (left, hidden below
+ * 900px) and a light glass login card (right, full-width on mobile).
+ * All tokens are CSS custom properties on :root so the palette is a
+ * one-place edit later.
+ */
+
+:root {
+  --primary: #4338ca;
+  --primary-hover: #3730a3;
+  --accent: #06b6d4;
+  --background: #f4f6fb;
+  --surface: rgba(255, 255, 255, 0.72);
+  --surface-border: rgba(15, 23, 42, 0.08);
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --error: #dc2626;
+  --error-soft: #fef2f2;
+  --success: #16a34a;
+  --success-soft: #ecfdf3;
+  --radius-lg: 26px;
+  --radius-md: 14px;
+  --font-sans: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.login-page {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--background);
+  overflow-x: hidden;
+}
+
+/* ------------------------------------------------------------------ *
+ * Shell
+ * ------------------------------------------------------------------ */
+
+.login-shell {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  opacity: 0;
+  animation: shellFadeIn 0.6s ease forwards;
+}
+
+@keyframes shellFadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Soft drifting glow shapes, shared across both panels */
+
+.bg-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+.bg-glow-a {
+  top: -12%;
+  left: 8%;
+  width: 46vw;
+  height: 46vw;
+  max-width: 620px;
+  max-height: 620px;
+  background: radial-gradient(circle, rgba(67, 56, 202, 0.35), transparent 70%);
+  animation: glowDriftA 16s ease-in-out infinite;
+}
+
+.bg-glow-b {
+  bottom: -16%;
+  right: 6%;
+  width: 38vw;
+  height: 38vw;
+  max-width: 520px;
+  max-height: 520px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.28), transparent 70%);
+  animation: glowDriftB 18s ease-in-out infinite;
+}
+
+@keyframes glowDriftA {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(3%, 4%);
+  }
+}
+
+@keyframes glowDriftB {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-4%, -3%);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Brand panel (left, desktop only)
+ * ------------------------------------------------------------------ */
+
+.brand-panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  padding: 6vh 5vw;
+  background: linear-gradient(155deg, #0f172a 0%, #1e1b4b 55%, #312e81 100%);
+  color: #fff;
+  overflow: hidden;
+}
+
+.brand-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 85% 15%, rgba(6, 182, 212, 0.22), transparent 45%);
+  pointer-events: none;
+}
+
+.brand-panel-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 460px;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 42px;
+}
+
+.brand-mark img {
+  height: 38px;
+  width: auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.95;
+}
+
+.brand-panel h1 {
+  margin: 0 0 16px;
+  font-size: clamp(1.7rem, 2.6vw, 2.35rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.brand-tagline {
+  margin: 0 0 40px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.feature-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.feature-list li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.feature-list .feature-icon {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.feature-list svg {
+  width: 18px;
+  height: 18px;
+  stroke: #a5b4fc;
+  fill: none;
+  stroke-width: 1.8;
+}
+
+/* ------------------------------------------------------------------ *
+ * Form panel (right) + glass card
+ * ------------------------------------------------------------------ */
+
+.form-panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6vh 6vw;
+}
+
+.login-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.14), 0 2px 6px rgba(15, 23, 42, 0.05);
+  padding: 42px 38px;
+  opacity: 0;
+  transform: translateY(24px) scale(0.98);
+  animation: cardEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.15s forwards;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+@keyframes cardEnter {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.login-card.is-leaving {
+  opacity: 0;
+  transform: translateY(-12px) scale(0.98);
+}
+
+.login-card.is-shaking {
+  animation: cardShake 0.4s ease;
+}
+
+@keyframes cardShake {
+  10%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  80% {
+    transform: translateX(4px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-6px);
+  }
+  40%,
+  60% {
+    transform: translateX(6px);
+  }
+}
+
+.login-card-logo {
+  height: 34px;
+  width: auto;
+  display: block;
+  margin: 0 auto 22px;
+}
+
+.login-card h2 {
+  margin: 0 0 6px;
+  font-size: 1.55rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.login-card-sub {
+  margin: 0 0 28px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+#loginForm {
+  display: grid;
+  gap: 16px;
+}
+
+.field {
+  position: relative;
+}
+
+.field svg.field-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  stroke: var(--text-secondary);
+  fill: none;
+  stroke-width: 1.8;
+  pointer-events: none;
+  transition: stroke 0.2s ease;
+}
+
+.field input {
+  width: 100%;
+  height: 52px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: rgba(255, 255, 255, 0.85);
+  padding: 14px 16px 14px 44px;
+  font-size: 0.96rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.field input::placeholder {
+  color: #9aa5b8;
+}
+
+.field input#password {
+  padding-right: 46px;
+}
+
+.field input:focus {
+  border-color: var(--primary);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(67, 56, 202, 0.12);
+}
+
+.field input:focus + svg.field-icon,
+.field:focus-within svg.field-icon {
+  stroke: var(--primary);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.toggle-password:hover {
+  background: rgba(67, 56, 202, 0.08);
+  color: var(--primary);
+}
+
+.toggle-password svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+}
+
+.toggle-password .icon-eye-off {
+  display: none;
+}
+
+.toggle-password[aria-pressed="true"] .icon-eye {
+  display: none;
+}
+
+.toggle-password[aria-pressed="true"] .icon-eye-off {
+  display: block;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.88rem;
+}
+
+.remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.remember input {
+  accent-color: var(--primary);
+  width: 15px;
+  height: 15px;
+}
+
+.forgot {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.forgot:hover {
+  text-decoration: underline;
+}
+
+button[type="submit"] {
+  height: 52px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--primary), #6d28d9);
+  color: #fff;
+  font-size: 0.96rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  box-shadow: 0 14px 30px rgba(67, 56, 202, 0.28);
+  margin-top: 4px;
+}
+
+button[type="submit"]:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+button[type="submit"]:active:not(:disabled) {
+  transform: translateY(0);
+  filter: brightness(0.98);
+}
+
+button[type="submit"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+  transform: none;
+  box-shadow: none;
+}
+
+button[type="submit"] .btn-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.spinner {
+  display: none;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: spin 0.7s linear infinite;
+}
+
+button[type="submit"].is-loading .spinner {
+  display: inline-block;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#loginMessage {
+  min-height: 20px;
+  margin-top: 2px;
+  text-align: center;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+#loginMessage.error {
+  color: var(--error);
+}
+
+#loginMessage.success {
+  color: var(--success);
+}
+
+.login-footer-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin: 26px 0 0;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.login-footer-note svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  flex-shrink: 0;
+}
+
+/* Focus visibility */
+
+button[type="submit"]:focus-visible,
+.field input:focus-visible,
+.toggle-password:focus-visible,
+.forgot:focus-visible,
+.remember input:focus-visible {
+  outline: 2.5px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Exit veil — brief full-page fade right before navigating to the
+ * dashboard on a successful login.
+ * ------------------------------------------------------------------ */
+
+.login-exit-veil {
+  position: fixed;
+  inset: 0;
+  background: var(--background);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50;
+  transition: opacity 0.35s ease;
+}
+
+.login-exit-veil.is-active {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------ *
+ * Reduced motion
+ * ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .login-shell,
+  .login-card {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .bg-glow {
+    animation: none !important;
+  }
+
+  .login-card.is-shaking {
+    animation: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Responsive
+ *
+ * Conceptually verified against 320/375/390/414/768/1024/1366/1920px:
+ * brand panel drops out entirely below 900px so the card never has to
+ * compete for width; the card itself only shrinks via viewport padding,
+ * never a fixed width, so it can't overflow at 320px.
+ * ------------------------------------------------------------------ */
+
+@media (max-width: 900px) {
+  .login-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-panel {
+    display: none;
+  }
+
+  .form-panel {
+    padding: 8vh 6vw;
+    min-height: 100vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-panel {
+    padding: 32px 16px;
+  }
+
+  .login-card {
+    padding: 32px 22px;
+    border-radius: 20px;
+  }
+
+  .login-card h2 {
+    font-size: 1.35rem;
+  }
+
+  .field input {
+    height: 50px;
+    font-size: 0.94rem;
+  }
+
+  button[type="submit"] {
+    height: 50px;
+  }
+}
+
+@media (max-width: 360px) {
+  .login-card {
+    padding: 26px 16px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
