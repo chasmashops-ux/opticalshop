@@ -40,8 +40,6 @@
       return;
     }
 
-    document.getElementById('newOrderForCustomer').href = '/crm/new-order.html?customerId=' + encodeURIComponent(userId);
-
     AUTH.authFetch(CONFIG.customerPath(userId))
       .then(function (data) {
         document.querySelectorAll('[data-skeleton]').forEach(function (el) {

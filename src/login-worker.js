@@ -381,10 +381,65 @@ function computeRange(range, fromParam, toParam) {
   return { range: normalized, start, end, groupBy: spanDays > 62 ? 'month' : 'day' };
 }
 
-/** WHERE-clause fragment (with leading space) + bind params for a date range, or '' for all-time. */
-function dateWhere(dateExprSql, start, end) {
-  if (!start || !end) return { clause: '', params: [] };
-  return { clause: `${dateExprSql} BETWEEN ? AND ?`, params: [start, end] };
+/** True when the on-disk format already sorts correctly as plain text. */
+function isSargableFormat(format) {
+  return format === 'iso-dash' || format === 'iso-slash';
+}
+
+/** Converts an ISO 'YYYY-MM-DD' bind value to match the column's on-disk separator. */
+function toStoredDate(iso, format) {
+  return format === 'iso-slash' ? iso.split('-').join('/') : iso;
+}
+
+/**
+ * WHERE-clause fragment (inclusive startIso..endIso, both 'YYYY-MM-DD'),
+ * or '' for all-time.
+ *
+ * For iso-dash/iso-slash data (already sorts as plain text) this compares
+ * the RAW column directly with a half-open range — no substr()/function
+ * wrapping — so SQLite can actually use an index on the column. Wrapping
+ * an indexed column in a function makes a predicate non-sargable: SQLite
+ * has to evaluate the function on every single row to know which match,
+ * i.e. a full table scan regardless of any index. This was the majority
+ * of this Worker's D1 "rows read" — a table scan on order_details for
+ * every date-filtered query, every dashboard/statistics load.
+ *
+ * dmy-* formats genuinely need day/month reordering, so they fall back to
+ * the wrapped expression — correct, but still a scan; that's a data-format
+ * limitation, not something a query rewrite alone can fix.
+ */
+function sargableDateWhere(colRef, format, startIso, endIso) {
+  if (!startIso || !endIso) return { clause: '', params: [] };
+  if (isSargableFormat(format)) {
+    const endExclusive = isoDate(addDays(new Date(`${endIso}T00:00:00Z`), 1));
+    return {
+      clause: `${colRef} >= ? AND ${colRef} < ?`,
+      params: [toStoredDate(startIso, format), toStoredDate(endExclusive, format)]
+    };
+  }
+  const expr = dateExpr(colRef, format);
+  return { clause: `${expr} BETWEEN ? AND ?`, params: [startIso, endIso] };
+}
+
+/** Same idea as sargableDateWhere, for a single exact day. */
+function sargableDayWhere(colRef, format, dayIso) {
+  return sargableDateWhere(colRef, format, dayIso, dayIso);
+}
+
+/** Same idea, for a 'YYYY-MM' month prefix. */
+function sargableMonthWhere(colRef, format, yearMonth) {
+  const [y, m] = yearMonth.split('-').map(Number);
+  const start = isoDate(firstOfMonth(y, m - 1));
+  const end = isoDate(lastOfMonth(y, m - 1));
+  return sargableDateWhere(colRef, format, start, end);
+}
+
+/** Same idea, for a 'YYYY' year prefix. */
+function sargableYearWhere(colRef, format, year) {
+  const y = Number(year);
+  const start = isoDate(firstOfMonth(y, 0));
+  const end = isoDate(lastOfMonth(y, 11));
+  return sargableDateWhere(colRef, format, start, end);
 }
 
 function combineWhere(parts) {
@@ -681,6 +736,10 @@ async function handleDashboard(request, env) {
     url.searchParams.get('to')
   );
 
+  // OD/O_OD (normalized to 'YYYY-MM-DD') are for SELECT/GROUP BY/ORDER BY
+  // only — grouping/sorting on a computed expression is fine. Every WHERE
+  // filter below uses sargableDateWhere() et al instead, which compare the
+  // RAW column directly so an index on it can actually be used.
   const OD = schema.hasOrderDate ? dateExpr('orderdate', schema.orderDateFormat) : null;
   const O_OD = schema.hasOrderDate ? dateExpr('o.orderdate', schema.orderDateFormat) : null;
   const ED = schema.hasEnterDate ? dateExpr('enterdate', schema.enterDateFormat) : null;
@@ -692,8 +751,12 @@ async function handleDashboard(request, env) {
   const yearPrefix = today.slice(0, 4);
 
   // Period WHERE fragment shared by every order_details-scoped query below.
-  const periodWhere = schema.hasOrderDate ? dateWhere(OD, start, end) : { clause: '', params: [] };
-  const periodWhereO = schema.hasOrderDate ? dateWhere(O_OD, start, end) : { clause: '', params: [] };
+  const periodWhere = schema.hasOrderDate
+    ? sargableDateWhere('orderdate', schema.orderDateFormat, start, end)
+    : { clause: '', params: [] };
+  const periodWhereO = schema.hasOrderDate
+    ? sargableDateWhere('o.orderdate', schema.orderDateFormat, start, end)
+    : { clause: '', params: [] };
   const billedExpr = schema.hasBillNo ? "billno IS NOT NULL AND TRIM(billno) <> ''" : null;
   const noBillExpr = schema.hasBillNo ? "(billno IS NULL OR TRIM(billno) = '')" : null;
 
@@ -792,23 +855,36 @@ async function handleDashboard(request, env) {
   const monthlyYear = start && (range === 'year' || range === 'custom') ? start.slice(0, 4) : yearPrefix;
 
   if (schema.hasOrderDate) {
-    add('today', `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${OD} = ?`, [today]);
-    add('yesterday', `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${OD} = ?`, [
-      yesterday
-    ]);
+    const todayWhere = sargableDayWhere('orderdate', schema.orderDateFormat, today);
+    add('today', `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${todayWhere.clause}`, todayWhere.params);
+
+    const yesterdayWhere = sargableDayWhere('orderdate', schema.orderDateFormat, yesterday);
+    add(
+      'yesterday',
+      `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${yesterdayWhere.clause}`,
+      yesterdayWhere.params
+    );
+
+    const monthToDateWhere = sargableMonthWhere('orderdate', schema.orderDateFormat, monthPrefix);
     add(
       'monthToDate',
-      `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE substr(${OD},1,7) = ?`,
-      [monthPrefix]
+      `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${monthToDateWhere.clause}`,
+      monthToDateWhere.params
     );
-    add('yearToDate', `SELECT COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE substr(${OD},1,4) = ?`, [
-      yearPrefix
-    ]);
+
+    const yearToDateWhere = sargableYearWhere('orderdate', schema.orderDateFormat, yearPrefix);
+    add(
+      'yearToDate',
+      `SELECT COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${yearToDateWhere.clause}`,
+      yearToDateWhere.params
+    );
+
+    const monthlyYearWhere = sargableYearWhere('orderdate', schema.orderDateFormat, monthlyYear);
     add(
       'monthly',
       `SELECT substr(${OD},6,2) AS m, COUNT(*) AS c, COALESCE(SUM(amount),0) AS s
-       FROM ${ORDER_TABLE} WHERE substr(${OD},1,4) = ? GROUP BY m`,
-      [monthlyYear]
+       FROM ${ORDER_TABLE} WHERE ${monthlyYearWhere.clause} GROUP BY m`,
+      monthlyYearWhere.params
     );
 
     // Sales Overview chart — grouped by the granularity computeRange chose.
@@ -823,20 +899,26 @@ async function handleDashboard(request, env) {
       overviewWhere.params
     );
 
+    const biggestOrderWhere = sargableMonthWhere('o.orderdate', schema.orderDateFormat, monthPrefix);
     add(
       'biggestOrderMonth',
       `SELECT o.orderid, o.billno, o.amount, o.orderdate, u.name AS customer_name
        FROM ${ORDER_TABLE} o LEFT JOIN ${CUSTOMER_TABLE} u ON o.userid = u.userid
-       WHERE substr(${O_OD},1,7) = ?
+       WHERE ${biggestOrderWhere.clause}
        ORDER BY o.amount DESC LIMIT 1`,
-      [monthPrefix]
+      biggestOrderWhere.params
     );
   }
 
   if (schema.hasEnterDate) {
-    add('custNewToday', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE} WHERE ${ED} = ?`, [today]);
-    add('custNewMonth', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE} WHERE substr(${ED},1,7) = ?`, [monthPrefix]);
-    add('custNewYear', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE} WHERE substr(${ED},1,4) = ?`, [yearPrefix]);
+    const custNewTodayWhere = sargableDayWhere('enterdate', schema.enterDateFormat, today);
+    add('custNewToday', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE} WHERE ${custNewTodayWhere.clause}`, custNewTodayWhere.params);
+
+    const custNewMonthWhere = sargableMonthWhere('enterdate', schema.enterDateFormat, monthPrefix);
+    add('custNewMonth', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE} WHERE ${custNewMonthWhere.clause}`, custNewMonthWhere.params);
+
+    const custNewYearWhere = sargableYearWhere('enterdate', schema.enterDateFormat, yearPrefix);
+    add('custNewYear', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE} WHERE ${custNewYearWhere.clause}`, custNewYearWhere.params);
     add(
       'recentCustomers',
       `SELECT userid, name, enterdate FROM ${CUSTOMER_TABLE} ORDER BY ${ED} DESC, userid DESC LIMIT 5`

@@ -19,16 +19,8 @@
 
     <div id="pageContent" hidden>
       <section class="crm-welcome">
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:14px;">
-          <div>
-            <h1>Search Customers &amp; Orders</h1>
-            <p>Find a customer by name or mobile — or find an order by bill number or order ID.</p>
-          </div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <a class="ghost-btn" href="/crm/new-order.html" style="text-decoration:none; display:inline-flex; align-items:center;">+ New Order</a>
-            <button class="primary-btn" type="button" id="showAddCustomerBtn">+ New Customer</button>
-          </div>
-        </div>
+        <h1>Search Customers &amp; Orders</h1>
+        <p>Find a customer by name or mobile — or find an order by bill number or order ID.</p>
       </section>
 
       <div class="crm-error-banner" id="crmError"></div>
@@ -59,31 +51,6 @@
 
         <div class="form-message" id="pageMessage"></div>
       </section>
-    </div>
-
-    <div class="modal-overlay" id="addCustomerModal">
-      <div class="modal-box">
-        <div class="modal-head">
-          <h3>New Customer</h3>
-          <button class="modal-close" type="button" data-close>&times;</button>
-        </div>
-        <form id="addCustomerForm" class="form-grid">
-          <div class="form-field">
-            <label for="custName">Name</label>
-            <input type="text" id="custName" required minlength="2" />
-          </div>
-          <div class="form-field">
-            <label for="custMobile">Mobile (optional)</label>
-            <input type="tel" id="custMobile" pattern="\d{7,15}" placeholder="9876543210" />
-          </div>
-          <div class="form-field">
-            <label for="custAddress">Address (optional)</label>
-            <input type="text" id="custAddress" />
-          </div>
-          <button class="primary-btn" type="submit" id="addCustomerSubmit">Add Customer</button>
-          <div class="form-message" id="addCustomerMessage"></div>
-        </form>
-      </div>
     </div>
 
     <script src="/assets/js/crm-search.js"></script>

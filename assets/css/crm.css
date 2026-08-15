@@ -329,7 +329,8 @@
   padding: 24px;
   display: grid;
   gap: 22px;
-  max-width: 1400px;
+  /* No max-width: fills the available width instead of leaving a dead
+     empty band on the right on wide desktop screens. */
 }
 
 .crm-welcome h1 {
@@ -518,14 +519,14 @@
   display: grid;
   grid-template-columns: 1.6fr 1fr;
   gap: 20px;
-  align-items: start;
+  align-items: stretch;
 }
 
 .crm-grid-2-even {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
-  align-items: start;
+  align-items: stretch;
 }
 
 /* Range filter */

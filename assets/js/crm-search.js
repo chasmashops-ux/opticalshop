@@ -136,66 +136,6 @@
       load();
     });
 
-    initAddCustomerModal(load);
-
     load();
   });
-
-  /** "+ New Customer" modal — reused wherever a customer needs adding on this page. */
-  function initAddCustomerModal(onSaved) {
-    var AUTH = window.SHCG_AUTH;
-    var CONFIG = window.SHCG_CONFIG;
-    var overlay = document.getElementById('addCustomerModal');
-
-    document.getElementById('showAddCustomerBtn').addEventListener('click', function () {
-      overlay.classList.add('open');
-    });
-    overlay.querySelectorAll('[data-close]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        overlay.classList.remove('open');
-      });
-    });
-    overlay.addEventListener('click', function (e) {
-      if (e.target === overlay) overlay.classList.remove('open');
-    });
-
-    var form = document.getElementById('addCustomerForm');
-    var message = document.getElementById('addCustomerMessage');
-    var button = document.getElementById('addCustomerSubmit');
-
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var name = document.getElementById('custName').value.trim();
-      var mobile = document.getElementById('custMobile').value.trim();
-      var address = document.getElementById('custAddress').value.trim();
-
-      message.textContent = '';
-      message.className = 'form-message';
-      button.disabled = true;
-      button.textContent = 'Saving...';
-
-      AUTH.authFetch(CONFIG.endpoints.customers, {
-        method: 'POST',
-        body: JSON.stringify({ name: name, mobile: mobile, address: address })
-      })
-        .then(function (result) {
-          message.textContent = result.message;
-          message.className = 'form-message success';
-          form.reset();
-          onSaved();
-          setTimeout(function () {
-            overlay.classList.remove('open');
-            message.textContent = '';
-          }, 900);
-        })
-        .catch(function (err) {
-          message.textContent = err.message;
-          message.className = 'form-message error';
-        })
-        .finally(function () {
-          button.disabled = false;
-          button.textContent = 'Add Customer';
-        });
-    });
-  }
 })();
