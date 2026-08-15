@@ -44,7 +44,8 @@
                 <input type="password" id="confirmPassword" minlength="4" autocomplete="new-password" required />
               </div>
 
-              <div class="form-field">
+              <!-- Hidden automatically when login_mst has no role column. -->
+              <div class="form-field" id="roleField" hidden>
                 <label for="newRole">Role</label>
                 <select id="newRole">
                   <option value="staff">Staff</option>
@@ -91,6 +92,10 @@
             var data = await window.SHCG_AUTH.authFetch(
               window.SHCG_CONFIG.endpoints.users + '?limit=6&page=1'
             );
+
+            // Only offer a Role choice if login_mst can actually store one.
+            document.getElementById('roleField').hidden = !data.hasRoleColumn;
+
             recentList.innerHTML = data.users.length
               ? data.users
                   .map(function (user) {
@@ -116,7 +121,8 @@
           var username = document.getElementById('newUsername').value.trim();
           var password = document.getElementById('newPassword').value;
           var confirm = document.getElementById('confirmPassword').value;
-          var role = document.getElementById('newRole').value;
+          var roleField = document.getElementById('roleField');
+          var role = roleField.hidden ? 'admin' : document.getElementById('newRole').value;
 
           if (username.length < 3) {
             setMessage('Username must be at least 3 characters.', 'error');
@@ -142,7 +148,14 @@
               body: JSON.stringify({ username: username, password: password, role: role })
             });
             form.reset();
-            setMessage(result.message + ' (' + username + ')', 'success');
+            setMessage(
+              result.message +
+                ' (' +
+                username +
+                ')' +
+                (result.roleStored === false ? ' — note: login_mst has no role column, so the role was not stored.' : ''),
+              'success'
+            );
             loadRecent();
           } catch (error) {
             setMessage(error.message, 'error');

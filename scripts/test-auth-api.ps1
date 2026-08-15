@@ -1,13 +1,14 @@
 <#
     Tests the deployed opticalshop Worker API.
+    Works on Windows PowerShell 5.1 and PowerShell 7+.
 
     Usage:
-        powershell -File scripts/test-auth-api.ps1
-        powershell -File scripts/test-auth-api.ps1 -Username admin -Password secret
+        powershell -ExecutionPolicy Bypass -File scripts/test-auth-api.ps1
+        powershell -ExecutionPolicy Bypass -File scripts/test-auth-api.ps1 -Username admin -Password secret
 
     Passing -Username/-Password also runs the authenticated tests
     (search user / add user / year-wise stats). The password is only sent to
-    the Worker over HTTPS; it is never written to the console or to a file.
+    the Worker over HTTPS; it is never printed or written to a file.
 #>
 param(
     [string]$Base = 'https://opticalshop.chasmashops.workers.dev',
@@ -15,17 +16,58 @@ param(
     [string]$Password
 )
 
-$ErrorActionPreference = 'Continue'
-$pass = 0
-$fail = 0
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+$script:pass = 0
+$script:fail = 0
+
+function Invoke-Api {
+    param([string]$Path, [string]$Method = 'GET', $Body, [string]$Token)
+
+    $request = [System.Net.HttpWebRequest]::Create("$Base$Path")
+    $request.Method = $Method
+    $request.Accept = 'application/json'
+    if ($Token) { $request.Headers.Add('Authorization', "Bearer $Token") }
+
+    if ($Body) {
+        $json = $Body | ConvertTo-Json -Compress
+        $bytes = [Text.Encoding]::UTF8.GetBytes($json)
+        $request.ContentType = 'application/json'
+        $request.ContentLength = $bytes.Length
+        $stream = $request.GetRequestStream()
+        $stream.Write($bytes, 0, $bytes.Length)
+        $stream.Close()
+    }
+
+    try {
+        $response = $request.GetResponse()
+    } catch [System.Net.WebException] {
+        if (-not $_.Exception.Response) { throw }
+        $response = $_.Exception.Response
+    }
+
+    $reader = New-Object IO.StreamReader($response.GetResponseStream())
+    $content = $reader.ReadToEnd()
+    $reader.Close()
+
+    $headers = @{}
+    foreach ($key in $response.Headers.AllKeys) { $headers[$key] = $response.Headers[$key] }
+    $status = [int]$response.StatusCode
+    $response.Close()
+
+    return [PSCustomObject]@{
+        StatusCode = $status
+        Content    = $content
+        Headers    = $headers
+        Json       = $(try { $content | ConvertFrom-Json } catch { $null })
+    }
+}
 
 function Test-Case {
     param([string]$Name, [scriptblock]$Body)
     Write-Host ""
     Write-Host "--- $Name" -ForegroundColor Cyan
     try {
-        $result = & $Body
-        if ($result) {
+        if (& $Body) {
             $script:pass++
             Write-Host "    PASS" -ForegroundColor Green
         } else {
@@ -38,43 +80,31 @@ function Test-Case {
     }
 }
 
-function Invoke-Api {
-    param([string]$Path, [string]$Method = 'GET', $Body, [string]$Token)
-    $headers = @{ 'Accept' = 'application/json' }
-    if ($Token) { $headers['Authorization'] = "Bearer $Token" }
-    $args = @{ Uri = "$Base$Path"; Method = $Method; Headers = $headers; SkipHttpErrorCheck = $true }
-    if ($Body) {
-        $args['Body'] = ($Body | ConvertTo-Json -Compress)
-        $args['ContentType'] = 'application/json'
-    }
-    return Invoke-WebRequest @args
-}
-
 Write-Host "Testing $Base" -ForegroundColor Yellow
 
 Test-Case 'TEST 1 - GET / returns service info JSON' {
     $r = Invoke-Api -Path '/'
-    Write-Host "    status=$($r.StatusCode) body=$($r.Content)"
+    Write-Host "    status=$($r.StatusCode) content-type=$($r.Headers['Content-Type'])"
+    Write-Host "    body=$($r.Content)"
     $r.StatusCode -eq 200 -and $r.Headers['Content-Type'] -like 'application/json*'
 }
 
 Test-Case 'GET /api/health - D1 reachable' {
     $r = Invoke-Api -Path '/api/health'
     Write-Host "    status=$($r.StatusCode) body=$($r.Content)"
-    $r.StatusCode -eq 200
+    $r.StatusCode -eq 200 -and $r.Json.success -eq $true
 }
 
-Test-Case 'CORS - OPTIONS preflight on /api/login' {
-    $r = Invoke-WebRequest -Uri "$Base/api/login" -Method Options -SkipHttpErrorCheck `
-        -Headers @{ 'Origin' = 'https://shreeharichasmaghar.com'; 'Access-Control-Request-Method' = 'POST' }
-    Write-Host "    status=$($r.StatusCode) allow-origin=$($r.Headers['Access-Control-Allow-Origin'])"
-    $r.StatusCode -eq 204 -and $r.Headers['Access-Control-Allow-Origin']
+Test-Case 'TEST 17 - OPTIONS preflight returns CORS headers' {
+    $r = Invoke-Api -Path '/api/login' -Method 'OPTIONS'
+    Write-Host "    status=$($r.StatusCode) allow-origin=$($r.Headers['Access-Control-Allow-Origin']) allow-headers=$($r.Headers['Access-Control-Allow-Headers'])"
+    $r.StatusCode -eq 204 -and $r.Headers['Access-Control-Allow-Origin'] -eq '*'
 }
 
-Test-Case 'TEST 3 - invalid credentials return 401' {
+Test-Case 'TEST 3 - invalid credentials return 401 JSON' {
     $r = Invoke-Api -Path '/api/login' -Method POST -Body @{ username = 'no_such_user_xyz'; password = 'wrong_pw_xyz' }
     Write-Host "    status=$($r.StatusCode) body=$($r.Content)"
-    $r.StatusCode -eq 401
+    $r.StatusCode -eq 401 -and $r.Json.success -eq $false
 }
 
 Test-Case 'Security - legacy action=insert is refused' {
@@ -83,46 +113,52 @@ Test-Case 'Security - legacy action=insert is refused' {
     $r.StatusCode -eq 403
 }
 
-Test-Case 'Security - protected endpoints need a token' {
+Test-Case 'Security - protected endpoints reject anonymous callers' {
     $users = Invoke-Api -Path '/api/users'
     $stats = Invoke-Api -Path '/api/stats/yearly'
-    Write-Host "    /api/users=$($users.StatusCode) /api/stats/yearly=$($stats.StatusCode)"
+    Write-Host "    GET /api/users=$($users.StatusCode)  GET /api/stats/yearly=$($stats.StatusCode)"
     $users.StatusCode -eq 401 -and $stats.StatusCode -eq 401
 }
 
+Test-Case 'Missing fields return 400' {
+    $r = Invoke-Api -Path '/api/login' -Method POST -Body @{ username = 'someone' }
+    Write-Host "    status=$($r.StatusCode) body=$($r.Content)"
+    $r.StatusCode -eq 400
+}
+
 if ($Username -and $Password) {
-    $token = $null
+    $script:token = $null
 
     Test-Case 'TEST 4 - valid credentials return success + token' {
         $r = Invoke-Api -Path '/api/login' -Method POST -Body @{ username = $Username; password = $Password }
-        $data = $r.Content | ConvertFrom-Json
-        Write-Host "    status=$($r.StatusCode) success=$($data.success) user=$($data.user.username) role=$($data.user.role)"
-        $script:token = $data.token
-        $r.StatusCode -eq 200 -and $data.success -eq $true -and $data.token
+        Write-Host "    status=$($r.StatusCode) success=$($r.Json.success) id=$($r.Json.user.id) user=$($r.Json.user.username) role=$($r.Json.user.role)"
+        $script:token = $r.Json.token
+        $r.StatusCode -eq 200 -and $r.Json.success -eq $true -and $r.Json.token
     }
 
     Test-Case 'Search users with token' {
-        $r = Invoke-Api -Path '/api/users?limit=5' -Token $token
-        $data = $r.Content | ConvertFrom-Json
-        Write-Host "    status=$($r.StatusCode) total=$($data.total)"
-        $r.StatusCode -eq 200 -and $data.success -eq $true
+        $r = Invoke-Api -Path '/api/users?limit=5' -Token $script:token
+        Write-Host "    status=$($r.StatusCode) total=$($r.Json.total) returned=$($r.Json.users.Count)"
+        Write-Host "    (password field present in response: $($r.Content -match '"password"'))"
+        $r.StatusCode -eq 200 -and $r.Json.success -eq $true -and ($r.Content -notmatch '"password"')
     }
 
-    Test-Case 'Year-wise statistics with token' {
-        $r = Invoke-Api -Path '/api/stats/yearly' -Token $token
+    Test-Case 'Dashboard totals with token' {
+        $r = Invoke-Api -Path '/api/stats' -Token $script:token
         Write-Host "    status=$($r.StatusCode) body=$($r.Content)"
         $r.StatusCode -eq 200
     }
 
-    Test-Case 'Dashboard totals with token' {
-        $r = Invoke-Api -Path '/api/stats' -Token $token
+    Test-Case 'Year-wise statistics with token' {
+        $r = Invoke-Api -Path '/api/stats/yearly' -Token $script:token
         Write-Host "    status=$($r.StatusCode) body=$($r.Content)"
         $r.StatusCode -eq 200
     }
 
     Test-Case 'Tampered token is rejected' {
-        $r = Invoke-Api -Path '/api/users' -Token "$token-tampered"
-        Write-Host "    status=$($r.StatusCode)"
+        $bad = $script:token.Substring(0, $script:token.Length - 2) + 'xy'
+        $r = Invoke-Api -Path '/api/users' -Token $bad
+        Write-Host "    status=$($r.StatusCode) body=$($r.Content)"
         $r.StatusCode -eq 401
     }
 } else {
@@ -131,5 +167,5 @@ if ($Username -and $Password) {
 }
 
 Write-Host ""
-Write-Host "Passed: $pass   Failed: $fail" -ForegroundColor $(if ($fail -eq 0) { 'Green' } else { 'Red' })
-exit $(if ($fail -eq 0) { 0 } else { 1 })
+Write-Host "Passed: $script:pass   Failed: $script:fail" -ForegroundColor $(if ($script:fail -eq 0) { 'Green' } else { 'Red' })
+exit $(if ($script:fail -eq 0) { 0 } else { 1 })

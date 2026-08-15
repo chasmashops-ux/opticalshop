@@ -276,7 +276,15 @@ async function handleListUsers(request, env) {
     createdAt: (f.date && r[f.date]) || null
   }));
 
-  return json({ success: true, users, page, limit, total: Number(total?.total || 0) });
+  return json({
+    success: true,
+    users,
+    page,
+    limit,
+    total: Number(total?.total || 0),
+    hasRoleColumn: Boolean(f.role),
+    hasDateColumn: Boolean(f.date)
+  });
 }
 
 async function handleCreateUser(request, env) {
@@ -331,7 +339,9 @@ async function handleCreateUser(request, env) {
     {
       success: true,
       message: 'User added successfully',
-      user: { id: result.meta?.last_row_id ?? null, username, role: f.role ? role : 'admin' }
+      user: { id: result.meta?.last_row_id ?? null, username, role: f.role ? role : 'admin' },
+      // login_mst has no role column in this database, so the role was not stored.
+      roleStored: Boolean(f.role)
     },
     201
   );
@@ -400,9 +410,11 @@ async function handleStats(request, env) {
   return json({
     success: true,
     currentYear,
+    table: AUTH_TABLE,
     totalUsers: Number(total?.total || 0),
     thisYear,
     thisMonth,
+    hasRoleColumn: Boolean(f.role),
     hasDateColumn: Boolean(f.date),
     recent: (latest.results || []).map((r) => ({
       id: r[f.id],
@@ -412,17 +424,16 @@ async function handleStats(request, env) {
   });
 }
 
+/**
+ * Public connectivity probe. Deliberately reports no row counts, column names
+ * or other schema detail — that lives on the authenticated /api/stats.
+ */
 async function handleHealth(env) {
   try {
-    const f = await getFields(env);
-    const row = await env.DB.prepare(`SELECT COUNT(*) AS total FROM ${AUTH_TABLE}`).first();
+    await env.DB.prepare(`SELECT 1 FROM ${AUTH_TABLE} LIMIT 1`).first();
     return json({
       success: true,
       database: 'connected',
-      table: AUTH_TABLE,
-      userCount: Number(row?.total || 0),
-      hasRoleColumn: Boolean(f.role),
-      hasDateColumn: Boolean(f.date),
       authSecretConfigured: Boolean(env.AUTH_SECRET)
     });
   } catch (error) {
