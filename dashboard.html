@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | Shree Hari Chasma Ghar</title>
+    <link rel="stylesheet" href="/assets/css/account.css" />
+  </head>
+  <body>
+    <div class="dashboard-shell">
+      <header class="dashboard-header">
+        <div class="brand-label">SHREE HARI CHASMA GHAR</div>
+        <div class="header-actions">
+          <div class="user-pill">👤 Admin</div>
+          <button class="logout-btn" type="button">Logout</button>
+        </div>
+      </header>
+
+      <main class="dashboard-main">
+        <section class="summary-grid">
+          <div class="stat-card">
+            <h3>Customers</h3>
+            <div class="value">1,248</div>
+          </div>
+          <div class="stat-card">
+            <h3>Orders</h3>
+            <div class="value">364</div>
+          </div>
+          <div class="stat-card">
+            <h3>Billing</h3>
+            <div class="value">₹48.2k</div>
+          </div>
+          <div class="stat-card">
+            <h3>Reports</h3>
+            <div class="value">12</div>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <div class="panel">
+            <h4>Recent Activity</h4>
+            <div class="list">
+              <div class="list-item"><span>New customer registration</span><span class="badge">Today</span></div>
+              <div class="list-item"><span>Order #2458 confirmed</span><span class="badge">Today</span></div>
+              <div class="list-item"><span>Billing updated</span><span class="badge">Yesterday</span></div>
+              <div class="list-item"><span>Monthly report generated</span><span class="badge">This week</span></div>
+            </div>
+          </div>
+
+          <aside class="sidebar-box">
+            <div class="panel">
+              <h4>Sections</h4>
+              <div class="list">
+                <div class="menu-card">Customers</div>
+                <div class="menu-card">Orders</div>
+                <div class="menu-card">Billing</div>
+                <div class="menu-card">Reports</div>
+                <div class="menu-card">Logout</div>
+              </div>
+            </div>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      document.querySelector('.logout-btn')?.addEventListener('click', () => {
+        window.location.href = '/login.html';
+      });
+    </script>
+  </body>
+</html>
