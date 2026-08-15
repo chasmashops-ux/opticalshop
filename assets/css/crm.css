@@ -908,6 +908,13 @@
     display: none;
   }
 
+  /* On desktop this stays auto-width so .crm-header-nav's auto margins
+     can center it; with the nav hidden here, it needs to grow itself so
+     the search bar actually fills the row instead of hugging the logo. */
+  .crm-header-actions {
+    flex: 1;
+  }
+
   .crm-logout-btn span {
     display: none;
   }
