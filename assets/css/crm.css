@@ -904,6 +904,12 @@
   font-weight: 700;
 }
 
+/* Customer names are stored as typed (often all-lowercase) — display only,
+   never changes the underlying data. */
+.customer-name {
+  text-transform: capitalize;
+}
+
 /* Modals */
 
 .modal-overlay {

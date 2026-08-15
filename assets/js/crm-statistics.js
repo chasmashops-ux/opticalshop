@@ -184,7 +184,7 @@
                   return (
                     '<tr class="row-link" data-href="/crm/customer.html?id=' +
                     encodeURIComponent(c.userId) +
-                    '"><td><strong>' +
+                    '"><td><strong class="customer-name">' +
                     escapeHtml(c.name) +
                     '</strong></td><td>' +
                     escapeHtml(c.mobile || '—') +
@@ -212,7 +212,7 @@
                     escapeHtml(o.orderId) +
                     '</td><td>' +
                     (o.billNo ? escapeHtml(o.billNo) : '<span class="badge-nobill">No Bill</span>') +
-                    '</td><td><strong>' +
+                    '</td><td><strong class="customer-name">' +
                     escapeHtml(o.customerName) +
                     '</strong></td><td>' +
                     fmtDate(o.orderDate) +

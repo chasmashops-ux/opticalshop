@@ -121,7 +121,7 @@
           parts.push(
             '<a class="crm-search-row" href="/crm/customer.html?id=' +
               encodeURIComponent(c.userId) +
-              '"><span>' +
+              '"><span class="customer-name">' +
               escapeHtml(c.name || 'Unnamed') +
               '</span><span>' +
               escapeHtml(c.mobile || '—') +

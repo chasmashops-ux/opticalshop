@@ -865,13 +865,6 @@ async function handleDashboard(request, env) {
       yesterdayWhere.params
     );
 
-    const monthToDateWhere = sargableMonthWhere('orderdate', schema.orderDateFormat, monthPrefix);
-    add(
-      'monthToDate',
-      `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${monthToDateWhere.clause}`,
-      monthToDateWhere.params
-    );
-
     const yearToDateWhere = sargableYearWhere('orderdate', schema.orderDateFormat, yearPrefix);
     add(
       'yearToDate',
@@ -945,7 +938,6 @@ async function handleDashboard(request, env) {
   const periodSales = toNumber(periodOrdersRow.s);
   const periodCustomers = isAllTime ? toNumber(row('totalCustomersAllTime').c) : toNumber(row('periodActiveCustomers').c);
 
-  const monthRow = schema.hasOrderDate ? row('monthToDate') : {};
   const todayRow = schema.hasOrderDate ? row('today') : {};
   const yesterdayRow = schema.hasOrderDate ? row('yesterday') : {};
 
@@ -1041,8 +1033,6 @@ async function handleDashboard(request, env) {
       repeatCustomers: schema.hasOrderDate ? toNumber(row('repeatCustomers').c) : 0,
       todayOrders,
       todaySales,
-      monthOrders: toNumber(monthRow.c),
-      monthSales: toNumber(monthRow.s),
       yearSales: schema.hasOrderDate ? toNumber(row('yearToDate').s) : 0,
       totalCustomersAllTime
     },

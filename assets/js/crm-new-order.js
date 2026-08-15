@@ -105,7 +105,7 @@
                 escapeHtml(c.name) +
                 '" data-mobile="' +
                 escapeHtml(c.mobile || '') +
-                '"><span>' +
+                '"><span class="customer-name">' +
                 escapeHtml(c.name) +
                 '</span><span>' +
                 escapeHtml(c.mobile || '—') +

@@ -6,7 +6,7 @@
 (function () {
   var AUTH = window.SHCG_AUTH;
   var CONFIG = window.SHCG_CONFIG;
-  var LIMIT = 15;
+  var LIMIT = 10;
   var state = { query: '', page: 1, total: 0 };
   var isLoading = false;
 
@@ -74,7 +74,7 @@
                   encodeURIComponent(c.userId) +
                   '"><td>' +
                   (rowStart + i) +
-                  '</td><td><strong>' +
+                  '</td><td><strong class="customer-name">' +
                   escapeHtml(c.name) +
                   '</strong></td><td>' +
                   escapeHtml(c.mobile || '—') +

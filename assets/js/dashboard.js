@@ -103,7 +103,6 @@
       kpis.range === 'all' ? 'All registered customers' : 'Active in this period';
     document.getElementById('kpiTotalOrders').textContent = fmtNumber(kpis.totalOrders);
     document.getElementById('kpiAvgOrder').textContent = fmtMoney(kpis.averageOrderValue);
-    document.getElementById('kpiMonthSales').textContent = fmtMoney(kpis.monthSales);
 
     var billedCard = document.getElementById('kpiBilledOrders').closest('.kpi-card');
     var noBillCard = document.getElementById('kpiNoBillOrders').closest('.kpi-card');
@@ -299,7 +298,7 @@
         return (
           '<tr class="row-link" data-href="/crm/customer.html?id=' +
           encodeURIComponent(c.userId) +
-          '"><td><strong>' +
+          '"><td><strong class="customer-name">' +
           escapeHtml(c.name) +
           '</strong></td><td>' +
           escapeHtml(c.mobile || '—') +
@@ -331,7 +330,7 @@
           escapeHtml(o.orderId) +
           '</td><td>' +
           (o.billNo ? escapeHtml(o.billNo) : '<span class="badge-nobill">No Bill</span>') +
-          '</td><td><strong>' +
+          '</td><td><strong class="customer-name">' +
           escapeHtml(o.customerName) +
           '</strong></td><td>' +
           fmtDate(o.orderDate) +

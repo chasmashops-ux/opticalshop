@@ -119,7 +119,7 @@
                 escapeHtml(o.orderId) +
                 '</td><td>' +
                 (o.billNo ? escapeHtml(o.billNo) : '<span class="badge-nobill">No Bill</span>') +
-                '</td><td><strong>' +
+                '</td><td><strong class="customer-name">' +
                 escapeHtml(o.customerName) +
                 '</strong></td><td>' +
                 fmtDate(o.orderDate) +
