@@ -16,6 +16,7 @@
  *   GET  /api/stats                 login_mst totals                  (Bearer)
  *   GET  /api/stats/yearly          login_mst year-wise stats         (Bearer)
  *   GET  /api/dashboard             CRM dashboard, period-scoped      (Bearer)
+ *   GET  /api/years                 distinct years with order data    (Bearer)
  *   GET  /api/search                quick global search               (Bearer)
  *   GET  /api/customers             list/search customers              (Bearer)
  *   POST /api/customers             add a customer                    (Bearer)
@@ -775,9 +776,15 @@ async function handleDashboard(request, env) {
      LEFT JOIN ${CUSTOMER_TABLE} u ON o.userid = u.userid
      ${recentWhere.sql}
      ORDER BY ${schema.hasOrderDate ? O_OD : 'o.orderid'} DESC, o.orderid DESC
-     LIMIT 8`,
+     LIMIT 15`,
     recentWhere.params
   );
+
+  // The "Monthly Sales" 12-month chart follows whichever year the caller is
+  // actually looking at — the selected year for 'year'/'custom' (the
+  // Statistics page passes a full-year custom range), otherwise the
+  // current year, matching the always-on "This Year Sales" KPI below.
+  const monthlyYear = start && (range === 'year' || range === 'custom') ? start.slice(0, 4) : yearPrefix;
 
   if (schema.hasOrderDate) {
     add('today', `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${OD} = ?`, [today]);
@@ -796,7 +803,7 @@ async function handleDashboard(request, env) {
       'monthly',
       `SELECT substr(${OD},6,2) AS m, COUNT(*) AS c, COALESCE(SUM(amount),0) AS s
        FROM ${ORDER_TABLE} WHERE substr(${OD},1,4) = ? GROUP BY m`,
-      [yearPrefix]
+      [monthlyYear]
     );
 
     // Sales Overview chart — grouped by the granularity computeRange chose.
@@ -967,6 +974,7 @@ async function handleDashboard(request, env) {
         ? rows('overview').map((r) => ({ date: r.d, sales: toNumber(r.s), orders: toNumber(r.c) }))
         : []
     },
+    monthlyYear,
     monthlySales,
     categorySales: [
       { category: 'Frame', sales: toNumber(category.frame) },
@@ -1002,8 +1010,42 @@ async function handleDashboard(request, env) {
       customersWithOrders,
       customersWithoutOrders: Math.max(0, totalCustomersAllTime - customersWithOrders)
     },
-    recentActivity: activity.slice(0, 8)
+    recentActivity: activity.slice(0, 5)
   });
+}
+
+/**
+ * GET /api/years — distinct years actually present in order_details,
+ * newest first. Powers the Statistics page's year selector so it only
+ * ever offers years that really have data.
+ */
+async function handleCrmYears(request, env) {
+  const auth = await requireAuth(request, env);
+  if (auth.error) return auth.error;
+
+  const schema = await getCrmSchema(env);
+  const unavailable = crmUnavailable(schema);
+  if (unavailable) return unavailable;
+
+  if (!schema.hasOrderDate) return json({ success: true, years: [] });
+
+  const OD = dateExpr('orderdate', schema.orderDateFormat);
+  let rows;
+  try {
+    rows = await env.DB.prepare(
+      `SELECT DISTINCT substr(${OD},1,4) AS year FROM ${ORDER_TABLE}
+       WHERE ${OD} IS NOT NULL AND ${OD} <> '' ORDER BY year DESC`
+    ).all();
+  } catch (error) {
+    return json({ success: false, message: 'Could not read available years.' }, 500);
+  }
+
+  const years = rowsOf(rows)
+    .map((r) => r.year)
+    .filter((y) => /^\d{4}$/.test(String(y)))
+    .map(Number);
+
+  return json({ success: true, years });
 }
 
 /**
@@ -1483,6 +1525,7 @@ export default {
             'GET  /api/stats',
             'GET  /api/stats/yearly',
             'GET  /api/dashboard',
+            'GET  /api/years',
             'GET  /api/search',
             'GET  /api/customers',
             'POST /api/customers',
@@ -1506,6 +1549,10 @@ export default {
       if (path === '/api/dashboard') {
         if (request.method !== 'GET') return json({ success: false, message: 'Only GET is allowed.' }, 405);
         return handleDashboard(request, env);
+      }
+      if (path === '/api/years') {
+        if (request.method !== 'GET') return json({ success: false, message: 'Only GET is allowed.' }, 405);
+        return handleCrmYears(request, env);
       }
       if (path === '/api/search') {
         if (request.method !== 'GET') return json({ success: false, message: 'Only GET is allowed.' }, 405);
