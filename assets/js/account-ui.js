@@ -31,7 +31,7 @@
 
     header.innerHTML =
       '<header class="dashboard-header">' +
-      '<div class="brand-label">SHREE HARI CHASMA GHAR</div>' +
+      '<a href="/account/" class="brand-label"><img src="/assets/images/Logo.png" alt="Shree Hari Chasma Ghar" class="brand-logo" /></a>' +
       '<div class="header-actions">' +
       '<div class="user-pill">👤 ' +
       escapeHtml(session.username || 'Admin') +

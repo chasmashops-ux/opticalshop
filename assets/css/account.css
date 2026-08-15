@@ -25,10 +25,21 @@ body {
 }
 
 .brand-label {
-  font-size: 1.2rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  color: #123a8a;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.brand-logo {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 480px) {
+  .brand-logo {
+    height: 32px;
+  }
 }
 
 .header-actions {
