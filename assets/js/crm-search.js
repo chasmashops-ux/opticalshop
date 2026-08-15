@@ -62,16 +62,19 @@
 
           if (!data.customers.length) {
             body.innerHTML =
-              '<tr><td colspan="6" class="crm-empty">' +
+              '<tr><td colspan="7" class="crm-empty">' +
               (state.query ? 'No match for “' + escapeHtml(state.query) + '”.' : 'No customers yet.') +
               '</td></tr>';
           } else {
+            var rowStart = (state.page - 1) * LIMIT + 1;
             body.innerHTML = data.customers
-              .map(function (c) {
+              .map(function (c, i) {
                 return (
                   '<tr class="row-link" data-href="/crm/customer.html?id=' +
                   encodeURIComponent(c.userId) +
-                  '"><td><strong>' +
+                  '"><td>' +
+                  (rowStart + i) +
+                  '</td><td><strong>' +
                   escapeHtml(c.name) +
                   '</strong></td><td>' +
                   escapeHtml(c.mobile || '—') +
@@ -102,7 +105,7 @@
         })
         .catch(function (err) {
           setMessage(err.message, 'error');
-          body.innerHTML = '<tr><td colspan="6" class="crm-empty">Could not load customers.</td></tr>';
+          body.innerHTML = '<tr><td colspan="7" class="crm-empty">Could not load customers.</td></tr>';
         })
         .finally(function () {
           isLoading = false;

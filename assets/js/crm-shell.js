@@ -23,7 +23,6 @@
   var TAB_NAV = [
     { key: 'dashboard', href: '/dashboard.html', label: 'Dashboard', icon: 'grid', color: '#2563eb' },
     { key: 'search', href: '/crm/search.html', label: 'Search', icon: 'users', color: '#16a34a' },
-    { key: 'new-order', href: '/crm/new-order.html', label: 'New Order', icon: 'plus', color: '#d97706' },
     { key: 'statistics', href: '/crm/statistics.html', label: 'Statistics', icon: 'chart', color: '#7c3aed' },
     { key: 'logout', label: 'Logout', icon: 'logout', color: '#dc2626', logout: true }
   ];
@@ -31,7 +30,6 @@
   var ICONS = {
     grid: '<rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/>',
     users: '<circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/>',
-    plus: '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
     chart: '<path d="M4 20V10M10 20V4M16 20v-7M4 20h16"/>',
     search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
     bell: '<path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',

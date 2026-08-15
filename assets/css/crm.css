@@ -28,10 +28,33 @@
   background: var(--bg);
   color: var(--text);
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  /* Defensive safety net: this app is single-column on mobile and should
+     never need to scroll sideways. Everything below is also fixed at its
+     actual source (nested flex/grid children ignoring the viewport), but
+     this guarantees it regardless. */
+  overflow-x: hidden;
 }
 
 .crm-app * {
   box-sizing: border-box;
+}
+
+/*
+ * Flex/grid items default to min-width:auto, which means they refuse to
+ * shrink below their OWN content's natural width — a nested flex/grid
+ * child (a search input, a wide table, a chart) can silently force its
+ * ancestor wider than the viewport even though every individual rule
+ * looks correct. This is what was causing the horizontal scroll on
+ * mobile. Overriding min-width to 0 on these containers lets them
+ * actually shrink to the space available.
+ */
+.crm-content > *,
+.crm-header-actions,
+.crm-search,
+.crm-header-nav,
+.table-wrap,
+.chart-wrap {
+  min-width: 0;
 }
 
 /* ---------------------------- header (desktop nav) ---------------------------- */
@@ -461,6 +484,67 @@
 
 .privacy-toggle[aria-pressed="true"] .icon-eye-off {
   display: block;
+}
+
+.kpi-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 12px;
+  background: var(--bg);
+}
+
+.kpi-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke-width: 1.9;
+  stroke: var(--primary);
+}
+
+.kpi-accent-blue .kpi-icon {
+  background: #eff4ff;
+}
+.kpi-accent-blue .kpi-icon svg {
+  stroke: #2563eb;
+}
+.kpi-accent-violet .kpi-icon {
+  background: #f3f0ff;
+}
+.kpi-accent-violet .kpi-icon svg {
+  stroke: #7c3aed;
+}
+.kpi-accent-green .kpi-icon {
+  background: #ecfdf3;
+}
+.kpi-accent-green .kpi-icon svg {
+  stroke: #16a34a;
+}
+.kpi-accent-amber .kpi-icon {
+  background: #fffbeb;
+}
+.kpi-accent-amber .kpi-icon svg {
+  stroke: #d97706;
+}
+.kpi-accent-teal .kpi-icon {
+  background: #ecfeff;
+}
+.kpi-accent-teal .kpi-icon svg {
+  stroke: #0891b2;
+}
+.kpi-accent-rose .kpi-icon {
+  background: #fff1f2;
+}
+.kpi-accent-rose .kpi-icon svg {
+  stroke: #e11d48;
+}
+.kpi-accent-indigo .kpi-icon {
+  background: #eef2ff;
+}
+.kpi-accent-indigo .kpi-icon svg {
+  stroke: #4f46e5;
 }
 
 .kpi-label {
