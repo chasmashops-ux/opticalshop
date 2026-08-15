@@ -1,8 +1,8 @@
-name = "opticalshop-login"
+name = "opticalshop"
 main = "src/login-worker.js"
 compatibility_date = "2026-08-15"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "shcg"
-database_id = "38c58cc85d49d6096e292ba42db9dfc3"
+database_id = "ea1597c2-fb39-4a1e-a6da-82c001a16695"
