@@ -923,7 +923,11 @@ async function handleDashboard(request, env) {
   try {
     results = await env.DB.batch(stmts);
   } catch (error) {
-    return json({ success: false, message: 'Could not read dashboard data from the database.' }, 500);
+    // TEMPORARY debug field — see matching note on the outer catch.
+    return json(
+      { success: false, message: 'Could not read dashboard data from the database.', debug: String((error && error.message) || error) },
+      500
+    );
   }
 
   const row = (key) => firstRow(results[at[key]]);
@@ -1670,8 +1674,10 @@ export default {
 
       return json({ success: false, message: 'Not found.' }, 404);
     } catch (error) {
-      // Never leak SQL or stack details to the browser.
-      return json({ success: false, message: 'Server error. Please try again.' }, 500);
+      // TEMPORARY: surfacing error.message to find a live bug reported on
+      // range=month/prev-month/6m/custom. Revert to the generic message
+      // once found — this can include SQL fragments.
+      return json({ success: false, message: 'Server error.', debug: String((error && error.message) || error) }, 500);
     }
   }
 };
