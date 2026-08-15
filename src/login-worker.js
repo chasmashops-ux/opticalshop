@@ -534,7 +534,7 @@ async function handleListUsers(request, env) {
 
   const selected = [f.id, f.username, f.role, f.date, f.email].filter(Boolean).join(', ');
 
-  const total = await env.DB.prepare(`SELECT COUNT(*) AS total FROM ${AUTH_TABLE} ${where}`)
+  const total = await env.DB.prepare(`SELECT COUNT(1) AS total FROM ${AUTH_TABLE} ${where}`)
     .bind(...params)
     .first();
 
@@ -636,7 +636,7 @@ async function handleYearlyStats(request, env) {
   }
 
   const rows = await env.DB.prepare(
-    `SELECT substr(${f.date}, 1, 4) AS year, COUNT(*) AS total
+    `SELECT substr(${f.date}, 1, 4) AS year, COUNT(1) AS total
      FROM ${AUTH_TABLE}
      WHERE ${f.date} IS NOT NULL AND ${f.date} <> ''
      GROUP BY year
@@ -657,20 +657,20 @@ async function handleStats(request, env) {
   const f = await getFields(env);
   const currentYear = String(new Date().getFullYear());
 
-  const total = await env.DB.prepare(`SELECT COUNT(*) AS total FROM ${AUTH_TABLE}`).first();
+  const total = await env.DB.prepare(`SELECT COUNT(1) AS total FROM ${AUTH_TABLE}`).first();
 
   let thisYear = 0;
   let thisMonth = 0;
   if (f.date) {
     const yearRow = await env.DB.prepare(
-      `SELECT COUNT(*) AS total FROM ${AUTH_TABLE} WHERE substr(${f.date}, 1, 4) = ?`
+      `SELECT COUNT(1) AS total FROM ${AUTH_TABLE} WHERE substr(${f.date}, 1, 4) = ?`
     )
       .bind(currentYear)
       .first();
     thisYear = Number(yearRow?.total || 0);
 
     const monthRow = await env.DB.prepare(
-      `SELECT COUNT(*) AS total FROM ${AUTH_TABLE} WHERE substr(${f.date}, 1, 7) = ?`
+      `SELECT COUNT(1) AS total FROM ${AUTH_TABLE} WHERE substr(${f.date}, 1, 7) = ?`
     )
       .bind(new Date().toISOString().slice(0, 7))
       .first();
@@ -772,7 +772,7 @@ async function handleDashboard(request, env) {
     const w = combineWhere([periodWhere]);
     add(
       'periodOrders',
-      `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s, COALESCE(MAX(amount),0) AS mx, COALESCE(MIN(amount),0) AS mn
+      `SELECT COUNT(1) AS c, COALESCE(SUM(amount),0) AS s, COALESCE(MAX(amount),0) AS mx, COALESCE(MIN(amount),0) AS mn
        FROM ${ORDER_TABLE} ${w.sql}`,
       w.params
     );
@@ -783,17 +783,17 @@ async function handleDashboard(request, env) {
     );
     if (schema.hasBillNo) {
       const billedWhere = combineWhere([periodWhere, { clause: billedExpr, params: [] }]);
-      add('billedOrders', `SELECT COUNT(*) AS c FROM ${ORDER_TABLE} ${billedWhere.sql}`, billedWhere.params);
+      add('billedOrders', `SELECT COUNT(1) AS c FROM ${ORDER_TABLE} ${billedWhere.sql}`, billedWhere.params);
       const noBillWhere = combineWhere([periodWhere, { clause: noBillExpr, params: [] }]);
-      add('noBillOrders', `SELECT COUNT(*) AS c FROM ${ORDER_TABLE} ${noBillWhere.sql}`, noBillWhere.params);
+      add('noBillOrders', `SELECT COUNT(1) AS c FROM ${ORDER_TABLE} ${noBillWhere.sql}`, noBillWhere.params);
     }
     add(
       'repeatCustomers',
-      `SELECT COUNT(*) AS c FROM (SELECT userid FROM ${ORDER_TABLE} ${w.sql} GROUP BY userid HAVING COUNT(*) > 1)`,
+      `SELECT COUNT(1) AS c FROM (SELECT userid FROM ${ORDER_TABLE} ${w.sql} GROUP BY userid HAVING COUNT(1) > 1)`,
       w.params
     );
   }
-  add('totalCustomersAllTime', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE}`);
+  add('totalCustomersAllTime', `SELECT COUNT(1) AS c FROM ${CUSTOMER_TABLE}`);
 
   // ---- supplementary always-on KPIs (independent of the period selector) ----
   const categoryWhere = combineWhere([periodWhere]);
@@ -809,14 +809,14 @@ async function handleDashboard(request, env) {
   const productWhere = combineWhere([periodWhere]);
   add(
     'productAnalytics',
-    `SELECT COALESCE(NULLIF(TRIM(product),''),'Unspecified') AS product, COUNT(*) AS c, COALESCE(SUM(amount),0) AS s
+    `SELECT COALESCE(NULLIF(TRIM(product),''),'Unspecified') AS product, COUNT(1) AS c, COALESCE(SUM(amount),0) AS s
      FROM ${ORDER_TABLE} ${productWhere.sql} GROUP BY product ORDER BY c DESC LIMIT 12`,
     productWhere.params
   );
   const frameWhere = combineWhere([periodWhere]);
   add(
     'frameAnalytics',
-    `SELECT COALESCE(NULLIF(TRIM(frametype),''),'Unspecified') AS frametype, COUNT(*) AS c, COALESCE(SUM(frameprice),0) AS s
+    `SELECT COALESCE(NULLIF(TRIM(frametype),''),'Unspecified') AS frametype, COUNT(1) AS c, COALESCE(SUM(frameprice),0) AS s
      FROM ${ORDER_TABLE} ${frameWhere.sql} GROUP BY frametype ORDER BY c DESC LIMIT 10`,
     frameWhere.params
   );
@@ -856,12 +856,12 @@ async function handleDashboard(request, env) {
 
   if (schema.hasOrderDate) {
     const todayWhere = sargableDayWhere('orderdate', schema.orderDateFormat, today);
-    add('today', `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${todayWhere.clause}`, todayWhere.params);
+    add('today', `SELECT COUNT(1) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${todayWhere.clause}`, todayWhere.params);
 
     const yesterdayWhere = sargableDayWhere('orderdate', schema.orderDateFormat, yesterday);
     add(
       'yesterday',
-      `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${yesterdayWhere.clause}`,
+      `SELECT COUNT(1) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${yesterdayWhere.clause}`,
       yesterdayWhere.params
     );
 
@@ -875,7 +875,7 @@ async function handleDashboard(request, env) {
     const monthlyYearWhere = sargableYearWhere('orderdate', schema.orderDateFormat, monthlyYear);
     add(
       'monthly',
-      `SELECT substr(${OD},6,2) AS m, COUNT(*) AS c, COALESCE(SUM(amount),0) AS s
+      `SELECT substr(${OD},6,2) AS m, COUNT(1) AS c, COALESCE(SUM(amount),0) AS s
        FROM ${ORDER_TABLE} WHERE ${monthlyYearWhere.clause} GROUP BY m`,
       monthlyYearWhere.params
     );
@@ -887,7 +887,7 @@ async function handleDashboard(request, env) {
     const overviewWhere = combineWhere([periodWhere]);
     add(
       'overview',
-      `SELECT ${groupExpr} AS d, COUNT(*) AS c, COALESCE(SUM(amount),0) AS s
+      `SELECT ${groupExpr} AS d, COUNT(1) AS c, COALESCE(SUM(amount),0) AS s
        FROM ${ORDER_TABLE} ${overviewWhere.sql} GROUP BY d ORDER BY d ASC`,
       overviewWhere.params
     );
@@ -903,15 +903,14 @@ async function handleDashboard(request, env) {
     );
   }
 
+  // custNewToday/custNewYear and custWithOrders (a COUNT(DISTINCT) full scan
+  // of order_details) used to be computed here unconditionally on every
+  // dashboard load, but nothing in the frontend actually displays them —
+  // only "new customers this month" is shown anywhere (the Current Month
+  // page). Removed rather than paying for data nobody sees.
   if (schema.hasEnterDate) {
-    const custNewTodayWhere = sargableDayWhere('enterdate', schema.enterDateFormat, today);
-    add('custNewToday', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE} WHERE ${custNewTodayWhere.clause}`, custNewTodayWhere.params);
-
     const custNewMonthWhere = sargableMonthWhere('enterdate', schema.enterDateFormat, monthPrefix);
-    add('custNewMonth', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE} WHERE ${custNewMonthWhere.clause}`, custNewMonthWhere.params);
-
-    const custNewYearWhere = sargableYearWhere('enterdate', schema.enterDateFormat, yearPrefix);
-    add('custNewYear', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE} WHERE ${custNewYearWhere.clause}`, custNewYearWhere.params);
+    add('custNewMonth', `SELECT COUNT(1) AS c FROM ${CUSTOMER_TABLE} WHERE ${custNewMonthWhere.clause}`, custNewMonthWhere.params);
     add(
       'recentCustomers',
       `SELECT userid, name, enterdate FROM ${CUSTOMER_TABLE} ORDER BY ${ED} DESC, userid DESC LIMIT 5`
@@ -919,8 +918,6 @@ async function handleDashboard(request, env) {
   } else {
     add('recentCustomers', `SELECT userid, name, NULL AS enterdate FROM ${CUSTOMER_TABLE} ORDER BY userid DESC LIMIT 5`);
   }
-
-  add('custWithOrders', `SELECT COUNT(DISTINCT userid) AS c FROM ${ORDER_TABLE} WHERE userid IS NOT NULL`);
 
   let results;
   try {
@@ -960,7 +957,6 @@ async function handleDashboard(request, env) {
   });
 
   const totalCustomersAllTime = toNumber(row('totalCustomersAllTime').c);
-  const customersWithOrders = toNumber(row('custWithOrders').c);
   const category = row('category');
 
   const recentOrders = rows('recentOrders').map((r) => ({
@@ -1211,7 +1207,7 @@ async function handleListCustomers(request, env) {
   let results;
   try {
     results = await env.DB.batch([
-      env.DB.prepare(`SELECT COUNT(*) AS total FROM ${CUSTOMER_TABLE} u ${where}`).bind(...params),
+      env.DB.prepare(`SELECT COUNT(1) AS total FROM ${CUSTOMER_TABLE} u ${where}`).bind(...params),
       env.DB.prepare(
         `SELECT u.userid, u.name, u.mobile, u.enterdate,
                 COUNT(o.orderid) AS total_orders, COALESCE(SUM(o.amount),0) AS total_spending,

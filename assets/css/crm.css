@@ -173,12 +173,14 @@
   flex: 1;
   border: 0;
   background: none;
-  color: #94a3b8;
+  color: var(--tab-color, var(--primary));
+  opacity: 0.5;
   text-decoration: none;
   font-size: 0.66rem;
   font-weight: 700;
   padding: 6px 2px 4px;
   cursor: pointer;
+  transition: opacity 0.15s ease;
 }
 
 .crm-tab svg {
@@ -190,7 +192,7 @@
 }
 
 .crm-tab.is-active {
-  color: var(--tab-color, var(--primary));
+  opacity: 1;
 }
 
 .crm-search {
@@ -993,31 +995,22 @@
 }
 
 @media (max-width: 820px) {
-  /* Primary nav moves to the fixed bottom tab bar; the header keeps
-     only branding + search + notifications. */
-  .crm-header-nav {
-    display: none;
-  }
-
-  /* On desktop this stays auto-width so .crm-header-nav's auto margins
-     can center it; with the nav hidden here, it needs to grow itself so
-     the search bar actually fills the row instead of hugging the logo. */
+  /* Mobile header is branding only — primary nav lives in the fixed
+     bottom tab bar, and search/notifications/logout move there or are
+     reached through the Search page itself instead of duplicating them
+     in an already-cramped top bar. */
+  .crm-header-nav,
   .crm-header-actions {
-    flex: 1;
-  }
-
-  .crm-logout-btn span {
     display: none;
   }
 
-  .crm-logout-btn {
-    width: 42px;
-    padding: 0;
+  .crm-header-row {
     justify-content: center;
+    padding: 14px 20px;
   }
 
-  .crm-search {
-    max-width: none;
+  .crm-header-logo img {
+    height: 46px;
   }
 
   .crm-bottom-tabs {
