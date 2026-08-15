@@ -10,7 +10,7 @@
   var CONFIG = window.SHCG_CONFIG;
 
   var charts = {};
-  var state = { range: 'all' };
+  var state = { range: 'month' };
   var salesRevealed = false;
   var lastTotalSales = 0;
 

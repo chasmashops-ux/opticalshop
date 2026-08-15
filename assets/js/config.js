@@ -17,6 +17,7 @@ window.SHCG_CONFIG = {
     yearlyStats: '/api/stats/yearly',
     health: '/api/health',
     dashboard: '/api/dashboard',
+    years: '/api/years',
     search: '/api/search',
     customers: '/api/customers',
     orders: '/api/orders'

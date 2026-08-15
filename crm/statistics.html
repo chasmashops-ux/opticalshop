@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Statistics | Shree Hari Chasma Ghar</title>
+    <link rel="stylesheet" href="/assets/css/account.css" />
+    <link rel="stylesheet" href="/assets/css/crm.css" />
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/session.js"></script>
+    <script src="/assets/js/crm-shell.js"></script>
+    <script>
+      document.documentElement.classList.add('auth-pending');
+    </script>
+  </head>
+  <body>
+    <div class="crm-app" id="crmShell"></div>
+
+    <div id="pageContent" hidden>
+      <section class="crm-welcome">
+        <h1>Statistics</h1>
+        <p>Year-wise business overview.</p>
+      </section>
+
+      <div class="crm-error-banner" id="crmError"></div>
+
+      <section class="crm-card">
+        <div class="crm-card-head">
+          <div>
+            <h3>Year</h3>
+            <p>Every KPI, chart and table below is for the selected year only.</p>
+          </div>
+          <div class="range-filter" id="yearFilter"></div>
+        </div>
+      </section>
+
+      <section class="kpi-grid">
+        <div class="kpi-card kpi-accent-blue" data-skeleton>
+          <div class="kpi-label">Total Customers</div>
+          <div class="kpi-value" id="sTotalCustomers">0</div>
+          <div class="kpi-sub">Active this year</div>
+        </div>
+        <div class="kpi-card kpi-accent-violet" data-skeleton>
+          <div class="kpi-label">Total Orders</div>
+          <div class="kpi-value" id="sTotalOrders">0</div>
+        </div>
+        <div class="kpi-card kpi-accent-green" data-skeleton>
+          <div class="kpi-label">Total Sales</div>
+          <div class="kpi-value kpi-value-masked" id="sTotalSalesWrap">
+            <span id="sTotalSalesText">₹ ******</span>
+            <button type="button" class="privacy-toggle" id="sSalesPrivacyToggle" aria-label="Show total sales" aria-pressed="false">
+              <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3.2"/></svg>
+              <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 10.7a3.2 3.2 0 0 0 4.5 4.5M7.4 7.5C4.7 9 2.9 11.4 1.5 12c0 0 3.5 7 10.5 7 2 0 3.7-.5 5.1-1.3M16.6 16.6C19 15 20.5 12 20.5 12s-1.6-3.2-4.7-5.2A12 12 0 0 0 12 5c-.8 0-1.6.1-2.3.3"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="kpi-card kpi-accent-amber" data-skeleton>
+          <div class="kpi-label">Average Order Value</div>
+          <div class="kpi-value" id="sAvgOrder">₹0</div>
+        </div>
+        <div class="kpi-card kpi-accent-teal" data-skeleton>
+          <div class="kpi-label">Billed Orders</div>
+          <div class="kpi-value" id="sBilled">0</div>
+        </div>
+        <div class="kpi-card kpi-accent-rose" data-skeleton>
+          <div class="kpi-label">No-Bill / Direct Orders</div>
+          <div class="kpi-value" id="sNoBill">0</div>
+        </div>
+        <div class="kpi-card kpi-accent-indigo" data-skeleton>
+          <div class="kpi-label">Repeat Customers</div>
+          <div class="kpi-value" id="sRepeat">0</div>
+        </div>
+      </section>
+
+      <section class="crm-card" data-skeleton>
+        <div class="crm-card-head">
+          <div>
+            <h3>Monthly Sales</h3>
+            <p id="monthlyLabel">January through December.</p>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="statMonthlyChart"></canvas>
+        </div>
+      </section>
+
+      <section class="crm-grid-2">
+        <div class="crm-card" data-skeleton>
+          <div class="crm-card-head">
+            <div>
+              <h3>Sales Category Breakdown</h3>
+              <p>Frame, glass, lens, sunglasses &amp; repair totals.</p>
+            </div>
+          </div>
+          <div class="chart-wrap chart-wrap-sm">
+            <canvas id="statCategoryChart"></canvas>
+            <div class="crm-empty" id="statCategoryEmpty" style="display:none">No data available</div>
+          </div>
+        </div>
+        <div class="crm-card" data-skeleton>
+          <div class="crm-card-head">
+            <div><h3>By Category</h3></div>
+          </div>
+          <div class="category-grid" id="statCategoryCards"></div>
+        </div>
+      </section>
+
+      <section class="crm-card" data-skeleton>
+        <div class="crm-card-head">
+          <div>
+            <h3>Top Customers</h3>
+            <p>Top 10 by spending, for the selected year.</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Customer</th><th>Mobile</th><th>Orders</th><th>Total Spending</th><th>Last Order</th></tr></thead>
+            <tbody id="statTopCustomersBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="crm-card" data-skeleton>
+        <div class="crm-card-head">
+          <div><h3>Recent Orders</h3></div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Order</th><th>Bill No</th><th>Customer</th><th>Date</th><th>Product</th><th>Amount</th></tr></thead>
+            <tbody id="statRecentOrdersBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="crm-grid-2-even">
+        <div class="crm-card" data-skeleton>
+          <div class="crm-card-head">
+            <div><h3>Orders by Product Type</h3></div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Product</th><th>Orders</th><th>Sales</th></tr></thead>
+              <tbody id="statProductBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="crm-card" data-skeleton>
+          <div class="crm-card-head">
+            <div><h3>Top Frame Types</h3></div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Frame Type</th><th>Orders</th><th>Sales</th></tr></thead>
+              <tbody id="statFrameBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="/assets/js/crm-statistics.js"></script>
+  </body>
+</html>
