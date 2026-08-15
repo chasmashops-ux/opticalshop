@@ -5,15 +5,20 @@
  *   D1 binding  : env.DB          (never a raw database id)
  *   D1 database : shcg
  *   Auth table  : login_mst       (existing table — not created or renamed here)
+ *   CRM tables  : user_details, order_details (existing tables — not created or renamed here)
  *
  * Routes
  *   GET  /                  service info
  *   GET  /api/health        D1 connectivity check
  *   POST /api/login         authenticate against login_mst
- *   GET  /api/users         search users            (requires Bearer token)
- *   POST /api/users         add user                (requires Bearer token)
- *   GET  /api/stats         dashboard totals        (requires Bearer token)
- *   GET  /api/stats/yearly  year-wise statistics    (requires Bearer token)
+ *   GET  /api/users         search users              (requires Bearer token)
+ *   POST /api/users         add user                  (requires Bearer token)
+ *   GET  /api/stats         login_mst totals          (requires Bearer token)
+ *   GET  /api/stats/yearly  login_mst year-wise stats (requires Bearer token)
+ *   GET  /api/dashboard     CRM dashboard (KPIs, charts, tables) (requires Bearer token)
+ *   GET  /api/search        global search: customers/orders/frame types (requires Bearer token)
+ *   POST /api/customers     add a customer to user_details        (requires Bearer token)
+ *   POST /api/orders        add an order to order_details         (requires Bearer token)
  */
 
 const AUTH_TABLE = 'login_mst';
@@ -184,6 +189,165 @@ async function requireAuth(request, env) {
     return { error: json({ success: false, message: 'Session expired. Please login again.' }, 401) };
   }
   return { user };
+}
+
+/* ------------------------------------------------------------------ *
+ * CRM schema discovery — user_details / order_details.
+ *
+ * The columns are known (given by the shop's existing schema), but the
+ * on-disk date format of orderdate/enterdate is not — historical imports
+ * commonly use DD-MM-YYYY rather than SQLite's native YYYY-MM-DD. Every
+ * date comparison below runs through a normalized expression detected
+ * once per Worker isolate instead of assuming a format.
+ * ------------------------------------------------------------------ */
+
+const CUSTOMER_TABLE = 'user_details';
+const ORDER_TABLE = 'order_details';
+
+let crmSchemaCache = null;
+
+async function tableColumns(env, table) {
+  try {
+    const info = await env.DB.prepare(`PRAGMA table_info(${table})`).all();
+    return (info.results || []).map((r) => r.name).filter(Boolean);
+  } catch (error) {
+    return [];
+  }
+}
+
+/** Classifies a sample date string so date arithmetic can be built correctly. */
+async function detectDateFormat(env, table, column) {
+  try {
+    const row = await env.DB.prepare(
+      `SELECT ${column} AS v FROM ${table} WHERE ${column} IS NOT NULL AND TRIM(${column}) <> '' LIMIT 1`
+    ).first();
+    const v = row && row.v !== null && row.v !== undefined ? String(row.v).trim() : '';
+    if (!v) return 'no-data';
+    if (/^\d{4}-\d{2}-\d{2}/.test(v)) return 'iso-dash';
+    if (/^\d{4}\/\d{2}\/\d{2}/.test(v)) return 'iso-slash';
+    if (/^\d{2}-\d{2}-\d{4}/.test(v)) return 'dmy-dash';
+    if (/^\d{2}\/\d{2}\/\d{4}/.test(v)) return 'dmy-slash';
+    return 'unknown';
+  } catch (error) {
+    return 'unknown';
+  }
+}
+
+/** SQL expression that normalizes a date column/alias to 'YYYY-MM-DD' text for comparison. */
+function dateExpr(colRef, format) {
+  switch (format) {
+    case 'iso-slash':
+      return `(substr(${colRef},1,4) || '-' || substr(${colRef},6,2) || '-' || substr(${colRef},9,2))`;
+    case 'dmy-dash':
+    case 'dmy-slash':
+      return `(substr(${colRef},7,4) || '-' || substr(${colRef},4,2) || '-' || substr(${colRef},1,2))`;
+    case 'iso-dash':
+    default:
+      return `substr(${colRef},1,10)`;
+  }
+}
+
+/** Formats an ISO 'YYYY-MM-DD' string to match the table's on-disk date format, for INSERTs. */
+function formatDateForStorage(isoDate, format) {
+  const [y, m, d] = isoDate.split('-');
+  switch (format) {
+    case 'dmy-dash':
+      return `${d}-${m}-${y}`;
+    case 'dmy-slash':
+      return `${d}/${m}/${y}`;
+    case 'iso-slash':
+      return `${y}/${m}/${d}`;
+    case 'iso-dash':
+    default:
+      return `${y}-${m}-${d}`;
+  }
+}
+
+async function getCrmSchema(env) {
+  if (crmSchemaCache) return crmSchemaCache;
+
+  const customerCols = await tableColumns(env, CUSTOMER_TABLE);
+  const orderCols = await tableColumns(env, ORDER_TABLE);
+  const hasCustomerTable = customerCols.length > 0;
+  const hasOrderTable = orderCols.length > 0;
+  const hasEnterDate = hasCustomerTable && customerCols.includes('enterdate');
+  const hasOrderDate = hasOrderTable && orderCols.includes('orderdate');
+
+  crmSchemaCache = {
+    hasCustomerTable,
+    hasOrderTable,
+    customerCols,
+    orderCols,
+    hasEnterDate,
+    hasOrderDate,
+    enterDateFormat: hasEnterDate ? await detectDateFormat(env, CUSTOMER_TABLE, 'enterdate') : 'no-column',
+    orderDateFormat: hasOrderDate ? await detectDateFormat(env, ORDER_TABLE, 'orderdate') : 'no-column'
+  };
+  return crmSchemaCache;
+}
+
+/* ------------------------------------------------------------------ *
+ * IST (UTC+5:30) date helpers — the shop operates in India, but the
+ * Worker's Date/SQLite `now` are UTC, so "today" is computed explicitly.
+ * ------------------------------------------------------------------ */
+
+const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+
+function istNow() {
+  return new Date(Date.now() + IST_OFFSET_MS);
+}
+
+function isoDate(d) {
+  return d.toISOString().slice(0, 10);
+}
+
+function addDays(d, n) {
+  const copy = new Date(d.getTime());
+  copy.setUTCDate(copy.getUTCDate() + n);
+  return copy;
+}
+
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Resolves a range token (today/7d/30d/month/year/custom) into a bounded, groupable window. */
+function computeRange(range, fromParam, toParam) {
+  const now = istNow();
+  const today = isoDate(now);
+  const KNOWN = ['today', '7d', '30d', 'month', 'year', 'custom'];
+  const normalized = KNOWN.includes(range) ? range : '30d';
+
+  if (normalized === 'today') return { range: normalized, start: today, end: today, groupBy: 'day' };
+  if (normalized === '7d') return { range: normalized, start: isoDate(addDays(now, -6)), end: today, groupBy: 'day' };
+  if (normalized === '30d') return { range: normalized, start: isoDate(addDays(now, -29)), end: today, groupBy: 'day' };
+  if (normalized === 'month') {
+    const first = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+    return { range: normalized, start: isoDate(first), end: today, groupBy: 'day' };
+  }
+  if (normalized === 'year') {
+    const first = new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
+    return { range: normalized, start: isoDate(first), end: today, groupBy: 'month' };
+  }
+
+  // custom
+  const fallbackStart = isoDate(addDays(now, -29));
+  let start = ISO_DATE_RE.test(fromParam || '') ? fromParam : fallbackStart;
+  let end = ISO_DATE_RE.test(toParam || '') ? toParam : today;
+  if (start > end) [start, end] = [end, start];
+  const spanDays = Math.round((new Date(end) - new Date(start)) / 86400000);
+  return { range: normalized, start, end, groupBy: spanDays > 62 ? 'month' : 'day' };
+}
+
+function firstRow(result) {
+  return (result && result.results && result.results[0]) || {};
+}
+
+function rowsOf(result) {
+  return (result && result.results) || [];
+}
+
+function toNumber(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : 0;
 }
 
 /* ------------------------------------------------------------------ *
@@ -424,17 +588,501 @@ async function handleStats(request, env) {
   });
 }
 
+function crmUnavailable(schema) {
+  if (!schema.hasCustomerTable || !schema.hasOrderTable) {
+    return json(
+      {
+        success: false,
+        message: `CRM tables were not found in the database (${CUSTOMER_TABLE}: ${
+          schema.hasCustomerTable ? 'ok' : 'missing'
+        }, ${ORDER_TABLE}: ${schema.hasOrderTable ? 'ok' : 'missing'}).`
+      },
+      500
+    );
+  }
+  return null;
+}
+
 /**
- * Public connectivity probe. Deliberately reports no row counts, column names
- * or other schema detail — that lives on the authenticated /api/stats.
+ * GET /api/dashboard?range=today|7d|30d|month|year|custom&from=YYYY-MM-DD&to=YYYY-MM-DD
+ *
+ * One D1 batch round trip for every KPI/chart/table the dashboard needs.
+ */
+async function handleDashboard(request, env) {
+  const auth = await requireAuth(request, env);
+  if (auth.error) return auth.error;
+
+  const schema = await getCrmSchema(env);
+  const unavailable = crmUnavailable(schema);
+  if (unavailable) return unavailable;
+
+  const url = new URL(request.url);
+  const { range, start, end, groupBy } = computeRange(
+    url.searchParams.get('range'),
+    url.searchParams.get('from'),
+    url.searchParams.get('to')
+  );
+
+  const OD = schema.hasOrderDate ? dateExpr('orderdate', schema.orderDateFormat) : null;
+  const O_OD = schema.hasOrderDate ? dateExpr('o.orderdate', schema.orderDateFormat) : null;
+  const ED = schema.hasEnterDate ? dateExpr('enterdate', schema.enterDateFormat) : null;
+
+  const now = istNow();
+  const today = isoDate(now);
+  const yesterday = isoDate(addDays(now, -1));
+  const monthPrefix = today.slice(0, 7);
+  const yearPrefix = today.slice(0, 4);
+
+  const stmts = [];
+  const at = {};
+  const add = (key, sql, params = []) => {
+    at[key] = stmts.length;
+    stmts.push(env.DB.prepare(sql).bind(...params));
+  };
+
+  add('totalCustomers', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE}`);
+  add('totalOrders', `SELECT COUNT(*) AS c FROM ${ORDER_TABLE}`);
+  add('totalSales', `SELECT COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE}`);
+  add(
+    'category',
+    `SELECT COALESCE(SUM(frameprice),0) AS frame, COALESCE(SUM(glassprice),0) AS glass,
+            COALESCE(SUM(lensprice),0) AS lens, COALESCE(SUM(sunglassprice),0) AS sunglass,
+            COALESCE(SUM(repairprice),0) AS repair
+     FROM ${ORDER_TABLE}`
+  );
+  add(
+    'productAnalytics',
+    `SELECT COALESCE(NULLIF(TRIM(product),''),'Unspecified') AS product, COUNT(*) AS c, COALESCE(SUM(amount),0) AS s
+     FROM ${ORDER_TABLE} GROUP BY product ORDER BY c DESC LIMIT 12`
+  );
+  add(
+    'frameAnalytics',
+    `SELECT COALESCE(NULLIF(TRIM(frametype),''),'Unspecified') AS frametype, COUNT(*) AS c, COALESCE(SUM(frameprice),0) AS s
+     FROM ${ORDER_TABLE} GROUP BY frametype ORDER BY c DESC LIMIT 10`
+  );
+  add(
+    'topCustomers',
+    `SELECT u.userid, u.name, u.mobile, COUNT(o.orderid) AS total_orders, COALESCE(SUM(o.amount),0) AS total_spending,
+            MAX(${schema.hasOrderDate ? O_OD : 'NULL'}) AS last_order_date
+     FROM ${CUSTOMER_TABLE} u
+     LEFT JOIN ${ORDER_TABLE} o ON u.userid = o.userid
+     GROUP BY u.userid, u.name, u.mobile
+     ORDER BY total_spending DESC
+     LIMIT 10`
+  );
+  add(
+    'recentOrders',
+    `SELECT o.orderid, o.billno, u.name AS customer_name, u.mobile AS customer_mobile, o.orderdate, o.product,
+            o.frametype, o.descriptionframe, o.descriptionglass, o.amount
+     FROM ${ORDER_TABLE} o
+     LEFT JOIN ${CUSTOMER_TABLE} u ON o.userid = u.userid
+     ORDER BY ${schema.hasOrderDate ? O_OD : 'o.orderid'} DESC, o.orderid DESC
+     LIMIT 10`
+  );
+  add('custWithOrders', `SELECT COUNT(DISTINCT userid) AS c FROM ${ORDER_TABLE} WHERE userid IS NOT NULL`);
+
+  if (schema.hasOrderDate) {
+    add('today', `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${OD} = ?`, [today]);
+    add('yesterday', `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${OD} = ?`, [
+      yesterday
+    ]);
+    add(
+      'month',
+      `SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE substr(${OD},1,7) = ?`,
+      [monthPrefix]
+    );
+    add('year', `SELECT COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE substr(${OD},1,4) = ?`, [yearPrefix]);
+    add(
+      'monthly',
+      `SELECT substr(${OD},6,2) AS m, COUNT(*) AS c, COALESCE(SUM(amount),0) AS s
+       FROM ${ORDER_TABLE} WHERE substr(${OD},1,4) = ? GROUP BY m`,
+      [yearPrefix]
+    );
+    const groupExpr = groupBy === 'month' ? `substr(${OD},1,7)` : OD;
+    add(
+      'overview',
+      `SELECT ${groupExpr} AS d, COUNT(*) AS c, COALESCE(SUM(amount),0) AS s
+       FROM ${ORDER_TABLE} WHERE ${OD} BETWEEN ? AND ? GROUP BY d ORDER BY d ASC`,
+      [start, end]
+    );
+    add(
+      'biggestOrderMonth',
+      `SELECT o.orderid, o.billno, o.amount, o.orderdate, u.name AS customer_name
+       FROM ${ORDER_TABLE} o LEFT JOIN ${CUSTOMER_TABLE} u ON o.userid = u.userid
+       WHERE substr(${O_OD},1,7) = ?
+       ORDER BY o.amount DESC LIMIT 1`,
+      [monthPrefix]
+    );
+  }
+
+  if (schema.hasEnterDate) {
+    add('custNewToday', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE} WHERE ${ED} = ?`, [today]);
+    add('custNewMonth', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE} WHERE substr(${ED},1,7) = ?`, [monthPrefix]);
+    add('custNewYear', `SELECT COUNT(*) AS c FROM ${CUSTOMER_TABLE} WHERE substr(${ED},1,4) = ?`, [yearPrefix]);
+    add(
+      'recentCustomers',
+      `SELECT userid, name, enterdate FROM ${CUSTOMER_TABLE} ORDER BY ${ED} DESC, userid DESC LIMIT 5`
+    );
+  } else {
+    add('recentCustomers', `SELECT userid, name, NULL AS enterdate FROM ${CUSTOMER_TABLE} ORDER BY userid DESC LIMIT 5`);
+  }
+
+  let results;
+  try {
+    results = await env.DB.batch(stmts);
+  } catch (error) {
+    return json({ success: false, message: 'Could not read dashboard data from the database.' }, 500);
+  }
+
+  const row = (key) => firstRow(results[at[key]]);
+  const rows = (key) => rowsOf(results[at[key]]);
+
+  const totalOrders = toNumber(row('totalOrders').c);
+  const totalSales = toNumber(row('totalSales').s);
+  const monthRow = schema.hasOrderDate ? row('month') : {};
+  const todayRow = schema.hasOrderDate ? row('today') : {};
+  const yesterdayRow = schema.hasOrderDate ? row('yesterday') : {};
+
+  const todaySales = toNumber(todayRow.s);
+  const yesterdaySales = toNumber(yesterdayRow.s);
+  const todayOrders = toNumber(todayRow.c);
+  const yesterdayOrders = toNumber(yesterdayRow.c);
+
+  const growthPct = (current, previous) => {
+    if (previous <= 0) return current > 0 ? 100 : 0;
+    return Math.round(((current - previous) / previous) * 1000) / 10;
+  };
+
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const monthlyByNum = new Map(rows('monthly').map((r) => [String(r.m).padStart(2, '0'), r]));
+  const monthlySales = monthNames.map((label, i) => {
+    const key = String(i + 1).padStart(2, '0');
+    const r = monthlyByNum.get(key);
+    return { month: label, sales: toNumber(r && r.s), orders: toNumber(r && r.c) };
+  });
+
+  const totalCustomers = toNumber(row('totalCustomers').c);
+  const customersWithOrders = toNumber(row('custWithOrders').c);
+
+  const category = row('category');
+  const recentOrders = rows('recentOrders').map((r) => ({
+    orderId: r.orderid,
+    billNo: r.billno || null,
+    customerName: r.customer_name || 'Walk-in customer',
+    customerMobile: r.customer_mobile || null,
+    orderDate: r.orderdate || null,
+    product: r.product || null,
+    frameType: r.frametype || null,
+    descriptionFrame: r.descriptionframe || null,
+    descriptionGlass: r.descriptionglass || null,
+    amount: toNumber(r.amount)
+  }));
+
+  const recentCustomers = rows('recentCustomers').map((r) => ({
+    userId: r.userid,
+    name: r.name,
+    enterDate: r.enterdate || null
+  }));
+
+  const biggestOrder = schema.hasOrderDate ? row('biggestOrderMonth') : {};
+
+  const activity = [];
+  recentCustomers.slice(0, 3).forEach((c) => {
+    activity.push({ type: 'customer', text: `New customer added: ${c.name || 'Unnamed'}`, at: c.enterDate });
+  });
+  recentOrders.slice(0, 3).forEach((o) => {
+    activity.push({
+      type: 'order',
+      text: `New order${o.billNo ? ` · Bill #${o.billNo}` : ''} for ${o.customerName} — ₹${o.amount.toLocaleString(
+        'en-IN'
+      )}`,
+      at: o.orderDate
+    });
+  });
+  if (biggestOrder && biggestOrder.orderid) {
+    activity.push({
+      type: 'highlight',
+      text: `Largest order this month: ₹${toNumber(biggestOrder.amount).toLocaleString('en-IN')} by ${
+        biggestOrder.customer_name || 'a customer'
+      }`,
+      at: biggestOrder.orderdate
+    });
+  }
+  activity.sort((a, b) => String(b.at || '').localeCompare(String(a.at || '')));
+
+  return json({
+    success: true,
+    generatedAt: new Date().toISOString(),
+    schema: {
+      hasOrderDate: schema.hasOrderDate,
+      hasEnterDate: schema.hasEnterDate,
+      orderDateFormat: schema.orderDateFormat,
+      enterDateFormat: schema.enterDateFormat
+    },
+    kpis: {
+      totalCustomers,
+      totalOrders,
+      totalSales,
+      averageOrderValue: totalOrders > 0 ? Math.round((totalSales / totalOrders) * 100) / 100 : 0,
+      todayOrders,
+      todaySales,
+      monthOrders: toNumber(monthRow.c),
+      monthSales: toNumber(monthRow.s),
+      yearSales: schema.hasOrderDate ? toNumber(row('year').s) : 0
+    },
+    dailyPerformance: {
+      todaySales,
+      yesterdaySales,
+      todayOrders,
+      yesterdayOrders,
+      salesGrowthPct: growthPct(todaySales, yesterdaySales),
+      orderGrowthPct: growthPct(todayOrders, yesterdayOrders)
+    },
+    salesOverview: {
+      range,
+      start,
+      end,
+      groupBy,
+      points: schema.hasOrderDate
+        ? rows('overview').map((r) => ({ date: r.d, sales: toNumber(r.s), orders: toNumber(r.c) }))
+        : []
+    },
+    monthlySales,
+    categorySales: [
+      { category: 'Frame', sales: toNumber(category.frame) },
+      { category: 'Glass', sales: toNumber(category.glass) },
+      { category: 'Lens', sales: toNumber(category.lens) },
+      { category: 'Sunglasses', sales: toNumber(category.sunglass) },
+      { category: 'Repair', sales: toNumber(category.repair) }
+    ],
+    topCustomers: rows('topCustomers').map((r) => ({
+      userId: r.userid,
+      name: r.name || 'Unnamed',
+      mobile: r.mobile || null,
+      totalOrders: toNumber(r.total_orders),
+      totalSpending: toNumber(r.total_spending),
+      lastOrderDate: r.last_order_date || null
+    })),
+    recentOrders,
+    productAnalytics: rows('productAnalytics').map((r) => ({
+      product: r.product,
+      orders: toNumber(r.c),
+      sales: toNumber(r.s)
+    })),
+    frameAnalytics: rows('frameAnalytics').map((r) => ({
+      frameType: r.frametype,
+      orders: toNumber(r.c),
+      sales: toNumber(r.s)
+    })),
+    customerAnalytics: {
+      newToday: schema.hasEnterDate ? toNumber(row('custNewToday').c) : 0,
+      newThisMonth: schema.hasEnterDate ? toNumber(row('custNewMonth').c) : 0,
+      newThisYear: schema.hasEnterDate ? toNumber(row('custNewYear').c) : 0,
+      totalCustomers,
+      customersWithOrders,
+      customersWithoutOrders: Math.max(0, totalCustomers - customersWithOrders)
+    },
+    recentActivity: activity.slice(0, 8)
+  });
+}
+
+/**
+ * GET /api/search?q=... — customers (name/mobile), orders (bill no/order id),
+ * and frame types. Every branch is LIMITed; nothing loads the full tables.
+ */
+async function handleSearch(request, env) {
+  const auth = await requireAuth(request, env);
+  if (auth.error) return auth.error;
+
+  const schema = await getCrmSchema(env);
+  const unavailable = crmUnavailable(schema);
+  if (unavailable) return unavailable;
+
+  const q = String(new URL(request.url).searchParams.get('q') || '').trim();
+  if (!q) return json({ success: true, query: '', customers: [], orders: [], frameTypes: [] });
+
+  const like = `%${q}%`;
+  let results;
+  try {
+    results = await env.DB.batch([
+      env.DB.prepare(
+        `SELECT userid, name, mobile FROM ${CUSTOMER_TABLE} WHERE name LIKE ? OR mobile LIKE ? LIMIT 8`
+      ).bind(like, like),
+      env.DB.prepare(
+        `SELECT orderid, billno, amount, orderdate, userid FROM ${ORDER_TABLE}
+         WHERE CAST(orderid AS TEXT) LIKE ? OR billno LIKE ? LIMIT 8`
+      ).bind(like, like),
+      env.DB.prepare(
+        `SELECT DISTINCT frametype FROM ${ORDER_TABLE} WHERE frametype LIKE ? AND TRIM(frametype) <> '' LIMIT 8`
+      ).bind(like)
+    ]);
+  } catch (error) {
+    return json({ success: false, message: 'Search failed.' }, 500);
+  }
+
+  return json({
+    success: true,
+    query: q,
+    customers: rowsOf(results[0]).map((r) => ({ userId: r.userid, name: r.name, mobile: r.mobile })),
+    orders: rowsOf(results[1]).map((r) => ({
+      orderId: r.orderid,
+      billNo: r.billno,
+      amount: toNumber(r.amount),
+      orderDate: r.orderdate,
+      userId: r.userid
+    })),
+    frameTypes: rowsOf(results[2]).map((r) => r.frametype)
+  });
+}
+
+/** POST /api/customers — add a row to user_details. */
+async function handleAddCustomer(request, env) {
+  const auth = await requireAuth(request, env);
+  if (auth.error) return auth.error;
+
+  const schema = await getCrmSchema(env);
+  const unavailable = crmUnavailable(schema);
+  if (unavailable) return unavailable;
+
+  let payload;
+  try {
+    payload = await request.json();
+  } catch (error) {
+    return json({ success: false, message: 'Invalid JSON body.' }, 400);
+  }
+
+  const name = String(payload.name || '').trim();
+  const mobile = String(payload.mobile || '').trim();
+  const address = String(payload.address || '').trim();
+
+  if (name.length < 2) return json({ success: false, message: 'Customer name is required.' }, 400);
+  if (!/^\d{7,15}$/.test(mobile)) return json({ success: false, message: 'Enter a valid mobile number.' }, 400);
+
+  const columns = ['name', 'mobile'];
+  const values = [name, mobile];
+  if (schema.customerCols.includes('address')) {
+    columns.push('address');
+    values.push(address);
+  }
+  if (schema.hasEnterDate) {
+    columns.push('enterdate');
+    values.push(formatDateForStorage(isoDate(istNow()), schema.enterDateFormat));
+  }
+
+  let result;
+  try {
+    result = await env.DB.prepare(
+      `INSERT INTO ${CUSTOMER_TABLE} (${columns.join(', ')}) VALUES (${columns.map(() => '?').join(', ')})`
+    )
+      .bind(...values)
+      .run();
+  } catch (error) {
+    return json({ success: false, message: 'Could not save the customer.' }, 500);
+  }
+
+  return json(
+    { success: true, message: 'Customer added successfully', customer: { userId: result.meta?.last_row_id ?? null, name, mobile } },
+    201
+  );
+}
+
+/** POST /api/orders — add a row to order_details for an existing customer. */
+async function handleAddOrder(request, env) {
+  const auth = await requireAuth(request, env);
+  if (auth.error) return auth.error;
+
+  const schema = await getCrmSchema(env);
+  const unavailable = crmUnavailable(schema);
+  if (unavailable) return unavailable;
+
+  let payload;
+  try {
+    payload = await request.json();
+  } catch (error) {
+    return json({ success: false, message: 'Invalid JSON body.' }, 400);
+  }
+
+  const userId = payload.userid ?? payload.userId;
+  if (userId === undefined || userId === null || userId === '') {
+    return json({ success: false, message: 'Select a customer for this order.' }, 400);
+  }
+
+  const customer = await env.DB.prepare(`SELECT userid FROM ${CUSTOMER_TABLE} WHERE userid = ? LIMIT 1`)
+    .bind(userId)
+    .first();
+  if (!customer) return json({ success: false, message: 'Customer not found.' }, 400);
+
+  const amount = toNumber(payload.amount);
+  if (amount <= 0) return json({ success: false, message: 'Enter a valid order amount.' }, 400);
+
+  const priceField = (key) => (payload[key] === undefined || payload[key] === '' ? null : toNumber(payload[key]));
+  const textField = (key) => {
+    const v = payload[key];
+    return v === undefined || v === null || v === '' ? null : String(v).trim();
+  };
+
+  const record = {
+    userid: userId,
+    billno: textField('billno'),
+    product: textField('product'),
+    descriptionframe: textField('descriptionframe'),
+    descriptionglass: textField('descriptionglass'),
+    eyeweardetail: textField('eyeweardetail'),
+    amount,
+    frametype: textField('frametype'),
+    framesize: textField('framesize'),
+    frameprice: priceField('frameprice'),
+    glassprice: priceField('glassprice'),
+    lensprice: priceField('lensprice'),
+    sunglassprice: priceField('sunglassprice'),
+    repairprice: priceField('repairprice')
+  };
+
+  const columns = Object.keys(record).filter((key) => schema.orderCols.includes(key));
+  const values = columns.map((key) => record[key]);
+
+  if (schema.hasOrderDate) {
+    columns.push('orderdate');
+    values.push(formatDateForStorage(isoDate(istNow()), schema.orderDateFormat));
+  }
+
+  let result;
+  try {
+    result = await env.DB.prepare(
+      `INSERT INTO ${ORDER_TABLE} (${columns.join(', ')}) VALUES (${columns.map(() => '?').join(', ')})`
+    )
+      .bind(...values)
+      .run();
+  } catch (error) {
+    return json({ success: false, message: 'Could not save the order.' }, 500);
+  }
+
+  return json(
+    { success: true, message: 'Order added successfully', order: { orderId: result.meta?.last_row_id ?? null, amount } },
+    201
+  );
+}
+
+/**
+ * Public connectivity probe. Deliberately reports no row counts, customer
+ * data or other sensitive schema detail — that lives on authenticated routes.
  */
 async function handleHealth(env) {
   try {
     await env.DB.prepare(`SELECT 1 FROM ${AUTH_TABLE} LIMIT 1`).first();
+    const crm = await getCrmSchema(env);
     return json({
       success: true,
       database: 'connected',
-      authSecretConfigured: Boolean(env.AUTH_SECRET)
+      authSecretConfigured: Boolean(env.AUTH_SECRET),
+      crm: {
+        customerTable: crm.hasCustomerTable,
+        orderTable: crm.hasOrderTable,
+        hasOrderDate: crm.hasOrderDate,
+        hasEnterDate: crm.hasEnterDate,
+        orderDateFormat: crm.orderDateFormat,
+        enterDateFormat: crm.enterDateFormat
+      }
     });
   } catch (error) {
     return json({ success: false, database: 'error', message: 'Could not reach the D1 database.' }, 500);
@@ -463,7 +1111,11 @@ export default {
             'GET  /api/users',
             'POST /api/users',
             'GET  /api/stats',
-            'GET  /api/stats/yearly'
+            'GET  /api/stats/yearly',
+            'GET  /api/dashboard',
+            'GET  /api/search',
+            'POST /api/customers',
+            'POST /api/orders'
           ]
         });
       }
@@ -476,6 +1128,22 @@ export default {
         if (request.method === 'GET') return handleListUsers(request, env);
         if (request.method === 'POST') return handleCreateUser(request, env);
         return json({ success: false, message: 'Only GET and POST are allowed.' }, 405);
+      }
+      if (path === '/api/dashboard') {
+        if (request.method !== 'GET') return json({ success: false, message: 'Only GET is allowed.' }, 405);
+        return handleDashboard(request, env);
+      }
+      if (path === '/api/search') {
+        if (request.method !== 'GET') return json({ success: false, message: 'Only GET is allowed.' }, 405);
+        return handleSearch(request, env);
+      }
+      if (path === '/api/customers') {
+        if (request.method !== 'POST') return json({ success: false, message: 'Only POST is allowed.' }, 405);
+        return handleAddCustomer(request, env);
+      }
+      if (path === '/api/orders') {
+        if (request.method !== 'POST') return json({ success: false, message: 'Only POST is allowed.' }, 405);
+        return handleAddOrder(request, env);
       }
 
       return json({ success: false, message: 'Not found.' }, 404);

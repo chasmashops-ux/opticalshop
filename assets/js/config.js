@@ -15,7 +15,11 @@ window.SHCG_CONFIG = {
     users: '/api/users',
     stats: '/api/stats',
     yearlyStats: '/api/stats/yearly',
-    health: '/api/health'
+    health: '/api/health',
+    dashboard: '/api/dashboard',
+    search: '/api/search',
+    customers: '/api/customers',
+    orders: '/api/orders'
   }
 };
 

@@ -6,6 +6,7 @@
     <meta name="robots" content="noindex, nofollow" />
     <title>Dashboard | Shree Hari Chasma Ghar</title>
     <link rel="stylesheet" href="/assets/css/account.css" />
+    <link rel="stylesheet" href="/assets/css/crm.css" />
     <script src="/assets/js/config.js"></script>
     <script src="/assets/js/session.js"></script>
     <script>
@@ -15,71 +16,444 @@
     </script>
   </head>
   <body>
-    <div class="dashboard-shell">
-      <header class="dashboard-header">
-        <a href="/dashboard.html" class="brand-label">
-          <img src="/assets/images/Logo.png" alt="Shree Hari Chasma Ghar" class="brand-logo" />
-        </a>
-        <div class="header-actions">
-          <div class="user-pill">👤 <span id="sessionUser">Admin</span></div>
+    <div class="crm-app">
+      <div class="crm-backdrop" id="crmBackdrop"></div>
+
+      <aside class="crm-sidebar" id="crmSidebar">
+        <div class="crm-sidebar-brand">
+          <img src="/assets/images/Logo.png" alt="Shree Hari Chasma Ghar" />
+          <button class="crm-sidebar-close" id="sidebarClose" aria-label="Close menu">&times;</button>
+        </div>
+
+        <nav class="crm-nav">
+          <div class="crm-nav-group-label">Main</div>
+          <a href="#" class="crm-nav-item is-active" data-scroll="topKpis">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
+            Dashboard
+          </a>
+          <a href="#" class="crm-nav-item" data-scroll="topCustomersSection">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/></svg>
+            Customers
+          </a>
+          <a href="#" class="crm-nav-item" data-scroll="recentOrdersSection">
+            <svg viewBox="0 0 24 24"><path d="M4 8h16l-1.4 11.2a1.5 1.5 0 0 1-1.5 1.3H6.9a1.5 1.5 0 0 1-1.5-1.3L4 8Z"/><path d="M8 8V6a4 4 0 1 1 8 0v2"/></svg>
+            Orders
+          </a>
+          <span class="crm-nav-item is-disabled" title="Not built yet">
+            <svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+            Invoices
+            <span class="crm-nav-soon">Soon</span>
+          </span>
+          <a href="#" class="crm-nav-item" data-scroll="frameAnalyticsSection">
+            <svg viewBox="0 0 24 24"><circle cx="6.5" cy="12" r="3.2"/><circle cx="17.5" cy="12" r="3.2"/><path d="M9.7 12h4.6M2 11l1.5 1M22 11l-1.5 1"/></svg>
+            Products / Frames
+          </a>
+          <a href="#" class="crm-nav-item" data-scroll="categorySection">
+            <svg viewBox="0 0 24 24"><path d="M12 3c3 4 5 6.5 5 9.5a5 5 0 0 1-10 0C7 9.5 9 7 12 3Z"/></svg>
+            Glass / Lens
+          </a>
+          <a href="#" class="crm-nav-item" data-scroll="categorySection">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg>
+            Sunglasses
+          </a>
+          <a href="#" class="crm-nav-item" data-scroll="categorySection">
+            <svg viewBox="0 0 24 24"><path d="m14.7 6.3-8 8a2 2 0 0 0 2.8 2.8l8-8"/><path d="M17.5 3.5 20.5 6.5 18 9l-3-3 2.5-2.5Z"/></svg>
+            Repairs
+          </a>
+          <span class="crm-nav-item is-disabled" title="Not built yet">
+            <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M4 20h16"/></svg>
+            Reports
+            <span class="crm-nav-soon">Soon</span>
+          </span>
+          <span class="crm-nav-item is-disabled" title="Not built yet">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.36a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.64 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.64 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.64a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.36 9c.1.36.5 1 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1Z"/></svg>
+            Settings
+            <span class="crm-nav-soon">Soon</span>
+          </span>
+
+          <div class="crm-nav-group-label">Login accounts</div>
+          <a href="/account/" class="crm-nav-item">
+            <svg viewBox="0 0 24 24"><path d="M12 2 3 6.5V12c0 5 3.8 8.7 9 10 5.2-1.3 9-5 9-10V6.5L12 2Z"/></svg>
+            Account Admin
+          </a>
+        </nav>
+
+        <div class="crm-sidebar-foot">
+          <div class="crm-profile">
+            <div class="crm-profile-avatar" id="profileAvatar">A</div>
+            <div>
+              <div class="crm-profile-name" id="profileName">Admin</div>
+              <div class="crm-profile-role" id="profileRole">admin</div>
+            </div>
+          </div>
           <button class="logout-btn" type="button" data-logout>Logout</button>
         </div>
-      </header>
+      </aside>
 
-      <main class="dashboard-main">
-        <section class="summary-grid">
-          <div class="stat-card">
-            <h3>Customers</h3>
-            <div class="value">1,248</div>
-          </div>
-          <div class="stat-card">
-            <h3>Orders</h3>
-            <div class="value">364</div>
-          </div>
-          <div class="stat-card">
-            <h3>Billing</h3>
-            <div class="value">₹48.2k</div>
-          </div>
-          <div class="stat-card">
-            <h3>Reports</h3>
-            <div class="value">12</div>
-          </div>
-        </section>
+      <div class="crm-main">
+        <header class="crm-topbar">
+          <button class="crm-sidebar-toggle" id="sidebarToggle" aria-label="Open menu">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="#334155" stroke-width="2" fill="none"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
 
-        <section class="content-grid">
-          <div class="panel">
-            <h4>Recent Activity</h4>
-            <div class="list">
-              <div class="list-item"><span>New customer registration</span><span class="badge">Today</span></div>
-              <div class="list-item"><span>Order #2458 confirmed</span><span class="badge">Today</span></div>
-              <div class="list-item"><span>Billing updated</span><span class="badge">Yesterday</span></div>
-              <div class="list-item"><span>Monthly report generated</span><span class="badge">This week</span></div>
+          <div class="crm-search">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="search" id="globalSearch" placeholder="Search customers, orders, bill no, frame type..." autocomplete="off" />
+            <div class="crm-search-results" id="searchResults"></div>
+          </div>
+
+          <div class="crm-topbar-actions">
+            <button class="crm-icon-btn" id="notifButton" aria-label="Recent activity">
+              <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+              <span class="dot" id="notifDot"></span>
+            </button>
+            <div class="crm-notif-panel" id="notifPanel"></div>
+          </div>
+        </header>
+
+        <main class="crm-content">
+          <div class="crm-error-banner" id="crmError"></div>
+
+          <section class="crm-welcome" id="topKpis">
+            <h1 id="greetingText">Good Morning, Admin</h1>
+            <p id="greetingDate">—</p>
+          </section>
+
+          <section class="kpi-grid">
+            <div class="kpi-card" data-skeleton>
+              <div class="kpi-label">Total Customers</div>
+              <div class="kpi-value" id="kpiTotalCustomers">0</div>
             </div>
-          </div>
+            <div class="kpi-card" data-skeleton>
+              <div class="kpi-label">Total Orders</div>
+              <div class="kpi-value" id="kpiTotalOrders">0</div>
+            </div>
+            <div class="kpi-card" data-skeleton>
+              <div class="kpi-label">Total Sales</div>
+              <div class="kpi-value" id="kpiTotalSales">₹0</div>
+            </div>
+            <div class="kpi-card" data-skeleton>
+              <div class="kpi-label">Average Order Value</div>
+              <div class="kpi-value" id="kpiAvgOrder">₹0</div>
+            </div>
+            <div class="kpi-card" data-skeleton>
+              <div class="kpi-label">Today's Orders</div>
+              <div class="kpi-value" id="kpiTodayOrders">0</div>
+            </div>
+            <div class="kpi-card" data-skeleton>
+              <div class="kpi-label">Today's Sales</div>
+              <div class="kpi-value" id="kpiTodaySales">₹0</div>
+            </div>
+            <div class="kpi-card" data-skeleton>
+              <div class="kpi-label">This Month Orders</div>
+              <div class="kpi-value" id="kpiMonthOrders">0</div>
+            </div>
+            <div class="kpi-card" data-skeleton>
+              <div class="kpi-label">This Month Sales</div>
+              <div class="kpi-value" id="kpiMonthSales">₹0</div>
+            </div>
+            <div class="kpi-card" data-skeleton>
+              <div class="kpi-label">This Year Sales</div>
+              <div class="kpi-value" id="kpiYearSales">₹0</div>
+            </div>
+          </section>
 
-          <aside class="sidebar-box">
-            <div class="panel">
-              <h4>Sections</h4>
-              <div class="list">
-                <a class="menu-card" href="/account/">Account Dashboard</a>
-                <a class="menu-card" href="/account/search-user.html">Search User</a>
-                <a class="menu-card" href="/account/add-user.html">Add User</a>
-                <a class="menu-card" href="/account/reports.html">Year-wise Reports</a>
-                <a class="menu-card" href="#" data-logout>Logout</a>
+          <section class="crm-card">
+            <div class="crm-card-head">
+              <div>
+                <h3>Quick Actions</h3>
+                <p>Jump straight into common tasks.</p>
               </div>
             </div>
-          </aside>
-        </section>
-      </main>
+            <div class="quick-actions">
+              <button class="quick-action-btn" data-open="add-customer" type="button">
+                <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M18 8v6M15 11h6"/></svg>
+                + New Customer
+              </button>
+              <button class="quick-action-btn" data-open="add-order" type="button">
+                <svg viewBox="0 0 24 24"><path d="M4 8h16l-1.4 11.2a1.5 1.5 0 0 1-1.5 1.3H6.9a1.5 1.5 0 0 1-1.5-1.3L4 8Z"/><path d="M8 8V6a4 4 0 1 1 8 0v2M12 11v5M9.5 13.5h5"/></svg>
+                + New Order / Invoice
+              </button>
+              <button class="quick-action-btn" id="qaSearchCustomer" type="button">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                Search Customer
+              </button>
+            </div>
+          </section>
+
+          <section class="crm-card">
+            <div class="crm-card-head">
+              <div>
+                <h3>Sales Overview</h3>
+                <p id="salesOverviewRangeLabel">Daily sales and order count from order_details.</p>
+              </div>
+              <div class="range-filter">
+                <button type="button" data-range="today">Today</button>
+                <button type="button" data-range="7d">7 Days</button>
+                <button type="button" data-range="30d" class="active">30 Days</button>
+                <button type="button" data-range="month">This Month</button>
+                <button type="button" data-range="year">This Year</button>
+                <button type="button" data-range="custom">Custom</button>
+              </div>
+            </div>
+            <div class="range-custom" id="rangeCustom">
+              <input type="date" id="rangeFrom" />
+              <span>to</span>
+              <input type="date" id="rangeTo" />
+              <button type="button" id="rangeCustomApply">Apply</button>
+            </div>
+            <div class="chart-wrap" data-skeleton>
+              <canvas id="salesOverviewChart"></canvas>
+              <div class="crm-empty" id="salesOverviewEmpty" style="display:none">No data available for this range</div>
+            </div>
+          </section>
+
+          <section class="crm-grid-2" id="categorySection">
+            <div class="crm-card" data-skeleton>
+              <div class="crm-card-head">
+                <div>
+                  <h3>Sales Category Breakdown</h3>
+                  <p>Frame, glass, lens, sunglasses &amp; repair totals.</p>
+                </div>
+              </div>
+              <div class="chart-wrap chart-wrap-sm">
+                <canvas id="categoryChart"></canvas>
+                <div class="crm-empty" id="categoryEmpty" style="display:none">No data available</div>
+              </div>
+            </div>
+            <div class="crm-card" data-skeleton>
+              <div class="crm-card-head">
+                <div>
+                  <h3>By Category</h3>
+                </div>
+              </div>
+              <div class="category-grid" id="categoryCards"></div>
+            </div>
+          </section>
+
+          <section class="crm-card" data-skeleton>
+            <div class="crm-card-head">
+              <div>
+                <h3>Monthly Sales</h3>
+                <p>Current year, January through December.</p>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="monthlyChart"></canvas>
+            </div>
+          </section>
+
+          <section class="crm-card" data-skeleton>
+            <div class="crm-card-head">
+              <div>
+                <h3>Today's Business Performance</h3>
+                <p>Compared with yesterday.</p>
+              </div>
+            </div>
+            <div class="perf-grid">
+              <div class="perf-item">
+                <div class="perf-label">Today's Sales</div>
+                <div class="perf-value" id="perfTodaySales">₹0</div>
+                <div id="perfSalesGrowth"></div>
+              </div>
+              <div class="perf-item">
+                <div class="perf-label">Yesterday's Sales</div>
+                <div class="perf-value" id="perfYesterdaySales">₹0</div>
+              </div>
+              <div class="perf-item">
+                <div class="perf-label">Today's Orders</div>
+                <div class="perf-value" id="perfTodayOrders">0</div>
+                <div id="perfOrderGrowth"></div>
+              </div>
+              <div class="perf-item">
+                <div class="perf-label">Yesterday's Orders</div>
+                <div class="perf-value" id="perfYesterdayOrders">0</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="crm-card" id="topCustomersSection" data-skeleton>
+            <div class="crm-card-head">
+              <div>
+                <h3>Top Customers</h3>
+                <p>Ranked by total spending across all orders.</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Customer</th><th>Mobile</th><th>Orders</th><th>Total Spending</th><th>Last Order</th></tr></thead>
+                <tbody id="topCustomersBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="crm-card" id="recentOrdersSection" data-skeleton>
+            <div class="crm-card-head">
+              <div>
+                <h3>Recent Orders</h3>
+                <p>Last 10 orders, newest first.</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Order</th><th>Bill No</th><th>Customer</th><th>Date</th><th>Product</th><th>Frame</th><th>Amount</th></tr></thead>
+                <tbody id="recentOrdersBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="crm-grid-2-even">
+            <div class="crm-card" data-skeleton>
+              <div class="crm-card-head">
+                <div>
+                  <h3>Orders by Product Type</h3>
+                </div>
+              </div>
+              <div class="chart-wrap chart-wrap-sm">
+                <canvas id="productChart"></canvas>
+                <div class="crm-empty" id="productEmpty" style="display:none">No data available</div>
+              </div>
+            </div>
+            <div class="crm-card" id="frameAnalyticsSection" data-skeleton>
+              <div class="crm-card-head">
+                <div>
+                  <h3>Top Frame Types</h3>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead><tr><th>Frame Type</th><th>Orders</th><th>Sales</th></tr></thead>
+                  <tbody id="frameAnalyticsBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section class="crm-card" data-skeleton>
+            <div class="crm-card-head">
+              <div>
+                <h3>Customer Analytics</h3>
+              </div>
+            </div>
+            <div class="perf-grid">
+              <div class="perf-item"><div class="perf-label">New Today</div><div class="perf-value" id="custNewToday">0</div></div>
+              <div class="perf-item"><div class="perf-label">New This Month</div><div class="perf-value" id="custNewMonth">0</div></div>
+              <div class="perf-item"><div class="perf-label">New This Year</div><div class="perf-value" id="custNewYear">0</div></div>
+              <div class="perf-item"><div class="perf-label">Customers With Orders</div><div class="perf-value" id="custWithOrders">0</div></div>
+              <div class="perf-item"><div class="perf-label">Customers Without Orders</div><div class="perf-value" id="custWithoutOrders">0</div></div>
+            </div>
+          </section>
+
+          <section class="crm-card" data-skeleton>
+            <div class="crm-card-head">
+              <div>
+                <h3>Recent Activity</h3>
+                <p>Newest customers, orders and highlights from your real data.</p>
+              </div>
+            </div>
+            <div class="timeline" id="activityTimeline"></div>
+          </section>
+        </main>
+      </div>
     </div>
 
+    <!-- Add Customer modal -->
+    <div class="modal-overlay" id="addCustomerModal">
+      <div class="modal-box">
+        <div class="modal-head">
+          <h3>New Customer</h3>
+          <button class="modal-close" type="button" data-close>&times;</button>
+        </div>
+        <form id="addCustomerForm" class="form-grid">
+          <div class="form-field">
+            <label for="custName">Name</label>
+            <input type="text" id="custName" required minlength="2" />
+          </div>
+          <div class="form-field">
+            <label for="custMobile">Mobile</label>
+            <input type="tel" id="custMobile" required pattern="\d{7,15}" placeholder="9876543210" />
+          </div>
+          <div class="form-field">
+            <label for="custAddress">Address (optional)</label>
+            <input type="text" id="custAddress" />
+          </div>
+          <button class="primary-btn" type="submit" id="addCustomerSubmit">Add Customer</button>
+          <div class="form-message" id="addCustomerMessage"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add Order modal -->
+    <div class="modal-overlay" id="addOrderModal">
+      <div class="modal-box">
+        <div class="modal-head">
+          <h3>New Order / Invoice</h3>
+          <button class="modal-close" type="button" data-close>&times;</button>
+        </div>
+        <form id="addOrderForm" class="form-grid">
+          <div class="form-field">
+            <label for="orderCustomerSearch">Customer</label>
+            <input type="text" id="orderCustomerSearch" placeholder="Search by name or mobile..." autocomplete="off" required />
+            <input type="hidden" id="orderCustomerId" />
+            <div id="orderCustomerResults"></div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-field">
+              <label for="orderBillNo">Bill No (optional)</label>
+              <input type="text" id="orderBillNo" />
+            </div>
+            <div class="form-field">
+              <label for="orderProduct">Product</label>
+              <input type="text" id="orderProduct" placeholder="e.g. Frame-Glass" />
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-field">
+              <label for="orderFrameType">Frame Type</label>
+              <input type="text" id="orderFrameType" />
+            </div>
+            <div class="form-field">
+              <label for="orderAmount">Total Amount (₹)</label>
+              <input type="number" id="orderAmount" min="0" step="0.01" required />
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-field">
+              <label for="orderFramePrice">Frame Price (₹)</label>
+              <input type="number" id="orderFramePrice" min="0" step="0.01" />
+            </div>
+            <div class="form-field">
+              <label for="orderGlassPrice">Glass Price (₹)</label>
+              <input type="number" id="orderGlassPrice" min="0" step="0.01" />
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-field">
+              <label for="orderLensPrice">Lens Price (₹)</label>
+              <input type="number" id="orderLensPrice" min="0" step="0.01" />
+            </div>
+            <div class="form-field">
+              <label for="orderSunglassPrice">Sunglass Price (₹)</label>
+              <input type="number" id="orderSunglassPrice" min="0" step="0.01" />
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="orderRepairPrice">Repair Price (₹)</label>
+            <input type="number" id="orderRepairPrice" min="0" step="0.01" />
+          </div>
+          <button class="primary-btn" type="submit" id="addOrderSubmit">Add Order</button>
+          <div class="form-message" id="addOrderMessage"></div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="/assets/js/dashboard.js"></script>
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        var session = window.SHCG_SESSION || window.SHCG_AUTH.get();
-        if (!session) return;
-        document.getElementById('sessionUser').textContent = session.username || 'Admin';
-        window.SHCG_AUTH.bindLogoutControls();
-        document.documentElement.classList.remove('auth-pending');
+      document.getElementById('qaSearchCustomer').addEventListener('click', function () {
+        var input = document.getElementById('globalSearch');
+        input.focus();
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
       });
     </script>
   </body>
