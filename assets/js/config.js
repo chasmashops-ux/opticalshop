@@ -27,3 +27,18 @@ window.SHCG_CONFIG.url = function (endpointOrPath) {
   var path = window.SHCG_CONFIG.endpoints[endpointOrPath] || endpointOrPath;
   return window.SHCG_CONFIG.API_BASE + path;
 };
+
+/**
+ * Path builders for dynamic-segment endpoints — return a PATH (not a full
+ * URL), same as everything in `endpoints`, so they compose correctly with
+ * SHCG_AUTH.authFetch()/CONFIG.url(), which always prepends API_BASE itself.
+ */
+window.SHCG_CONFIG.customerPath = function (id) {
+  return '/api/customers/' + encodeURIComponent(id);
+};
+window.SHCG_CONFIG.orderPath = function (id) {
+  return '/api/orders/' + encodeURIComponent(id);
+};
+window.SHCG_CONFIG.orderBillPath = function (id) {
+  return '/api/orders/' + encodeURIComponent(id) + '/bill';
+};

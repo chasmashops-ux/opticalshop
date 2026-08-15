@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Customer Profile | Shree Hari Chasma Ghar</title>
+    <link rel="stylesheet" href="/assets/css/account.css" />
+    <link rel="stylesheet" href="/assets/css/crm.css" />
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/session.js"></script>
+    <script src="/assets/js/crm-shell.js"></script>
+    <script>
+      document.documentElement.classList.add('auth-pending');
+    </script>
+  </head>
+  <body>
+    <div class="crm-app" id="crmShell"></div>
+
+    <div id="pageContent" hidden>
+      <div class="crm-error-banner" id="crmError"></div>
+
+      <section class="crm-card" data-skeleton id="profileCard">
+        <div class="profile-head">
+          <div class="profile-title">
+            <div class="profile-avatar-lg" id="custAvatar">?</div>
+            <div>
+              <h1 id="custName">Loading...</h1>
+              <p id="custMeta">—</p>
+            </div>
+          </div>
+          <a class="primary-btn" id="newOrderForCustomer" href="/crm/new-order.html" style="text-decoration:none; display:inline-flex; align-items:center;">+ New Order</a>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-tile"><div class="stat-label">Total Orders</div><div class="stat-value" id="statTotalOrders">0</div></div>
+          <div class="stat-tile"><div class="stat-label">Total Purchase</div><div class="stat-value" id="statTotalPurchase">₹0</div></div>
+          <div class="stat-tile"><div class="stat-label">Last Order</div><div class="stat-value" id="statLastOrder">—</div></div>
+          <div class="stat-tile"><div class="stat-label">Average Order Value</div><div class="stat-value" id="statAvgOrder">₹0</div></div>
+        </div>
+      </section>
+
+      <section class="crm-card" data-skeleton>
+        <div class="crm-card-head">
+          <div>
+            <h3>Order History</h3>
+            <p>Every order for this customer. Click a row to open it.</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Order</th><th>Bill No</th><th>Date</th><th>Product</th><th>Frame</th><th>Amount</th></tr></thead>
+            <tbody id="ordersBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <script src="/assets/js/crm-customer.js"></script>
+  </body>
+</html>

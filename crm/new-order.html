@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>New Order | Shree Hari Chasma Ghar</title>
+    <link rel="stylesheet" href="/assets/css/account.css" />
+    <link rel="stylesheet" href="/assets/css/crm.css" />
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/session.js"></script>
+    <script src="/assets/js/crm-shell.js"></script>
+    <script>
+      document.documentElement.classList.add('auth-pending');
+    </script>
+  </head>
+  <body>
+    <div class="crm-app" id="crmShell"></div>
+
+    <div id="pageContent" hidden>
+      <section class="crm-welcome">
+        <h1>New Order</h1>
+        <p>Select an existing customer or add a new one, then enter the order details.</p>
+      </section>
+
+      <div class="crm-error-banner" id="crmError"></div>
+
+      <!-- Step 1: customer -->
+      <section class="crm-card" id="customerStep">
+        <div class="crm-card-head">
+          <div><span class="step-pill">Step 1</span></div>
+        </div>
+
+        <div class="selected-customer-card" id="selectedCustomerCard">
+          <div>
+            <strong id="selectedCustomerName"></strong>
+            <div id="selectedCustomerMeta" style="color:var(--text-muted); font-size:0.85rem;"></div>
+          </div>
+          <button type="button" id="changeCustomerBtn">Change</button>
+        </div>
+
+        <div id="customerPicker">
+          <div class="search-bar">
+            <input type="search" id="customerSearchInput" placeholder="Search customer by name or mobile..." autocomplete="off" />
+            <button class="ghost-btn" type="button" id="showAddCustomerBtn">+ New Customer</button>
+          </div>
+          <div class="customer-pick-list" id="customerPickList"></div>
+        </div>
+
+        <form class="form-grid" id="quickAddCustomerForm" style="display:none; margin-top:16px; max-width:480px;">
+          <div class="form-field">
+            <label for="newCustName">Name</label>
+            <input type="text" id="newCustName" required minlength="2" />
+          </div>
+          <div class="form-field">
+            <label for="newCustMobile">Mobile (optional)</label>
+            <input type="tel" id="newCustMobile" pattern="\d{7,15}" />
+          </div>
+          <div class="form-field">
+            <label for="newCustAddress">Address (optional)</label>
+            <input type="text" id="newCustAddress" />
+          </div>
+          <button class="primary-btn" type="submit">Add &amp; Select Customer</button>
+        </form>
+      </section>
+
+      <!-- Step 2: order -->
+      <section class="crm-card" id="orderStep" style="opacity:0.5; pointer-events:none;">
+        <div class="crm-card-head">
+          <div><span class="step-pill">Step 2</span></div>
+        </div>
+
+        <form class="form-grid" id="orderForm">
+          <div class="form-grid-2">
+            <div class="form-field">
+              <label for="orderBillNo">Bill Number (optional)</label>
+              <input type="text" id="orderBillNo" placeholder="Leave blank for a direct order" />
+            </div>
+            <div class="form-field">
+              <label for="orderProduct">Product</label>
+              <input type="text" id="orderProduct" placeholder="e.g. Frame-Glass, Sunglasses, Contact Lens" />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-field">
+              <label for="orderFrameType">Frame Type</label>
+              <input type="text" id="orderFrameType" />
+            </div>
+            <div class="form-field">
+              <label for="orderFrameSize">Frame Size</label>
+              <input type="text" id="orderFrameSize" />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="orderDescFrame">Frame Description</label>
+            <input type="text" id="orderDescFrame" />
+          </div>
+          <div class="form-field">
+            <label for="orderDescGlass">Glass Description</label>
+            <input type="text" id="orderDescGlass" />
+          </div>
+
+          <div class="crm-card-head" style="margin-top:6px;">
+            <div>
+              <h3 style="font-size:0.98rem;">Prescription (Eyewear Details)</h3>
+              <p>Optional. Saved as the order's eyeweardetail record.</p>
+            </div>
+          </div>
+          <div class="prescription-grid">
+            <div class="eye-block">
+              <h4>Right Eye (OD)</h4>
+              <div class="form-grid-2">
+                <div class="form-field"><label for="odSph">SPH</label><input type="text" id="odSph" /></div>
+                <div class="form-field"><label for="odCyl">CYL</label><input type="text" id="odCyl" /></div>
+              </div>
+              <div class="form-grid-2">
+                <div class="form-field"><label for="odAxis">AXIS</label><input type="text" id="odAxis" /></div>
+                <div class="form-field"><label for="odDv">DV</label><input type="text" id="odDv" /></div>
+              </div>
+              <div class="form-field"><label for="odNv">NV</label><input type="text" id="odNv" /></div>
+            </div>
+            <div class="eye-block">
+              <h4>Left Eye (OS)</h4>
+              <div class="form-grid-2">
+                <div class="form-field"><label for="osSph">SPH</label><input type="text" id="osSph" /></div>
+                <div class="form-field"><label for="osCyl">CYL</label><input type="text" id="osCyl" /></div>
+              </div>
+              <div class="form-grid-2">
+                <div class="form-field"><label for="osAxis">AXIS</label><input type="text" id="osAxis" /></div>
+                <div class="form-field"><label for="osDv">DV</label><input type="text" id="osDv" /></div>
+              </div>
+              <div class="form-field"><label for="osNv">NV</label><input type="text" id="osNv" /></div>
+            </div>
+          </div>
+
+          <div class="crm-card-head" style="margin-top:6px;">
+            <div>
+              <h3 style="font-size:0.98rem;">Price Breakdown</h3>
+              <p>Amount auto-fills from these — you can still edit it directly.</p>
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-field"><label for="priceFrame">Frame Price (₹)</label><input type="number" id="priceFrame" min="0" step="0.01" class="price-input" /></div>
+            <div class="form-field"><label for="priceGlass">Glass Price (₹)</label><input type="number" id="priceGlass" min="0" step="0.01" class="price-input" /></div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-field"><label for="priceLens">Lens Price (₹)</label><input type="number" id="priceLens" min="0" step="0.01" class="price-input" /></div>
+            <div class="form-field"><label for="priceSunglass">Sunglass Price (₹)</label><input type="number" id="priceSunglass" min="0" step="0.01" class="price-input" /></div>
+          </div>
+          <div class="form-field"><label for="priceRepair">Repair Price (₹)</label><input type="number" id="priceRepair" min="0" step="0.01" class="price-input" /></div>
+
+          <div class="form-field">
+            <label for="orderAmount">Total Amount (₹)</label>
+            <input type="number" id="orderAmount" min="0" step="0.01" required />
+          </div>
+
+          <button class="primary-btn" type="submit" id="orderSubmit">Save Order</button>
+          <div class="form-message" id="orderMessage"></div>
+        </form>
+      </section>
+    </div>
+
+    <script src="/assets/js/crm-new-order.js"></script>
+  </body>
+</html>

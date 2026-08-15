@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Current Month | Shree Hari Chasma Ghar</title>
+    <link rel="stylesheet" href="/assets/css/account.css" />
+    <link rel="stylesheet" href="/assets/css/crm.css" />
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/session.js"></script>
+    <script src="/assets/js/crm-shell.js"></script>
+    <script>
+      document.documentElement.classList.add('auth-pending');
+    </script>
+  </head>
+  <body>
+    <div class="crm-app" id="crmShell"></div>
+
+    <div id="pageContent" hidden>
+      <section class="crm-welcome">
+        <h1 id="monthTitle">Current Month</h1>
+        <p>Scoped strictly to this month — no data from previous months is mixed in.</p>
+      </section>
+
+      <div class="crm-error-banner" id="crmError"></div>
+
+      <section class="kpi-grid">
+        <div class="kpi-card kpi-accent-blue" data-skeleton>
+          <div class="kpi-label">New Customers</div>
+          <div class="kpi-value" id="mNewCustomers">0</div>
+        </div>
+        <div class="kpi-card kpi-accent-violet" data-skeleton>
+          <div class="kpi-label">Total Orders</div>
+          <div class="kpi-value" id="mTotalOrders">0</div>
+        </div>
+        <div class="kpi-card kpi-accent-green" data-skeleton>
+          <div class="kpi-label">Total Sales</div>
+          <div class="kpi-value" id="mTotalSales">₹0</div>
+        </div>
+        <div class="kpi-card kpi-accent-amber" data-skeleton>
+          <div class="kpi-label">Average Order Value</div>
+          <div class="kpi-value" id="mAvgOrder">₹0</div>
+        </div>
+        <div class="kpi-card kpi-accent-teal" data-skeleton>
+          <div class="kpi-label">Billed Orders</div>
+          <div class="kpi-value" id="mBilled">0</div>
+        </div>
+        <div class="kpi-card kpi-accent-rose" data-skeleton>
+          <div class="kpi-label">No-Bill / Direct Orders</div>
+          <div class="kpi-value" id="mNoBill">0</div>
+        </div>
+        <div class="kpi-card kpi-accent-indigo" data-skeleton>
+          <div class="kpi-label">Repeat Customers</div>
+          <div class="kpi-value" id="mRepeat">0</div>
+        </div>
+        <div class="kpi-card kpi-accent-blue" data-skeleton>
+          <div class="kpi-label">Active Customers</div>
+          <div class="kpi-value" id="mActiveCustomers">0</div>
+        </div>
+      </section>
+
+      <section class="crm-card" data-skeleton>
+        <div class="crm-card-head">
+          <div>
+            <h3>Daily Sales &amp; Orders</h3>
+            <p>Every day this month, from the 1st through today.</p>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="dailyChart"></canvas>
+          <div class="crm-empty" id="dailyEmpty" style="display:none">No orders yet this month</div>
+        </div>
+      </section>
+
+      <section class="crm-card" id="recentOrdersSection" data-skeleton>
+        <div class="crm-card-head">
+          <div>
+            <h3>Recent Orders This Month</h3>
+            <p>Latest 8. Click a row to open it.</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Order</th><th>Bill No</th><th>Customer</th><th>Date</th><th>Product</th><th>Amount</th></tr></thead>
+            <tbody id="recentOrdersBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="crm-card" data-skeleton>
+        <div class="crm-card-head">
+          <div>
+            <h3>Top Products This Month</h3>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Product</th><th>Orders</th><th>Sales</th></tr></thead>
+            <tbody id="productBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="/assets/js/crm-current-month.js"></script>
+  </body>
+</html>
