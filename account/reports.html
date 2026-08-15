@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Year-wise Report | Shree Hari Chasma Ghar</title>
+    <link rel="stylesheet" href="/assets/css/account.css" />
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/session.js"></script>
+    <script src="/assets/js/account-ui.js"></script>
+    <script>
+      document.documentElement.classList.add('auth-pending');
+      window.SHCG_AUTH.requireAuth();
+    </script>
+  </head>
+  <body>
+    <div class="dashboard-shell">
+      <div id="account-header"></div>
+
+      <main class="dashboard-main">
+        <h1 class="page-title">Year-wise Statistics</h1>
+        <p class="page-subtitle">Accounts created per year, grouped by the enterdate column in login_mst.</p>
+
+        <section class="summary-grid">
+          <div class="stat-card">
+            <h3>Total Users</h3>
+            <div class="value" id="statTotal">–</div>
+          </div>
+          <div class="stat-card">
+            <h3>Years Covered</h3>
+            <div class="value" id="statYears">–</div>
+          </div>
+          <div class="stat-card">
+            <h3>Best Year</h3>
+            <div class="value" id="statBestYear">–</div>
+          </div>
+          <div class="stat-card">
+            <h3>Average / Year</h3>
+            <div class="value" id="statAverage">–</div>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <div class="panel">
+            <div class="panel-head">
+              <h4>Users Added Per Year</h4>
+              <span class="badge" id="chartRange">—</span>
+            </div>
+            <div class="year-chart" id="yearChart"></div>
+          </div>
+
+          <aside class="sidebar-box">
+            <div class="panel">
+              <h4>Breakdown</h4>
+              <div class="table-wrap">
+                <table class="data-table" style="min-width: 0">
+                  <thead>
+                    <tr><th>Year</th><th>Users</th><th>Share</th></tr>
+                  </thead>
+                  <tbody id="yearBody">
+                    <tr><td colspan="3" class="empty-state">Loading...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="form-message" id="pageMessage"></div>
+            </div>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', async function () {
+        var session = window.SHCG_ACCOUNT.init();
+        if (!session) return;
+
+        var escapeHtml = window.SHCG_ACCOUNT.escapeHtml;
+        var chart = document.getElementById('yearChart');
+        var tableBody = document.getElementById('yearBody');
+        var message = document.getElementById('pageMessage');
+
+        function setText(id, value) {
+          document.getElementById(id).textContent = value;
+        }
+
+        try {
+          var data = await window.SHCG_AUTH.authFetch('yearlyStats');
+          var years = data.years;
+
+          if (!years.length) {
+            chart.innerHTML = '<div class="empty-state">' + escapeHtml(data.message || 'No dated records yet.') + '</div>';
+            tableBody.innerHTML = '<tr><td colspan="3" class="empty-state">No data.</td></tr>';
+            setText('statTotal', '0');
+            setText('statYears', '0');
+            setText('statBestYear', '—');
+            setText('statAverage', '0');
+            return;
+          }
+
+          var total = years.reduce(function (sum, row) {
+            return sum + row.total;
+          }, 0);
+          var max = Math.max.apply(
+            null,
+            years.map(function (row) {
+              return row.total;
+            })
+          );
+          var best = years.reduce(function (a, b) {
+            return b.total > a.total ? b : a;
+          });
+
+          setText('statTotal', total.toLocaleString('en-IN'));
+          setText('statYears', years.length);
+          setText('statBestYear', best.year + ' (' + best.total + ')');
+          setText('statAverage', Math.round(total / years.length));
+          setText(
+            'chartRange',
+            years[years.length - 1].year + ' – ' + years[0].year
+          );
+
+          // Oldest year on the left so the chart reads left to right.
+          var ascending = years.slice().reverse();
+
+          chart.innerHTML = ascending
+            .map(function (row) {
+              var height = Math.max(6, Math.round((row.total / max) * 170));
+              return (
+                '<div class="year-column">' +
+                '<span class="year-count">' + row.total + '</span>' +
+                '<div class="year-bar" style="height:' + height + 'px" title="' + escapeHtml(row.year) + ': ' + row.total + ' users"></div>' +
+                '<span class="year-label">' + escapeHtml(row.year) + '</span>' +
+                '</div>'
+              );
+            })
+            .join('');
+
+          tableBody.innerHTML = years
+            .map(function (row) {
+              var share = total ? Math.round((row.total / total) * 100) : 0;
+              return (
+                '<tr><td><strong>' +
+                escapeHtml(row.year) +
+                '</strong></td><td>' +
+                row.total +
+                '</td><td><span class="badge">' +
+                share +
+                '%</span></td></tr>'
+              );
+            })
+            .join('');
+        } catch (error) {
+          message.textContent = error.message;
+          message.className = 'form-message error';
+          chart.innerHTML = '<div class="empty-state">Could not load statistics.</div>';
+          tableBody.innerHTML = '<tr><td colspan="3" class="empty-state">Could not load statistics.</td></tr>';
+        }
+      });
+    </script>
+  </body>
+</html>

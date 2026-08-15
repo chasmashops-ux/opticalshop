@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Add User | Shree Hari Chasma Ghar</title>
+    <link rel="stylesheet" href="/assets/css/account.css" />
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/session.js"></script>
+    <script src="/assets/js/account-ui.js"></script>
+    <script>
+      document.documentElement.classList.add('auth-pending');
+      window.SHCG_AUTH.requireAuth();
+    </script>
+  </head>
+  <body>
+    <div class="dashboard-shell">
+      <div id="account-header"></div>
+
+      <main class="dashboard-main">
+        <h1 class="page-title">Add User</h1>
+        <p class="page-subtitle">
+          Creates a new row in login_mst. Only a logged-in user can add accounts, and the password is
+          hashed by the Worker before it is stored.
+        </p>
+
+        <section class="content-grid">
+          <div class="panel">
+            <h4>New Account</h4>
+            <form class="form-grid" id="addUserForm" autocomplete="off">
+              <div class="form-field">
+                <label for="newUsername">Username</label>
+                <input type="text" id="newUsername" minlength="3" autocomplete="off" required />
+              </div>
+
+              <div class="form-field">
+                <label for="newPassword">Password</label>
+                <input type="password" id="newPassword" minlength="4" autocomplete="new-password" required />
+              </div>
+
+              <div class="form-field">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" minlength="4" autocomplete="new-password" required />
+              </div>
+
+              <div class="form-field">
+                <label for="newRole">Role</label>
+                <select id="newRole">
+                  <option value="staff">Staff</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+
+              <button class="primary-btn" type="submit" id="addUserButton">Add User</button>
+              <div class="form-message" id="formMessage" aria-live="polite"></div>
+            </form>
+          </div>
+
+          <aside class="sidebar-box">
+            <div class="panel">
+              <h4>Recently Added</h4>
+              <div class="list" id="recentList">
+                <div class="list-item"><span>Loading...</span></div>
+              </div>
+            </div>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var session = window.SHCG_ACCOUNT.init();
+        if (!session) return;
+
+        var escapeHtml = window.SHCG_ACCOUNT.escapeHtml;
+        var form = document.getElementById('addUserForm');
+        var button = document.getElementById('addUserButton');
+        var message = document.getElementById('formMessage');
+        var recentList = document.getElementById('recentList');
+        var isSubmitting = false;
+
+        function setMessage(text, type) {
+          message.textContent = text || '';
+          message.className = 'form-message' + (type ? ' ' + type : '');
+        }
+
+        async function loadRecent() {
+          try {
+            var data = await window.SHCG_AUTH.authFetch(
+              window.SHCG_CONFIG.endpoints.users + '?limit=6&page=1'
+            );
+            recentList.innerHTML = data.users.length
+              ? data.users
+                  .map(function (user) {
+                    return (
+                      '<div class="list-item"><span>' +
+                      escapeHtml(user.username) +
+                      '</span><span class="badge">' +
+                      escapeHtml(user.createdAt || user.role) +
+                      '</span></div>'
+                    );
+                  })
+                  .join('')
+              : '<div class="list-item"><span>No users yet.</span></div>';
+          } catch (error) {
+            recentList.innerHTML = '<div class="list-item"><span>Could not load users.</span></div>';
+          }
+        }
+
+        form.addEventListener('submit', async function (event) {
+          event.preventDefault();
+          if (isSubmitting) return;
+
+          var username = document.getElementById('newUsername').value.trim();
+          var password = document.getElementById('newPassword').value;
+          var confirm = document.getElementById('confirmPassword').value;
+          var role = document.getElementById('newRole').value;
+
+          if (username.length < 3) {
+            setMessage('Username must be at least 3 characters.', 'error');
+            return;
+          }
+          if (password.length < 4) {
+            setMessage('Password must be at least 4 characters.', 'error');
+            return;
+          }
+          if (password !== confirm) {
+            setMessage('The two passwords do not match.', 'error');
+            return;
+          }
+
+          isSubmitting = true;
+          button.disabled = true;
+          button.textContent = 'Adding...';
+          setMessage('Saving to the database...', 'info');
+
+          try {
+            var result = await window.SHCG_AUTH.authFetch('users', {
+              method: 'POST',
+              body: JSON.stringify({ username: username, password: password, role: role })
+            });
+            form.reset();
+            setMessage(result.message + ' (' + username + ')', 'success');
+            loadRecent();
+          } catch (error) {
+            setMessage(error.message, 'error');
+          } finally {
+            isSubmitting = false;
+            button.disabled = false;
+            button.textContent = 'Add User';
+          }
+        });
+
+        loadRecent();
+      });
+    </script>
+  </body>
+</html>

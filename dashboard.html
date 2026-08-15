@@ -3,16 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
     <title>Dashboard | Shree Hari Chasma Ghar</title>
     <link rel="stylesheet" href="/assets/css/account.css" />
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/session.js"></script>
+    <script>
+      // Auth gate: runs before the page renders, so protected content never flashes.
+      document.documentElement.classList.add('auth-pending');
+      window.SHCG_SESSION = window.SHCG_AUTH.requireAuth();
+    </script>
   </head>
   <body>
     <div class="dashboard-shell">
       <header class="dashboard-header">
         <div class="brand-label">SHREE HARI CHASMA GHAR</div>
         <div class="header-actions">
-          <div class="user-pill">👤 Admin</div>
-          <button class="logout-btn" type="button">Logout</button>
+          <div class="user-pill">👤 <span id="sessionUser">Admin</span></div>
+          <button class="logout-btn" type="button" data-logout>Logout</button>
         </div>
       </header>
 
@@ -51,11 +59,11 @@
             <div class="panel">
               <h4>Sections</h4>
               <div class="list">
-                <div class="menu-card">Customers</div>
-                <div class="menu-card">Orders</div>
-                <div class="menu-card">Billing</div>
-                <div class="menu-card">Reports</div>
-                <div class="menu-card">Logout</div>
+                <a class="menu-card" href="/account/">Account Dashboard</a>
+                <a class="menu-card" href="/account/search-user.html">Search User</a>
+                <a class="menu-card" href="/account/add-user.html">Add User</a>
+                <a class="menu-card" href="/account/reports.html">Year-wise Reports</a>
+                <a class="menu-card" href="#" data-logout>Logout</a>
               </div>
             </div>
           </aside>
@@ -64,8 +72,12 @@
     </div>
 
     <script>
-      document.querySelector('.logout-btn')?.addEventListener('click', () => {
-        window.location.href = '/login.html';
+      document.addEventListener('DOMContentLoaded', function () {
+        var session = window.SHCG_SESSION || window.SHCG_AUTH.get();
+        if (!session) return;
+        document.getElementById('sessionUser').textContent = session.username || 'Admin';
+        window.SHCG_AUTH.bindLogoutControls();
+        document.documentElement.classList.remove('auth-pending');
       });
     </script>
   </body>

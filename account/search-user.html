@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Search User | Shree Hari Chasma Ghar</title>
+    <link rel="stylesheet" href="/assets/css/account.css" />
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/session.js"></script>
+    <script src="/assets/js/account-ui.js"></script>
+    <script>
+      document.documentElement.classList.add('auth-pending');
+      window.SHCG_AUTH.requireAuth();
+    </script>
+  </head>
+  <body>
+    <div class="dashboard-shell">
+      <div id="account-header"></div>
+
+      <main class="dashboard-main">
+        <h1 class="page-title">Search User</h1>
+        <p class="page-subtitle">Search the login_mst table by username or role. Passwords are never returned by the API.</p>
+
+        <section class="panel">
+          <form class="search-bar" id="searchForm">
+            <input type="search" id="searchInput" placeholder="Type a username and press Search..." autocomplete="off" />
+            <button class="primary-btn" type="submit" id="searchButton">Search</button>
+            <button class="ghost-btn" type="button" id="resetButton">Reset</button>
+          </form>
+
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr><th>ID</th><th>Username</th><th>Role</th><th>Added On</th></tr>
+              </thead>
+              <tbody id="userBody">
+                <tr><td colspan="4" class="empty-state">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pager">
+            <button type="button" id="prevButton" disabled>← Previous</button>
+            <span class="page-info" id="pageInfo"></span>
+            <button type="button" id="nextButton" disabled>Next →</button>
+          </div>
+
+          <div class="form-message" id="pageMessage"></div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var session = window.SHCG_ACCOUNT.init();
+        if (!session) return;
+
+        var escapeHtml = window.SHCG_ACCOUNT.escapeHtml;
+        var form = document.getElementById('searchForm');
+        var input = document.getElementById('searchInput');
+        var searchButton = document.getElementById('searchButton');
+        var resetButton = document.getElementById('resetButton');
+        var prevButton = document.getElementById('prevButton');
+        var nextButton = document.getElementById('nextButton');
+        var pageInfo = document.getElementById('pageInfo');
+        var body = document.getElementById('userBody');
+        var message = document.getElementById('pageMessage');
+
+        var LIMIT = 20;
+        var state = { query: '', page: 1, total: 0 };
+        var isLoading = false;
+
+        function setMessage(text, type) {
+          message.textContent = text || '';
+          message.className = 'form-message' + (type ? ' ' + type : '');
+        }
+
+        async function load() {
+          if (isLoading) return;
+          isLoading = true;
+          searchButton.disabled = true;
+          setMessage('Loading...', 'info');
+
+          try {
+            var params = new URLSearchParams({ q: state.query, page: state.page, limit: LIMIT });
+            var data = await window.SHCG_AUTH.authFetch(
+              window.SHCG_CONFIG.endpoints.users + '?' + params.toString()
+            );
+
+            state.total = data.total;
+
+            if (!data.users.length) {
+              body.innerHTML =
+                '<tr><td colspan="4" class="empty-state">' +
+                (state.query ? 'No user matches “' + escapeHtml(state.query) + '”.' : 'No users found.') +
+                '</td></tr>';
+            } else {
+              body.innerHTML = data.users
+                .map(function (user) {
+                  return (
+                    '<tr><td>' +
+                    escapeHtml(user.id) +
+                    '</td><td><strong>' +
+                    escapeHtml(user.username) +
+                    '</strong></td><td><span class="role-tag">' +
+                    escapeHtml(user.role) +
+                    '</span></td><td>' +
+                    escapeHtml(user.createdAt || '—') +
+                    '</td></tr>'
+                  );
+                })
+                .join('');
+            }
+
+            var totalPages = Math.max(1, Math.ceil(state.total / LIMIT));
+            pageInfo.textContent =
+              'Page ' + state.page + ' of ' + totalPages + ' · ' + state.total + ' user(s)';
+            prevButton.disabled = state.page <= 1;
+            nextButton.disabled = state.page >= totalPages;
+            setMessage('');
+          } catch (error) {
+            setMessage(error.message, 'error');
+            body.innerHTML = '<tr><td colspan="4" class="empty-state">Could not load users.</td></tr>';
+          } finally {
+            isLoading = false;
+            searchButton.disabled = false;
+          }
+        }
+
+        form.addEventListener('submit', function (event) {
+          event.preventDefault();
+          state.query = input.value.trim();
+          state.page = 1;
+          load();
+        });
+
+        resetButton.addEventListener('click', function () {
+          input.value = '';
+          state.query = '';
+          state.page = 1;
+          load();
+        });
+
+        prevButton.addEventListener('click', function () {
+          if (state.page > 1) {
+            state.page -= 1;
+            load();
+          }
+        });
+
+        nextButton.addEventListener('click', function () {
+          state.page += 1;
+          load();
+        });
+
+        load();
+      });
+    </script>
+  </body>
+</html>

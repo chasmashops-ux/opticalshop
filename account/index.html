@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Account Dashboard | Shree Hari Chasma Ghar</title>
+    <link rel="stylesheet" href="/assets/css/account.css" />
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/session.js"></script>
+    <script src="/assets/js/account-ui.js"></script>
+    <script>
+      document.documentElement.classList.add('auth-pending');
+      window.SHCG_AUTH.requireAuth();
+    </script>
+  </head>
+  <body>
+    <div class="dashboard-shell">
+      <div id="account-header"></div>
+
+      <main class="dashboard-main">
+        <h1 class="page-title">Total Dashboard</h1>
+        <p class="page-subtitle">Live totals from the <strong>shcg</strong> D1 database.</p>
+
+        <section class="summary-grid">
+          <div class="stat-card">
+            <h3>Total Users</h3>
+            <div class="value" id="statTotal">–</div>
+          </div>
+          <div class="stat-card">
+            <h3>Added This Year (<span id="statYearLabel">–</span>)</h3>
+            <div class="value" id="statYear">–</div>
+          </div>
+          <div class="stat-card">
+            <h3>Added This Month</h3>
+            <div class="value" id="statMonth">–</div>
+          </div>
+          <div class="stat-card">
+            <h3>Years On Record</h3>
+            <div class="value" id="statYears">–</div>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <div class="panel">
+            <div class="panel-head">
+              <h4>Latest Users</h4>
+              <a class="ghost-btn" href="/account/search-user.html" style="line-height: 46px; text-decoration: none;">Search Users</a>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr><th>ID</th><th>Username</th><th>Added On</th></tr>
+                </thead>
+                <tbody id="recentBody">
+                  <tr><td colspan="3" class="empty-state">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="form-message" id="pageMessage"></div>
+          </div>
+
+          <aside class="sidebar-box">
+            <div class="panel">
+              <h4>Quick Actions</h4>
+              <div class="list">
+                <a class="menu-card" href="/account/add-user.html">➕ Add User</a>
+                <a class="menu-card" href="/account/search-user.html">🔍 Search User</a>
+                <a class="menu-card" href="/account/reports.html">📊 Year-wise Statistics</a>
+                <a class="menu-card" href="#" data-logout>🚪 Logout</a>
+              </div>
+            </div>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', async function () {
+        var session = window.SHCG_ACCOUNT.init();
+        if (!session) return;
+
+        var escapeHtml = window.SHCG_ACCOUNT.escapeHtml;
+        var message = document.getElementById('pageMessage');
+        var recentBody = document.getElementById('recentBody');
+
+        function setText(id, value) {
+          document.getElementById(id).textContent = value;
+        }
+
+        try {
+          var stats = await window.SHCG_AUTH.authFetch('stats');
+
+          setText('statTotal', stats.totalUsers.toLocaleString('en-IN'));
+          setText('statYearLabel', stats.currentYear);
+          setText('statYear', stats.hasDateColumn ? stats.thisYear : 'n/a');
+          setText('statMonth', stats.hasDateColumn ? stats.thisMonth : 'n/a');
+
+          if (!stats.recent.length) {
+            recentBody.innerHTML = '<tr><td colspan="3" class="empty-state">No users found.</td></tr>';
+          } else {
+            recentBody.innerHTML = stats.recent
+              .map(function (user) {
+                return (
+                  '<tr><td>' +
+                  escapeHtml(user.id) +
+                  '</td><td><strong>' +
+                  escapeHtml(user.username) +
+                  '</strong></td><td>' +
+                  escapeHtml(user.createdAt || '—') +
+                  '</td></tr>'
+                );
+              })
+              .join('');
+          }
+
+          var yearly = await window.SHCG_AUTH.authFetch('yearlyStats');
+          setText('statYears', yearly.years.length);
+        } catch (error) {
+          message.textContent = error.message;
+          message.className = 'form-message error';
+          recentBody.innerHTML = '<tr><td colspan="3" class="empty-state">Could not load data.</td></tr>';
+        }
+      });
+    </script>
+  </body>
+</html>

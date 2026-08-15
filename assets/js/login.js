@@ -1,3 +1,11 @@
+/**
+ * LEGACY / UNUSED — kept for reference only.
+ *
+ * login.html loads assets/js/auth.js instead. This script targets elements
+ * (#message, .submit-btn, #successState) that do not exist on the current
+ * login page, and no HTML file includes it. Do not add it to a page: it still
+ * carries a placeholder Worker URL. Use assets/js/config.js for the API URL.
+ */
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('loginForm');
   const messageBox = document.getElementById('message');

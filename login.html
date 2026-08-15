@@ -230,6 +230,38 @@
         transform: translateY(-1px);
       }
 
+      button[type="submit"]:disabled {
+        cursor: not-allowed;
+        opacity: 0.75;
+        transform: none;
+        box-shadow: none;
+      }
+
+      button[type="submit"] .btn-inner {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .spinner {
+        display: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2.5px solid rgba(255, 255, 255, 0.35);
+        border-top-color: #fff;
+        animation: spin 0.7s linear infinite;
+      }
+
+      button[type="submit"].is-loading .spinner {
+        display: inline-block;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
       #loginMessage {
         min-height: 22px;
         margin-top: 8px;
@@ -258,7 +290,8 @@
       }
     </style>
   </head>
-  <body data-api-url="https://opticalshop.chasmashops.workers.dev/api/login">
+  <!-- Worker API URL lives in assets/js/config.js only. -->
+  <body>
     <div class="login-shell">
       <div class="login-card">
         <aside class="brand-side">
@@ -320,26 +353,30 @@
           <form id="loginForm">
             <div class="field">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              <input type="text" id="username" placeholder="Username" required />
+              <input type="text" id="username" name="username" autocomplete="username" placeholder="Username or email" required />
             </div>
 
             <div class="field">
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 1 1 8 0v3"/></svg>
-              <input type="password" id="password" placeholder="Password" required />
+              <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Password" required />
             </div>
 
             <div class="form-row">
-              <label class="remember"><input type="checkbox" /> Remember me</label>
+              <label class="remember"><input type="checkbox" id="rememberMe" /> Remember me</label>
               <a href="#" class="forgot">Forgot password?</a>
             </div>
 
-            <button type="submit">Login</button>
+            <button type="submit" id="loginButton">
+              <span class="btn-inner"><span class="spinner" aria-hidden="true"></span><span class="btn-text">Login</span></span>
+            </button>
             <div id="loginMessage" aria-live="polite"></div>
           </form>
         </section>
       </div>
     </div>
 
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/session.js"></script>
     <script src="/assets/js/auth.js"></script>
   </body>
 </html>
