@@ -115,17 +115,17 @@
               return (
                 '<tr class="row-link" data-href="/crm/order.html?id=' +
                 encodeURIComponent(o.orderId) +
-                '"><td>#' +
+                '"><td class="cell-title" data-label="Order">#' +
                 escapeHtml(o.orderId) +
-                '</td><td>' +
+                '</td><td data-label="Bill No">' +
                 (o.billNo ? escapeHtml(o.billNo) : '<span class="badge-nobill">No Bill</span>') +
-                '</td><td><strong class="customer-name">' +
+                '</td><td data-label="Customer"><strong class="customer-name">' +
                 escapeHtml(o.customerName) +
-                '</strong></td><td>' +
+                '</strong></td><td data-label="Date">' +
                 fmtDate(o.orderDate) +
-                '</td><td>' +
+                '</td><td data-label="Product">' +
                 escapeHtml(o.product || '—') +
-                '</td><td>' +
+                '</td><td data-label="Amount">' +
                 fmtMoney(o.amount) +
                 '</td></tr>'
               );
@@ -145,11 +145,11 @@
           productBody.innerHTML = data.productAnalytics
             .map(function (p) {
               return (
-                '<tr><td><strong>' +
+                '<tr><td class="cell-title" data-label="Product"><strong>' +
                 escapeHtml(p.product) +
-                '</strong></td><td>' +
+                '</strong></td><td data-label="Orders">' +
                 fmtNumber(p.orders) +
-                '</td><td>' +
+                '</td><td data-label="Sales">' +
                 fmtMoney(p.sales) +
                 '</td></tr>'
               );

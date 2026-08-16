@@ -320,6 +320,14 @@ a.menu-card:hover {
   color: #24406f;
   font-weight: 700;
   cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.ghost-btn:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-color: transparent;
+  color: #fff;
+  transform: translateY(-1px);
 }
 
 .search-bar {
@@ -391,8 +399,180 @@ a.menu-card:hover {
   letter-spacing: 0.05em;
 }
 
+.th-icon {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.th-icon svg {
+  width: 13px;
+  height: 13px;
+  stroke: #94a3b8;
+  fill: none;
+  stroke-width: 2.2;
+}
+
 .data-table tbody tr:hover {
   background: #f5f8ff;
+}
+
+/*
+ * Mobile: tables collapse into stacked cards instead of horizontal-scrolling.
+ * Requires each <td> to carry data-label="..." (the column header text) —
+ * see the JS/inline scripts that build these rows. A td can opt into one of
+ * three roles via an explicit class (not :first-child/:last-child — the
+ * row's identity column isn't always first, and not every table has an
+ * actions column at all): .cell-title (card header), .cell-actions
+ * (full-width button row), .cell-hide-mobile (e.g. a redundant Sr No/ID
+ * column once the card already has a title). Purely presentational: no
+ * data, markup meaning, or behavior changes.
+ */
+@media (max-width: 640px) {
+  .table-wrap {
+    overflow-x: visible;
+  }
+
+  .data-table {
+    min-width: 0;
+    border: 0;
+  }
+
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table,
+  .data-table tbody,
+  .data-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .data-table tbody tr {
+    position: relative;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 4px 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  }
+
+  .data-table tbody tr:last-child {
+    margin-bottom: 0;
+  }
+
+  .data-table tbody tr:hover {
+    background: #fff;
+  }
+
+  .data-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid #f1f5f9;
+    text-align: right;
+  }
+
+  .data-table td:last-child {
+    border-bottom: 0;
+  }
+
+  .data-table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    text-align: left;
+    margin-right: auto;
+  }
+
+  /* Card title: the row's primary identity (name/id), not a label/value pair.
+     Explicit class rather than :first-child — the identity column isn't
+     always the table's first column (e.g. "Sr No" precedes "Customer"). */
+  .data-table td.cell-title {
+    display: block;
+    font-weight: 800;
+    font-size: 1rem;
+    color: #17263d;
+    padding: 12px 0 10px;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 2px;
+  }
+
+  .data-table td.cell-title::before {
+    content: none;
+  }
+
+  /* Sr No / row-index columns carry no useful info once the card has a
+     title, and duplicating it as a label/value row is just noise. */
+  .data-table td.cell-hide-mobile {
+    display: none;
+  }
+
+  /* Sr No as a small numbered badge sitting inline right before the name,
+     instead of hiding it — used where the row number itself is worth
+     keeping visible on mobile (e.g. a ranked/paginated list). The row
+     switches to flex so the badge + title share one line while every
+     other cell still gets its own full-width line below. */
+  .data-table tr:has(.cell-badge) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .data-table tr:has(.cell-badge) > td {
+    flex: 1 1 100%;
+  }
+
+  /* These two override the ">td" reset above — written with matching
+     specificity (same tr:has(...) prefix) so they reliably win regardless
+     of source order. */
+  .data-table tr:has(.cell-badge) > td.cell-badge {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    margin: 12px 8px 10px 0;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #2563eb;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 800;
+  }
+
+  .data-table td.cell-badge::before {
+    content: none;
+  }
+
+  .data-table tr:has(.cell-badge) > td.cell-title {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    min-height: 22px;
+  }
+
+  /* Action row: buttons/links laid out full width instead of label/value. */
+  .data-table td.cell-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 10px 0 12px;
+  }
+
+  .data-table td.cell-actions::before {
+    content: none;
+  }
 }
 
 .role-tag {
@@ -467,18 +647,23 @@ a.menu-card:hover {
   width: 44px;
   min-height: 6px;
   border-radius: 10px 10px 4px 4px;
-  background: linear-gradient(180deg, #4b7ff0, #1a3f9e);
-  transition: height 0.4s ease;
+  background: linear-gradient(180deg, #2563eb, #1d4ed8);
+  transition: height 0.4s ease, opacity 0.15s ease, transform 0.15s ease;
+}
+
+.year-column:hover .year-bar {
+  opacity: 0.85;
+  transform: scaleX(1.06);
 }
 
 .year-count {
   font-weight: 800;
-  color: #17263d;
+  color: #0f172a;
 }
 
 .year-label {
   font-size: 0.85rem;
-  color: #62708d;
+  color: #64748b;
   font-weight: 700;
 }
 

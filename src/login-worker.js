@@ -746,7 +746,6 @@ async function handleDashboard(request, env) {
 
   const now = istNow();
   const today = isoDate(now);
-  const yesterday = isoDate(addDays(now, -1));
   const monthPrefix = today.slice(0, 7);
   const yearPrefix = today.slice(0, 4);
 
@@ -817,7 +816,7 @@ async function handleDashboard(request, env) {
   add(
     'frameAnalytics',
     `SELECT COALESCE(NULLIF(TRIM(frametype),''),'Unspecified') AS frametype, COUNT(1) AS c, COALESCE(SUM(frameprice),0) AS s
-     FROM ${ORDER_TABLE} ${frameWhere.sql} GROUP BY frametype ORDER BY c DESC LIMIT 10`,
+     FROM ${ORDER_TABLE} ${frameWhere.sql} GROUP BY frametype ORDER BY c DESC LIMIT 8`,
     frameWhere.params
   );
 
@@ -844,7 +843,7 @@ async function handleDashboard(request, env) {
      LEFT JOIN ${CUSTOMER_TABLE} u ON o.userid = u.userid
      ${recentWhere.sql}
      ORDER BY ${schema.hasOrderDate ? O_OD : 'o.orderid'} DESC, o.orderid DESC
-     LIMIT 15`,
+     LIMIT 10`,
     recentWhere.params
   );
 
@@ -855,16 +854,6 @@ async function handleDashboard(request, env) {
   const monthlyYear = start && (range === 'year' || range === 'custom') ? start.slice(0, 4) : yearPrefix;
 
   if (schema.hasOrderDate) {
-    const todayWhere = sargableDayWhere('orderdate', schema.orderDateFormat, today);
-    add('today', `SELECT COUNT(1) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${todayWhere.clause}`, todayWhere.params);
-
-    const yesterdayWhere = sargableDayWhere('orderdate', schema.orderDateFormat, yesterday);
-    add(
-      'yesterday',
-      `SELECT COUNT(1) AS c, COALESCE(SUM(amount),0) AS s FROM ${ORDER_TABLE} WHERE ${yesterdayWhere.clause}`,
-      yesterdayWhere.params
-    );
-
     const yearToDateWhere = sargableYearWhere('orderdate', schema.orderDateFormat, yearPrefix);
     add(
       'yearToDate',
@@ -938,19 +927,6 @@ async function handleDashboard(request, env) {
   const periodOrders = toNumber(periodOrdersRow.c);
   const periodSales = toNumber(periodOrdersRow.s);
   const periodCustomers = isAllTime ? toNumber(row('totalCustomersAllTime').c) : toNumber(row('periodActiveCustomers').c);
-
-  const todayRow = schema.hasOrderDate ? row('today') : {};
-  const yesterdayRow = schema.hasOrderDate ? row('yesterday') : {};
-
-  const todaySales = toNumber(todayRow.s);
-  const yesterdaySales = toNumber(yesterdayRow.s);
-  const todayOrders = toNumber(todayRow.c);
-  const yesterdayOrders = toNumber(yesterdayRow.c);
-
-  const growthPct = (current, previous) => {
-    if (previous <= 0) return current > 0 ? 100 : 0;
-    return Math.round(((current - previous) / previous) * 1000) / 10;
-  };
 
   const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const monthlyByNum = new Map(rows('monthly').map((r) => [String(r.m).padStart(2, '0'), r]));
@@ -1034,18 +1010,8 @@ async function handleDashboard(request, env) {
       billedOrders: schema.hasBillNo ? toNumber(row('billedOrders').c) : null,
       noBillOrders: schema.hasBillNo ? toNumber(row('noBillOrders').c) : null,
       repeatCustomers: schema.hasOrderDate ? toNumber(row('repeatCustomers').c) : 0,
-      todayOrders,
-      todaySales,
       yearSales: schema.hasOrderDate ? toNumber(row('yearToDate').s) : 0,
       totalCustomersAllTime
-    },
-    dailyPerformance: {
-      todaySales,
-      yesterdaySales,
-      todayOrders,
-      yesterdayOrders,
-      salesGrowthPct: growthPct(todaySales, yesterdaySales),
-      orderGrowthPct: growthPct(todayOrders, yesterdayOrders)
     },
     salesOverview: {
       range,

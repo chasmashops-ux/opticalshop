@@ -5,24 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
     <title>Search User | Shree Hari Chasma Ghar</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png" />
+    <link rel="icon" href="/assets/images/favicon/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="/assets/css/account.css" />
+    <link rel="stylesheet" href="/assets/css/crm.css" />
     <script src="/assets/js/config.js"></script>
     <script src="/assets/js/session.js"></script>
     <script src="/assets/js/account-ui.js"></script>
+    <script src="/assets/js/scroll-top.js"></script>
     <script>
       document.documentElement.classList.add('auth-pending');
       window.SHCG_AUTH.requireAuth();
     </script>
   </head>
   <body>
-    <div class="dashboard-shell">
+    <div class="crm-app">
       <div id="account-header"></div>
 
-      <main class="dashboard-main">
-        <h1 class="page-title">Search User</h1>
-        <p class="page-subtitle">Search the login_mst table by username or role. Passwords are never returned by the API.</p>
+      <main class="crm-content">
+        <section class="crm-welcome">
+          <h1>Search User</h1>
+          <p>Search the login_mst table by username or role. Passwords are never returned by the API.</p>
+        </section>
 
-        <section class="panel">
+        <section class="crm-card">
           <form class="search-bar" id="searchForm">
             <input type="search" id="searchInput" placeholder="Type a username and press Search..." autocomplete="off" />
             <button class="primary-btn" type="submit" id="searchButton">Search</button>
@@ -35,7 +43,7 @@
                 <tr><th>ID</th><th>Username</th><th>Role</th><th>Added On</th></tr>
               </thead>
               <tbody id="userBody">
-                <tr><td colspan="4" class="empty-state">Loading...</td></tr>
+                <tr><td colspan="4" class="crm-empty">Loading...</td></tr>
               </tbody>
             </table>
           </div>
@@ -99,13 +107,13 @@
               body.innerHTML = data.users
                 .map(function (user) {
                   return (
-                    '<tr><td>' +
+                    '<tr><td class="cell-hide-mobile" data-label="ID">' +
                     escapeHtml(user.id) +
-                    '</td><td><strong>' +
+                    '</td><td class="cell-title" data-label="Username"><strong>' +
                     escapeHtml(user.username) +
-                    '</strong></td><td><span class="role-tag">' +
+                    '</strong></td><td data-label="Role"><span class="role-tag">' +
                     escapeHtml(user.role) +
-                    '</span></td><td>' +
+                    '</span></td><td data-label="Added On">' +
                     escapeHtml(user.createdAt || '—') +
                     '</td></tr>'
                   );

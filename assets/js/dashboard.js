@@ -120,21 +120,6 @@
     document.getElementById('kpiMinOrder').textContent = kpis.minOrderAmount === null ? '—' : fmtMoney(kpis.minOrderAmount);
   }
 
-  function growthBadge(pct) {
-    if (pct > 0) return '<span class="growth-badge growth-up">▲ ' + pct + '%</span>';
-    if (pct < 0) return '<span class="growth-badge growth-down">▼ ' + Math.abs(pct) + '%</span>';
-    return '<span class="growth-badge growth-flat">— 0%</span>';
-  }
-
-  function renderPerformance(perf) {
-    document.getElementById('perfTodaySales').textContent = fmtMoney(perf.todaySales);
-    document.getElementById('perfYesterdaySales').textContent = fmtMoney(perf.yesterdaySales);
-    document.getElementById('perfTodayOrders').textContent = fmtNumber(perf.todayOrders);
-    document.getElementById('perfYesterdayOrders').textContent = fmtNumber(perf.yesterdayOrders);
-    document.getElementById('perfSalesGrowth').innerHTML = growthBadge(perf.salesGrowthPct);
-    document.getElementById('perfOrderGrowth').innerHTML = growthBadge(perf.orderGrowthPct);
-  }
-
   /* ---------------------------- charts ---------------------------- */
 
   var PALETTE = ['#2563eb', '#16a34a', '#d97706', '#7c3aed', '#dc2626', '#0891b2'];
@@ -156,6 +141,12 @@
     var labels = overview.points.map(function (p) {
       return overviewLabel(p.date, overview.groupBy);
     });
+    // Mobile: the dual-axis (Sales + Orders) view is too cramped to read on
+    // a phone-width screen, so it collapses to a single Sales line with no
+    // legend/second axis, and the x-axis thins out to a handful of labels
+    // instead of every point rotated on top of the next. Desktop is unchanged.
+    var isMobile = window.matchMedia('(max-width: 640px)').matches;
+
     ensureChart('overview', 'salesOverviewChart', {
       type: 'line',
       data: {
@@ -170,6 +161,7 @@
             backgroundColor: 'rgba(37,99,235,0.1)',
             fill: true,
             tension: 0.35,
+            pointRadius: isMobile ? 0 : 3,
             yAxisID: 'y'
           },
           {
@@ -181,6 +173,8 @@
             backgroundColor: 'rgba(22,163,74,0.08)',
             fill: false,
             tension: 0.35,
+            pointRadius: isMobile ? 0 : 3,
+            hidden: isMobile,
             yAxisID: 'y1'
           }
         ]
@@ -189,9 +183,19 @@
         responsive: true,
         maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: !isMobile }
+        },
         scales: {
-          y: { position: 'left', beginAtZero: true, title: { display: true, text: 'Sales (₹)' } },
-          y1: { position: 'right', beginAtZero: true, grid: { drawOnChartArea: false }, title: { display: true, text: 'Orders' } }
+          x: {
+            ticks: {
+              autoSkip: true,
+              maxTicksLimit: isMobile ? 4 : undefined,
+              maxRotation: isMobile ? 0 : 50
+            }
+          },
+          y: { position: 'left', beginAtZero: true, title: { display: !isMobile, text: 'Sales (₹)' } },
+          y1: { position: 'right', beginAtZero: true, display: !isMobile, grid: { drawOnChartArea: false }, title: { display: true, text: 'Orders' } }
         }
       }
     });
@@ -283,30 +287,47 @@
       },
       options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
     });
+
+    document.getElementById('productBreakdown').innerHTML = top
+      .map(function (p, i) {
+        return (
+          '<div class="category-pill"><span class="cat-name"><span class="dot" style="background:' +
+          PALETTE[i % PALETTE.length] +
+          '"></span>' +
+          escapeHtml(p.product) +
+          '</span><div class="cat-value">' +
+          fmtNumber(p.orders) +
+          ' orders</div></div>'
+        );
+      })
+      .join('');
   }
 
   /* ---------------------------- tables ---------------------------- */
 
   function renderTopCustomers(customers) {
     var body = document.getElementById('topCustomersBody');
-    if (!customers.length) {
-      body.innerHTML = '<tr><td colspan="5" class="crm-empty">No data available</td></tr>';
+    var top = customers.slice(0, 5);
+    if (!top.length) {
+      body.innerHTML = '<tr><td colspan="6" class="crm-empty">No data available</td></tr>';
       return;
     }
-    body.innerHTML = customers
-      .map(function (c) {
+    body.innerHTML = top
+      .map(function (c, i) {
         return (
           '<tr class="row-link" data-href="/crm/customer.html?id=' +
           encodeURIComponent(c.userId) +
-          '"><td><strong class="customer-name">' +
+          '"><td class="cell-badge" data-label="Sr No">' +
+          (i + 1) +
+          '</td><td class="cell-title" data-label="Customer"><strong class="customer-name">' +
           escapeHtml(c.name) +
-          '</strong></td><td>' +
+          '</strong></td><td data-label="Mobile">' +
           escapeHtml(c.mobile || '—') +
-          '</td><td>' +
+          '</td><td data-label="Orders">' +
           fmtNumber(c.totalOrders) +
-          '</td><td>' +
+          '</td><td data-label="Total Spending">' +
           fmtMoney(c.totalSpending) +
-          '</td><td>' +
+          '</td><td data-label="Last Order">' +
           fmtDate(c.lastOrderDate) +
           '</td></tr>'
         );
@@ -326,19 +347,19 @@
         return (
           '<tr class="row-link" data-href="/crm/order.html?id=' +
           encodeURIComponent(o.orderId) +
-          '"><td>#' +
+          '"><td class="cell-title" data-label="Order">#' +
           escapeHtml(o.orderId) +
-          '</td><td>' +
+          '</td><td data-label="Bill No">' +
           (o.billNo ? escapeHtml(o.billNo) : '<span class="badge-nobill">No Bill</span>') +
-          '</td><td><strong class="customer-name">' +
+          '</td><td data-label="Customer"><strong class="customer-name">' +
           escapeHtml(o.customerName) +
-          '</strong></td><td>' +
+          '</strong></td><td data-label="Date">' +
           fmtDate(o.orderDate) +
-          '</td><td>' +
+          '</td><td data-label="Product">' +
           escapeHtml(o.product || '—') +
-          '</td><td>' +
+          '</td><td data-label="Frame">' +
           escapeHtml(o.frameType || '—') +
-          '</td><td>' +
+          '</td><td data-label="Amount">' +
           fmtMoney(o.amount) +
           '</td></tr>'
         );
@@ -364,11 +385,11 @@
     body.innerHTML = frames
       .map(function (f) {
         return (
-          '<tr><td><strong>' +
+          '<tr><td class="cell-title" data-label="Frame Type"><strong>' +
           escapeHtml(f.frameType) +
-          '</strong></td><td>' +
+          '</strong></td><td data-label="Orders">' +
           fmtNumber(f.orders) +
-          '</td><td>' +
+          '</td><td data-label="Sales">' +
           fmtMoney(f.sales) +
           '</td></tr>'
         );
@@ -419,7 +440,6 @@
     return AUTH.authFetch(CONFIG.endpoints.dashboard + '?range=' + encodeURIComponent(state.range))
       .then(function (data) {
         renderKpis(data.kpis);
-        renderPerformance(data.dailyPerformance);
         renderSalesOverview(data.salesOverview);
         renderCategoryChart(data.categorySales);
         renderMonthlyChart(data.monthlySales);

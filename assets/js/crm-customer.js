@@ -70,17 +70,17 @@
             return (
               '<tr class="row-link" data-href="/crm/order.html?id=' +
               encodeURIComponent(o.orderId) +
-              '"><td>#' +
+              '"><td class="cell-title" data-label="Order">#' +
               escapeHtml(o.orderId) +
-              '</td><td>' +
+              '</td><td data-label="Bill No">' +
               (o.billNo ? escapeHtml(o.billNo) : '<span class="badge-nobill">No Bill</span>') +
-              '</td><td>' +
+              '</td><td data-label="Date">' +
               fmtDate(o.orderDate) +
-              '</td><td>' +
+              '</td><td data-label="Product">' +
               escapeHtml(o.product || '—') +
-              '</td><td>' +
+              '</td><td data-label="Frame">' +
               escapeHtml(o.frameType || '—') +
-              '</td><td>' +
+              '</td><td data-label="Amount">' +
               fmtMoney(o.amount) +
               '</td></tr>'
             );

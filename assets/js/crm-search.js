@@ -72,19 +72,19 @@
                 return (
                   '<tr class="row-link" data-href="/crm/customer.html?id=' +
                   encodeURIComponent(c.userId) +
-                  '"><td>' +
+                  '"><td class="cell-badge" data-label="Sr No">' +
                   (rowStart + i) +
-                  '</td><td><strong class="customer-name">' +
+                  '</td><td class="cell-title" data-label="Customer"><strong class="customer-name">' +
                   escapeHtml(c.name) +
-                  '</strong></td><td>' +
+                  '</strong></td><td data-label="Mobile">' +
                   escapeHtml(c.mobile || '—') +
-                  '</td><td>' +
+                  '</td><td data-label="Orders">' +
                   c.totalOrders +
-                  '</td><td>' +
+                  '</td><td data-label="Total Purchase">' +
                   fmtMoney(c.totalSpending) +
-                  '</td><td>' +
+                  '</td><td data-label="Last Order">' +
                   fmtDate(c.lastOrderDate) +
-                  '</td><td>' +
+                  '</td><td data-label="Customer Since">' +
                   fmtDate(c.customerSince) +
                   '</td></tr>'
                 );

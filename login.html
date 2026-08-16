@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shree Hari Chasma Ghar | Login</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png" />
+    <link rel="icon" href="/assets/images/favicon/favicon.ico" type="image/x-icon" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -19,9 +23,9 @@
       <!-- LEFT: branding (hidden below 900px) -->
       <aside class="brand-panel" aria-hidden="true">
         <div class="brand-panel-inner">
-          <div class="brand-mark">
+          <a class="brand-mark" href="https://www.shreeharichasmaghar.com/" tabindex="-1">
             <img src="/assets/images/Logo.png" alt="Shree Hari Chasma Ghar" />
-          </div>
+          </a>
           <h1>Manage your optical business with clarity.</h1>
           <p class="brand-tagline">The all-in-one CRM for Shree Hari Chasma Ghar, New Ranip — customers, orders, billing and insights in one place.</p>
 
@@ -48,8 +52,23 @@
 
       <!-- RIGHT: glass login card -->
       <main class="form-panel">
+        <!-- Mobile-only (brand-panel above is desktop-only): a compact
+             animated taste of what the hidden brand panel shows, so the
+             mobile login isn't just a bare card on a flat background. -->
+        <div class="mobile-intro" aria-hidden="true">
+          <div class="mobile-intro-icons">
+            <span class="mi-icon mi-1"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/></svg></span>
+            <span class="mi-icon mi-2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16l-1.4 11.2a1.5 1.5 0 0 1-1.5 1.3H6.9a1.5 1.5 0 0 1-1.5-1.3L4 8Z"/><path d="M8 8V6a4 4 0 1 1 8 0v2"/></svg></span>
+            <span class="mi-icon mi-3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M4 20h16"/></svg></span>
+            <span class="mi-icon mi-4"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6.5" cy="12" r="3.2"/><circle cx="17.5" cy="12" r="3.2"/><path d="M9.7 12h4.6M2 11l1.5 1M22 11l-1.5 1"/></svg></span>
+          </div>
+          <p class="mobile-intro-text">Customers · Orders · Sales · Inventory — all in one place.</p>
+        </div>
+
         <div class="login-card" id="loginCard">
-          <img class="login-card-logo" src="/assets/images/Logo.png" alt="Shree Hari Chasma Ghar" />
+          <a class="login-card-logo-link" href="https://www.shreeharichasmaghar.com/" aria-label="Shree Hari Chasma Ghar home page">
+            <img class="login-card-logo" src="/assets/images/Logo.png" alt="Shree Hari Chasma Ghar" />
+          </a>
           <h2>Welcome back</h2>
           <p class="login-card-sub">Sign in to your Optical Shop CRM</p>
 

@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
     <title>Statistics | Shree Hari Chasma Ghar</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png" />
+    <link rel="icon" href="/assets/images/favicon/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="/assets/css/account.css" />
     <link rel="stylesheet" href="/assets/css/crm.css" />
     <script src="/assets/js/config.js"></script>
     <script src="/assets/js/session.js"></script>
     <script src="/assets/js/crm-shell.js"></script>
+    <script src="/assets/js/scroll-top.js"></script>
     <script>
       document.documentElement.classList.add('auth-pending');
     </script>
@@ -51,7 +56,7 @@
           <div class="kpi-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg></div>
           <div class="kpi-label">Total Sales</div>
           <div class="kpi-value kpi-value-masked" id="sTotalSalesWrap">
-            <span id="sTotalSalesText">₹ ******</span>
+            <span id="sTotalSalesText" class="kpi-value-text">₹ ******</span>
             <button type="button" class="privacy-toggle" id="sSalesPrivacyToggle" aria-label="Show total sales" aria-pressed="false">
               <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3.2"/></svg>
               <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 10.7a3.2 3.2 0 0 0 4.5 4.5M7.4 7.5C4.7 9 2.9 11.4 1.5 12c0 0 3.5 7 10.5 7 2 0 3.7-.5 5.1-1.3M16.6 16.6C19 15 20.5 12 20.5 12s-1.6-3.2-4.7-5.2A12 12 0 0 0 12 5c-.8 0-1.6.1-2.3.3"/></svg>
@@ -132,20 +137,8 @@
         </div>
         <div class="table-wrap">
           <table class="data-table">
-            <thead><tr><th>Customer</th><th>Mobile</th><th>Orders</th><th>Total Spending</th><th>Last Order</th></tr></thead>
+            <thead><tr><th>Sr No</th><th>Customer</th><th>Mobile</th><th>Orders</th><th>Total Spending</th><th>Last Order</th></tr></thead>
             <tbody id="statTopCustomersBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="crm-card" data-skeleton>
-        <div class="crm-card-head">
-          <div><h3>Recent Orders</h3></div>
-        </div>
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead><tr><th>Order</th><th>Bill No</th><th>Customer</th><th>Date</th><th>Product</th><th>Amount</th></tr></thead>
-            <tbody id="statRecentOrdersBody"></tbody>
           </table>
         </div>
       </section>
@@ -153,25 +146,29 @@
       <section class="crm-grid-2-even">
         <div class="crm-card" data-skeleton>
           <div class="crm-card-head">
-            <div><h3>Orders by Product Type</h3></div>
+            <div>
+              <h3>Orders by Product Type</h3>
+              <p>Order count by product, for the selected year.</p>
+            </div>
           </div>
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead><tr><th>Product</th><th>Orders</th><th>Sales</th></tr></thead>
-              <tbody id="statProductBody"></tbody>
-            </table>
+          <div class="chart-wrap chart-wrap-sm">
+            <canvas id="statProductChart"></canvas>
+            <div class="crm-empty" id="statProductEmpty" style="display:none">No data available</div>
           </div>
+          <div class="category-grid" id="statProductBreakdown"></div>
         </div>
         <div class="crm-card" data-skeleton>
           <div class="crm-card-head">
-            <div><h3>Top Frame Types</h3></div>
+            <div>
+              <h3>Top Frame Types</h3>
+              <p>Order count by frame type, for the selected year.</p>
+            </div>
           </div>
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead><tr><th>Frame Type</th><th>Orders</th><th>Sales</th></tr></thead>
-              <tbody id="statFrameBody"></tbody>
-            </table>
+          <div class="chart-wrap chart-wrap-sm">
+            <canvas id="statFrameChart"></canvas>
+            <div class="crm-empty" id="statFrameEmpty" style="display:none">No data available</div>
           </div>
+          <div class="category-grid" id="statFrameBreakdown"></div>
         </div>
       </section>
     </div>

@@ -180,74 +180,96 @@
           var topBody = document.getElementById('statTopCustomersBody');
           topBody.innerHTML = data.topCustomers.length
             ? data.topCustomers
-                .map(function (c) {
+                .map(function (c, i) {
                   return (
                     '<tr class="row-link" data-href="/crm/customer.html?id=' +
                     encodeURIComponent(c.userId) +
-                    '"><td><strong class="customer-name">' +
+                    '"><td class="cell-badge" data-label="Sr No">' +
+                    (i + 1) +
+                    '</td><td class="cell-title" data-label="Customer"><strong class="customer-name">' +
                     escapeHtml(c.name) +
-                    '</strong></td><td>' +
+                    '</strong></td><td data-label="Mobile">' +
                     escapeHtml(c.mobile || '—') +
-                    '</td><td>' +
+                    '</td><td data-label="Orders">' +
                     fmtNumber(c.totalOrders) +
-                    '</td><td>' +
+                    '</td><td data-label="Total Spending">' +
                     fmtMoney(c.totalSpending) +
-                    '</td><td>' +
+                    '</td><td data-label="Last Order">' +
                     fmtDate(c.lastOrderDate) +
                     '</td></tr>'
                   );
                 })
                 .join('')
-            : '<tr><td colspan="5" class="crm-empty">No data available</td></tr>';
+            : '<tr><td colspan="6" class="crm-empty">No data available</td></tr>';
           bindRowLinks(topBody);
 
-          var ordersBody = document.getElementById('statRecentOrdersBody');
-          ordersBody.innerHTML = data.recentOrders.length
-            ? data.recentOrders
-                .map(function (o) {
-                  return (
-                    '<tr class="row-link" data-href="/crm/order.html?id=' +
-                    encodeURIComponent(o.orderId) +
-                    '"><td>#' +
-                    escapeHtml(o.orderId) +
-                    '</td><td>' +
-                    (o.billNo ? escapeHtml(o.billNo) : '<span class="badge-nobill">No Bill</span>') +
-                    '</td><td><strong class="customer-name">' +
-                    escapeHtml(o.customerName) +
-                    '</strong></td><td>' +
-                    fmtDate(o.orderDate) +
-                    '</td><td>' +
-                    escapeHtml(o.product || '—') +
-                    '</td><td>' +
-                    fmtMoney(o.amount) +
-                    '</td></tr>'
-                  );
-                })
-                .join('')
-            : '<tr><td colspan="6" class="crm-empty">No orders in ' + year + '.</td></tr>';
-          bindRowLinks(ordersBody);
+          document.getElementById('statProductEmpty').style.display = data.productAnalytics.length ? 'none' : 'block';
+          ensureChart('statProduct', 'statProductChart', {
+            type: 'bar',
+            data: {
+              labels: data.productAnalytics.map(function (p) {
+                return p.product;
+              }),
+              datasets: [
+                {
+                  label: 'Orders',
+                  data: data.productAnalytics.map(function (p) {
+                    return p.orders;
+                  }),
+                  backgroundColor: '#7c3aed',
+                  borderRadius: 6
+                }
+              ]
+            },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
+          });
+          document.getElementById('statProductBreakdown').innerHTML = data.productAnalytics
+            .map(function (p, i) {
+              return (
+                '<div class="category-pill"><span class="cat-name"><span class="dot" style="background:' +
+                PALETTE[i % PALETTE.length] +
+                '"></span>' +
+                escapeHtml(p.product) +
+                '</span><div class="cat-value">' +
+                fmtNumber(p.orders) +
+                ' orders</div></div>'
+              );
+            })
+            .join('');
 
-          var productBody = document.getElementById('statProductBody');
-          productBody.innerHTML = data.productAnalytics.length
-            ? data.productAnalytics
-                .map(function (p) {
-                  return (
-                    '<tr><td><strong>' + escapeHtml(p.product) + '</strong></td><td>' + fmtNumber(p.orders) + '</td><td>' + fmtMoney(p.sales) + '</td></tr>'
-                  );
-                })
-                .join('')
-            : '<tr><td colspan="3" class="crm-empty">No data available</td></tr>';
-
-          var frameBody = document.getElementById('statFrameBody');
-          frameBody.innerHTML = data.frameAnalytics.length
-            ? data.frameAnalytics
-                .map(function (f) {
-                  return (
-                    '<tr><td><strong>' + escapeHtml(f.frameType) + '</strong></td><td>' + fmtNumber(f.orders) + '</td><td>' + fmtMoney(f.sales) + '</td></tr>'
-                  );
-                })
-                .join('')
-            : '<tr><td colspan="3" class="crm-empty">No data available</td></tr>';
+          document.getElementById('statFrameEmpty').style.display = data.frameAnalytics.length ? 'none' : 'block';
+          ensureChart('statFrame', 'statFrameChart', {
+            type: 'bar',
+            data: {
+              labels: data.frameAnalytics.map(function (f) {
+                return f.frameType;
+              }),
+              datasets: [
+                {
+                  label: 'Orders',
+                  data: data.frameAnalytics.map(function (f) {
+                    return f.orders;
+                  }),
+                  backgroundColor: '#0891b2',
+                  borderRadius: 6
+                }
+              ]
+            },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
+          });
+          document.getElementById('statFrameBreakdown').innerHTML = data.frameAnalytics
+            .map(function (f, i) {
+              return (
+                '<div class="category-pill"><span class="cat-name"><span class="dot" style="background:' +
+                PALETTE[i % PALETTE.length] +
+                '"></span>' +
+                escapeHtml(f.frameType) +
+                '</span><div class="cat-value">' +
+                fmtNumber(f.orders) +
+                ' orders</div></div>'
+              );
+            })
+            .join('');
         })
         .catch(function (err) {
           setSkeleton(false);

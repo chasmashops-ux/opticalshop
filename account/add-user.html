@@ -5,29 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
     <title>Add User | Shree Hari Chasma Ghar</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png" />
+    <link rel="icon" href="/assets/images/favicon/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="/assets/css/account.css" />
+    <link rel="stylesheet" href="/assets/css/crm.css" />
     <script src="/assets/js/config.js"></script>
     <script src="/assets/js/session.js"></script>
     <script src="/assets/js/account-ui.js"></script>
+    <script src="/assets/js/scroll-top.js"></script>
     <script>
       document.documentElement.classList.add('auth-pending');
       window.SHCG_AUTH.requireAuth();
     </script>
   </head>
   <body>
-    <div class="dashboard-shell">
+    <div class="crm-app">
       <div id="account-header"></div>
 
-      <main class="dashboard-main">
-        <h1 class="page-title">Add User</h1>
-        <p class="page-subtitle">
-          Creates a new row in login_mst. Only a logged-in user can add accounts, and the password is
-          hashed by the Worker before it is stored.
-        </p>
+      <main class="crm-content">
+        <section class="crm-welcome">
+          <h1>Add User</h1>
+          <p>
+            Creates a new row in login_mst. Only a logged-in user can add accounts, and the password is
+            hashed by the Worker before it is stored.
+          </p>
+        </section>
 
-        <section class="content-grid">
-          <div class="panel">
-            <h4>New Account</h4>
+        <section class="crm-grid-2">
+          <div class="crm-card">
+            <div class="crm-card-head"><div><h3>New Account</h3></div></div>
             <form class="form-grid" id="addUserForm" autocomplete="off">
               <div class="form-field">
                 <label for="newUsername">Username</label>
@@ -58,12 +66,10 @@
             </form>
           </div>
 
-          <aside class="sidebar-box">
-            <div class="panel">
-              <h4>Recently Added</h4>
-              <div class="list" id="recentList">
-                <div class="list-item"><span>Loading...</span></div>
-              </div>
+          <aside class="crm-card">
+            <div class="crm-card-head"><div><h3>Recently Added</h3></div></div>
+            <div class="list" id="recentList">
+              <div class="list-item"><span>Loading...</span></div>
             </div>
           </aside>
         </section>

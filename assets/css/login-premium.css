@@ -270,11 +270,16 @@ body.login-page {
   }
 }
 
+.login-card-logo-link {
+  display: block;
+  width: fit-content;
+  margin: 0 auto 22px;
+}
+
 .login-card-logo {
   height: 34px;
   width: auto;
   display: block;
-  margin: 0 auto 22px;
 }
 
 .login-card h2 {
@@ -533,9 +538,18 @@ button[type="submit"]:focus-visible,
 .field input:focus-visible,
 .toggle-password:focus-visible,
 .forgot:focus-visible,
-.remember input:focus-visible {
+.remember input:focus-visible,
+.login-card-logo-link:focus-visible {
   outline: 2.5px solid var(--primary);
   outline-offset: 2px;
+}
+
+.login-card-logo-link {
+  transition: opacity 0.15s ease;
+}
+
+.login-card-logo-link:hover {
+  opacity: 0.82;
 }
 
 /* ------------------------------------------------------------------ *
@@ -563,7 +577,9 @@ button[type="submit"]:focus-visible,
 
 @media (prefers-reduced-motion: reduce) {
   .login-shell,
-  .login-card {
+  .login-card,
+  .mi-icon,
+  .mobile-intro-text {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
@@ -587,6 +603,10 @@ button[type="submit"]:focus-visible,
  * never a fixed width, so it can't overflow at 320px.
  * ------------------------------------------------------------------ */
 
+.mobile-intro {
+  display: none;
+}
+
 @media (max-width: 900px) {
   .login-shell {
     grid-template-columns: 1fr;
@@ -597,8 +617,89 @@ button[type="submit"]:focus-visible,
   }
 
   .form-panel {
+    flex-direction: column;
     padding: 8vh 6vw;
     min-height: 100vh;
+  }
+
+  /* The brand panel normally carries the gradient/dark-indigo feel — with
+     it hidden, a soft radial wash at the top keeps mobile from reading as
+     a flat, empty page above the card. */
+  body.login-page {
+    background: radial-gradient(circle at 50% -8%, rgba(67, 56, 202, 0.16), transparent 55%), var(--background);
+  }
+
+  .mobile-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+
+  .mobile-intro-icons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .mi-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.16);
+    opacity: 0;
+    transform: translateY(10px) scale(0.85);
+    animation: miIconIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .mi-icon.mi-1 {
+    background: linear-gradient(135deg, #6366f1, #4338ca);
+    animation-delay: 0.15s;
+  }
+  .mi-icon.mi-2 {
+    background: linear-gradient(135deg, #06b6d4, #0e7490);
+    animation-delay: 0.28s;
+  }
+  .mi-icon.mi-3 {
+    background: linear-gradient(135deg, #22c55e, #15803d);
+    animation-delay: 0.41s;
+  }
+  .mi-icon.mi-4 {
+    background: linear-gradient(135deg, #f59e0b, #b45309);
+    animation-delay: 0.54s;
+  }
+
+  .mi-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: #fff;
+    fill: none;
+    stroke-width: 1.9;
+  }
+
+  @keyframes miIconIn {
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .mobile-intro-text {
+    margin: 0;
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    opacity: 0;
+    animation: miTextIn 0.5s ease 0.65s forwards;
+  }
+
+  @keyframes miTextIn {
+    to {
+      opacity: 1;
+    }
   }
 }
 
