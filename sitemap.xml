@@ -7,7 +7,7 @@
   <!-- Homepage - Highest Priority -->
   <url>
     <loc>https://www.shreeharichasmaghar.com/</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.00</priority>
   </url>
@@ -15,14 +15,14 @@
   <!-- Main Category Pages -->
   <url>
     <loc>https://www.shreeharichasmaghar.com/eyeglasses</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/sunglasses</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
@@ -37,7 +37,7 @@
   <!-- Services Page -->
   <url>
     <loc>https://www.shreeharichasmaghar.com/services</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -45,7 +45,7 @@
   <!-- About & Info Pages -->
   <url>
     <loc>https://www.shreeharichasmaghar.com/about-us</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
@@ -60,7 +60,7 @@
   <!-- Contact Pages -->
   <url>
     <loc>https://www.shreeharichasmaghar.com/contact-us</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -68,7 +68,7 @@
   <!-- Additional Pages -->
   <url>
     <loc>https://www.shreeharichasmaghar.com/googlereviews</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
   </url>
@@ -76,7 +76,7 @@
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/privacypolicy</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.50</priority>
   </url>
@@ -140,7 +140,7 @@
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/services/computerized-eye-testing-ranip</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
@@ -159,12 +159,6 @@
     <priority>0.75</priority>
   </url>
 
-  <url>
-    <loc>https://www.shreeharichasmaghar.com/services/digital-eye-test-center-ahmedabad</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/services/eye-lens-store-near-ranip</loc>
@@ -173,12 +167,6 @@
     <priority>0.75</priority>
   </url>
 
-  <url>
-    <loc>https://www.shreeharichasmaghar.com/services/eye-number-checking-in-ranip</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/services/eyeglasses-store-in-new-ranip</loc>
@@ -187,16 +175,10 @@
     <priority>0.75</priority>
   </url>
 
-  <url>
-    <loc>https://www.shreeharichasmaghar.com/services/frame-repair-optical-shop-ahmedabad</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/services/free-eye-checkup-in-new-ranip</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
@@ -245,14 +227,14 @@
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/services/nose-pad-replacement-optical-shop</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/services/optical-accessories-store-ranip</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
@@ -280,7 +262,7 @@
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/services/optical-store-near-gota-ahmedabad</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
@@ -315,7 +297,7 @@
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/services/professional-optometry-service</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
@@ -329,21 +311,21 @@
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/services/reading-glasses-shop-in-ranip</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/services/spectacle-repair-in-new-ranip</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/services/spectacles-shop-in-ranip</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
@@ -355,12 +337,6 @@
     <priority>0.75</priority>
   </url>
 
-  <url>
-    <loc>https://www.shreeharichasmaghar.com/services/stylish-goggles-shop-in-ranip</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/services/stylish-spectacle-frames-ahmedabad</loc>
@@ -383,12 +359,6 @@
     <priority>0.75</priority>
   </url>
 
-  <url>
-    <loc>https://www.shreeharichasmaghar.com/services/vision-testing-optical-shop-ahmedabad</loc>
-    <lastmod>2026-07-06T00:00:00+05:30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/services/women-spectacle-frames-ranip</loc>
@@ -437,7 +407,7 @@
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/blog/computer-vision-syndrome</loc>
-    <lastmod>2026-06-28T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>
@@ -514,14 +484,14 @@
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/blog/20-20-20-rule-eye-strain</loc>
-    <lastmod>2026-05-14T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/blog/digital-eye-strain-tips</loc>
-    <lastmod>2026-05-10T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>
@@ -652,16 +622,10 @@
     <priority>0.70</priority>
   </url>
 
-  <url>
-    <loc>https://www.shreeharichasmaghar.com/blog/how-to-clean-glasses</loc>
-    <lastmod>2026-02-22T00:00:00+05:30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
-  </url>
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/blog/how-to-maintain-eyeglasses</loc>
-    <lastmod>2026-02-18T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>
@@ -675,7 +639,7 @@
 
   <url>
     <loc>https://www.shreeharichasmaghar.com/blog/first-time-glasses-tips</loc>
-    <lastmod>2026-02-10T00:00:00+05:30</lastmod>
+    <lastmod>2026-08-29T00:00:00+05:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>

@@ -1,7 +1,21 @@
 /* =========================================================
-   OptiCare Virtual Try-On — face-tracking AR (MediaPipe)
-   Loads the face-mesh model lazily, overlays an SVG vector
-   frame on the user's eyes and follows head tilt/turn.
+   OptiCare Virtual Try-On — real-time face-tracking AR
+   Technology: MediaPipe Tasks Vision — FaceLandmarker (browser-side,
+   no data leaves the device). Live video is never sent to any server.
+
+   Flow: permission screen -> getUserMedia -> FaceLandmarker load ->
+   per-frame landmark detection -> geometry-based overlay placement
+   (eye centres, inter-eye distance, head roll/yaw) -> optional capture.
+
+   Overlay note: until a product supplies a real transparent cutout of
+   itself (product.tryOn.overlay), this engine draws a stylized vector
+   shape matched to the product's frame "shape" and clearly labels it
+   as a preview shape — never presented as a photo of the real product.
+
+   Calibration: append ?tryonDebug=true to the page URL to reveal
+   scale/offset/rotation sliders and live landmark points for tuning a
+   product's tryOn config. Hidden from normal visitors.
+
    Exposes: window.OptiTryOn.open(id) / .close()
 ========================================================= */
 (function () {
@@ -12,10 +26,9 @@
     const canvas = document.getElementById('tryOnCanvas');
     const ctx = canvas ? canvas.getContext('2d') : null;
     const statusEl = document.getElementById('tryOnStatus');
-    const stylesEl = document.getElementById('tryOnStyles');
-    const sizeEl = document.getElementById('tryOnSize');
     const titleEl = document.getElementById('tryOnTitle');
-    const isSun = (document.body && document.body.dataset && document.body.dataset.catalog === 'sunglasses');
+    const isSun = document.body?.dataset?.catalog === 'sunglasses';
+    const DEBUG = new URLSearchParams(window.location.search).get('tryonDebug') === 'true';
 
     if (!video || !canvas || !ctx) return;
 
@@ -24,32 +37,36 @@
     const MODEL_URL = 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task';
 
     let stream = null, landmarker = null, raf = null, running = false;
-    let facing = 'user', sizeMul = 1, currentStyle = 'rectangle';
+    let facing = 'user';
     let lastTs = 0;
+    let currentProduct = null;
+    let debugConfig = { widthRatio: 2.0, verticalOffset: 0, noseOffset: 0, rotationMultiplier: 1 };
     const imgCache = {};
+    let noFaceFrames = 0, multiFaceFrames = 0;
 
-    const STYLES = [
-        { id: 'rectangle', name: 'Rectangle' },
-        { id: 'wayfarer', name: 'Wayfarer' },
-        { id: 'round', name: 'Round' },
-        { id: 'aviator', name: 'Aviator' },
-        { id: 'cateye', name: 'Cat-Eye' },
-        { id: 'sport', name: 'Sport' }
-    ];
+    function setStatus(t, tone) {
+        if (!statusEl) return;
+        statusEl.textContent = t || '';
+        statusEl.style.display = t ? 'block' : 'none';
+        statusEl.dataset.tone = tone || 'info';
+    }
 
-    function styleForCategory(cat) {
-        cat = (cat || '').toLowerCase();
-        if (cat.indexOf('aviator') > -1) return 'aviator';
-        if (cat.indexOf('wayfarer') > -1) return 'wayfarer';
-        if (cat.indexOf('round') > -1) return 'round';
-        if (cat.indexOf('cat') > -1) return 'cateye';
-        if (cat.indexOf('sport') > -1) return 'sport';
-        if (cat.indexOf('women') > -1) return 'cateye';
-        if (cat.indexOf('kid') > -1) return 'round';
+    function setPanel(which) {
+        modal.querySelectorAll('[data-tryon-panel]').forEach(p => {
+            p.hidden = p.dataset.tryonPanel !== which;
+        });
+        modal.dataset.state = which;
+    }
+
+    // ---- Vector placeholder shapes (used only until a real overlay exists) ----
+    function shapeForProduct(p) {
+        const s = (p && p.shape || '').toLowerCase();
+        if (['aviator', 'round', 'cat-eye', 'wayfarer', 'rectangle'].includes(s)) return s === 'cat-eye' ? 'cateye' : s;
+        if (s === 'square' || s === 'full-rim') return 'rectangle';
+        if (s === 'rimless' || s === 'half-rim') return 'rectangle';
         return 'rectangle';
     }
 
-    // ---- SVG vector frame (viewBox 0 0 220 80, bridge centred at x=110) ----
     function frameSVG(style, sun) {
         const lens = sun ? 'rgba(20,24,36,0.80)' : 'rgba(150,196,255,0.20)';
         const edge = sun ? '#0f172a' : '#1f2937';
@@ -73,10 +90,6 @@
                          "<path d='M118 40 q2 -24 38 -24 q40 0 42 24 q-8 16 -42 18 q-32 -2 -38 -18 z'/>";
                 bridge = 'M96 36 q14 -6 28 0';
                 break;
-            case 'sport':
-                lenses = "<path d='M16 30 q94 -24 188 0 q-6 34 -42 38 q-52 6 -104 0 q-36 -4 -42 -38 z'/>";
-                bridge = 'M104 28 v36';
-                break;
             default: // rectangle
                 lenses = "<rect x='22' y='22' width='78' height='44' rx='16'/>" +
                          "<rect x='120' y='22' width='78' height='44' rx='16'/>";
@@ -90,44 +103,42 @@
         return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
     }
 
-    function frameImg(style) {
-        const key = style + (isSun ? '_s' : '_c');
+    function overlayImage(p) {
+        const hasReal = p && p.tryOn && p.tryOn.overlay;
+        const key = hasReal ? p.tryOn.overlay : ('shape:' + shapeForProduct(p) + (isSun ? ':sun' : ':clear'));
         if (!imgCache[key]) {
             const img = new Image();
-            img.src = frameSVG(style, isSun);
+            img.crossOrigin = 'anonymous';
+            img.src = hasReal ? p.tryOn.overlay : frameSVG(shapeForProduct(p), isSun);
             imgCache[key] = img;
         }
-        return imgCache[key];
+        return { img: imgCache[key], isReal: !!hasReal };
     }
 
-    function setStatus(t) {
-        if (!statusEl) return;
-        statusEl.textContent = t || '';
-        statusEl.style.display = t ? 'block' : 'none';
-    }
-
-    // ---- Build style selector chips ----
-    function buildStyles() {
-        if (!stylesEl || stylesEl.childElementCount) return;
-        STYLES.forEach(s => {
-            const b = document.createElement('button');
-            b.type = 'button';
-            b.className = 'tryon-style-chip';
-            b.dataset.style = s.id;
-            b.textContent = s.name;
-            b.addEventListener('click', () => { currentStyle = s.id; highlightStyle(); });
-            stylesEl.appendChild(b);
-        });
-    }
-    function highlightStyle() {
-        if (!stylesEl) return;
-        stylesEl.querySelectorAll('.tryon-style-chip').forEach(b => {
-            b.classList.toggle('active', b.dataset.style === currentStyle);
-        });
+    function activeConfig() {
+        const cfg = (currentProduct && currentProduct.tryOn) || {};
+        if (DEBUG) return debugConfig;
+        return {
+            widthRatio: typeof cfg.widthRatio === 'number' ? cfg.widthRatio : 2.0,
+            verticalOffset: typeof cfg.verticalOffset === 'number' ? cfg.verticalOffset : 0,
+            noseOffset: typeof cfg.noseOffset === 'number' ? cfg.noseOffset : 0,
+            rotationMultiplier: typeof cfg.rotationMultiplier === 'number' ? cfg.rotationMultiplier : 1
+        };
     }
 
     // ---- Geometry + draw ----
     function pt(lm, i) { return { x: lm[i].x * canvas.width, y: lm[i].y * canvas.height }; }
+
+    function drawLandmarkDots(lm) {
+        if (!DEBUG) return;
+        ctx.fillStyle = 'rgba(34,197,94,0.85)';
+        for (let i = 0; i < lm.length; i += 3) {
+            const p = pt(lm, i);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 1.6, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
 
     function drawGlasses(lm) {
         const lEye = pt(lm, 33);    // left eye outer corner
@@ -140,26 +151,28 @@
         const eyeW = Math.hypot(dx, dy);
         if (!eyeW) return;
         const angle = Math.atan2(dy, dx);
+        const cfg = activeConfig();
 
-        const fw = eyeW * 2.05 * sizeMul;
+        const fw = eyeW * cfg.widthRatio;
         const fh = fw * (80 / 220);
 
-        // yaw estimate for the "360" turn feel (nose offset vs eye centre)
-        let yaw = (nose.x - cx) / eyeW;            // ~ -0.5 .. 0.5
+        let yaw = (nose.x - cx) / eyeW;
         yaw = Math.max(-0.6, Math.min(0.6, yaw));
-        const sx = 1 - Math.abs(yaw) * 0.45;        // compress horizontally when turned
+        const sx = 1 - Math.abs(yaw) * 0.45;
 
-        const img = frameImg(currentStyle);
+        const { img } = overlayImage(currentProduct);
         if (!img.complete || !img.naturalWidth) return;
 
         ctx.save();
         ctx.translate(cx, cy);
-        ctx.rotate(angle);
-        ctx.translate(yaw * eyeW * 0.25, 0);        // slide toward turn direction
+        ctx.rotate(angle * cfg.rotationMultiplier);
+        ctx.translate(yaw * eyeW * 0.25 + cfg.noseOffset * eyeW, cfg.verticalOffset * fh);
         ctx.scale(sx, 1);
         ctx.globalAlpha = 0.97;
         ctx.drawImage(img, -fw / 2, -fh / 2, fw, fh);
         ctx.restore();
+
+        drawLandmarkDots(lm);
     }
 
     function loop() {
@@ -176,12 +189,19 @@
                 if (ts <= lastTs) ts = lastTs + 1;
                 lastTs = ts;
                 res = landmarker.detectForVideo(video, ts);
-            } catch (e) { /* skip frame */ }
-            if (res && res.faceLandmarks && res.faceLandmarks.length) {
-                drawGlasses(res.faceLandmarks[0]);
-                setStatus('');
+            } catch (e) { /* skip this frame, keep the loop alive */ }
+
+            const faces = (res && res.faceLandmarks) || [];
+            if (faces.length === 1) {
+                noFaceFrames = 0; multiFaceFrames = 0;
+                drawGlasses(faces[0]);
+                setStatus('Face detected', 'ok');
+            } else if (faces.length > 1) {
+                multiFaceFrames++; noFaceFrames = 0;
+                if (multiFaceFrames > 5) setStatus('Please make sure only one face is visible.', 'warn');
             } else {
-                setStatus('Center your face in the camera 🙂');
+                noFaceFrames++; multiFaceFrames = 0;
+                if (noFaceFrames > 8) setStatus('Move your face into the camera frame.', 'warn');
             }
         }
         raf = requestAnimationFrame(loop);
@@ -204,7 +224,6 @@
 
     async function initLandmarker() {
         if (landmarker) return;
-        setStatus('Loading face tracking…');
         const vision = await import(MP_BASE + '/vision_bundle.mjs');
         const FaceLandmarker = vision.FaceLandmarker;
         const FilesetResolver = vision.FilesetResolver;
@@ -212,14 +231,18 @@
         try {
             landmarker = await FaceLandmarker.createFromOptions(fileset, {
                 baseOptions: { modelAssetPath: MODEL_URL, delegate: 'GPU' },
-                runningMode: 'VIDEO', numFaces: 1
+                runningMode: 'VIDEO', numFaces: 2
             });
         } catch (e) {
             landmarker = await FaceLandmarker.createFromOptions(fileset, {
                 baseOptions: { modelAssetPath: MODEL_URL, delegate: 'CPU' },
-                runningMode: 'VIDEO', numFaces: 1
+                runningMode: 'VIDEO', numFaces: 2
             });
         }
+    }
+
+    function browserSupported() {
+        return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.WebAssembly);
     }
 
     // ---- Capture (mirrored, to match the on-screen preview) ----
@@ -232,36 +255,100 @@
         o.translate(out.width, 0);
         o.scale(-1, 1);
         o.drawImage(canvas, 0, 0);
+        const dataUrl = out.toDataURL('image/png');
+
+        const previewImg = document.getElementById('tryOnCaptureImg');
+        if (previewImg) previewImg.src = dataUrl;
+        setPanel('captured');
+    }
+
+    function retake() {
+        setPanel('live');
+    }
+
+    function downloadCapture() {
+        const previewImg = document.getElementById('tryOnCaptureImg');
+        if (!previewImg || !previewImg.src) return;
         const a = document.createElement('a');
-        a.href = out.toDataURL('image/png');
+        a.href = previewImg.src;
         a.download = 'shree-hari-tryon.png';
         document.body.appendChild(a);
         a.click();
         a.remove();
     }
 
+    // ---- Debug calibration panel ----
+    function buildDebugPanel() {
+        if (!DEBUG) return;
+        const panel = document.getElementById('tryOnDebugPanel');
+        if (!panel || panel.dataset.built) return;
+        panel.dataset.built = '1';
+        panel.hidden = false;
+        panel.innerHTML = `
+            <p class="tryon-debug-title">Calibration (debug mode)</p>
+            <label>Width ratio <input type="range" id="dbgWidth" min="1.2" max="3" step="0.01" value="${debugConfig.widthRatio}"><span id="dbgWidthVal">${debugConfig.widthRatio}</span></label>
+            <label>Vertical offset <input type="range" id="dbgVert" min="-0.5" max="0.5" step="0.01" value="${debugConfig.verticalOffset}"><span id="dbgVertVal">${debugConfig.verticalOffset}</span></label>
+            <label>Nose offset <input type="range" id="dbgNose" min="-0.3" max="0.3" step="0.01" value="${debugConfig.noseOffset}"><span id="dbgNoseVal">${debugConfig.noseOffset}</span></label>
+            <label>Rotation multiplier <input type="range" id="dbgRot" min="0" max="2" step="0.01" value="${debugConfig.rotationMultiplier}"><span id="dbgRotVal">${debugConfig.rotationMultiplier}</span></label>
+            <pre id="dbgOutput"></pre>
+        `;
+        const bind = (id, key, out) => {
+            const el = document.getElementById(id);
+            el.addEventListener('input', () => {
+                debugConfig[key] = parseFloat(el.value);
+                document.getElementById(out).textContent = el.value;
+                updateDebugOutput();
+            });
+        };
+        bind('dbgWidth', 'widthRatio', 'dbgWidthVal');
+        bind('dbgVert', 'verticalOffset', 'dbgVertVal');
+        bind('dbgNose', 'noseOffset', 'dbgNoseVal');
+        bind('dbgRot', 'rotationMultiplier', 'dbgRotVal');
+        updateDebugOutput();
+    }
+    function updateDebugOutput() {
+        const out = document.getElementById('dbgOutput');
+        if (!out) return;
+        out.textContent = '"tryOn": ' + JSON.stringify(debugConfig, null, 2);
+    }
+
     // ---- Public open / close ----
     async function open(id) {
-        const frames = window.eyeglassFrames || [];
-        const frame = frames.find(f => f.id === id);
-        currentStyle = styleForCategory(frame && frame.category);
-        if (titleEl && frame) titleEl.textContent = frame.title;
-        sizeMul = 1;
-        if (sizeEl) sizeEl.value = '1';
-        buildStyles();
-        highlightStyle();
+        currentProduct = (window.OptiCatalog && window.OptiCatalog.getById(id)) || null;
+        if (titleEl) titleEl.textContent = currentProduct ? ('Try On: ' + currentProduct.name) : 'Virtual Try-On';
+
         modal.hidden = false;
         document.body.style.overflow = 'hidden';
+
+        if (!browserSupported()) {
+            setPanel('unsupported');
+            return;
+        }
+
+        setPanel('permission');
+        buildDebugPanel();
+    }
+
+    async function beginCamera() {
+        setPanel('loading');
         try {
             await startCam();
             await initLandmarker();
             running = true;
+            noFaceFrames = 0; multiFaceFrames = 0;
+            setPanel('live');
             loop();
         } catch (err) {
-            const denied = err && (err.name === 'NotAllowedError' || err.name === 'NotFoundError');
-            setStatus(denied
-                ? '📷 Camera blocked. Please allow camera access in your browser, then reopen Try-On.'
-                : '⚠️ Unable to start the camera. Try a different browser or check your connection.');
+            const denied = err && (err.name === 'NotAllowedError' || err.name === 'SecurityError');
+            const noCam = err && err.name === 'NotFoundError';
+            if (denied) {
+                setPanel('denied');
+            } else if (noCam) {
+                setPanel('unsupported');
+            } else {
+                console.error('OptiTryOn init error', err);
+                setPanel('unsupported');
+            }
         }
     }
 
@@ -273,23 +360,32 @@
         if (ctx && canvas.width) ctx.clearRect(0, 0, canvas.width, canvas.height);
         modal.hidden = true;
         document.body.style.overflow = '';
+        setPanel('permission');
     }
 
     // ---- Wire controls ----
-    document.querySelectorAll('#closeTryOn, #closeTryOnFooter').forEach(b => b.addEventListener('click', close));
+    modal.querySelectorAll('[data-tryon-close]').forEach(b => b.addEventListener('click', close));
     modal.addEventListener('click', e => { if (e.target === modal) close(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) close(); });
 
-    const capBtn = document.getElementById('tryOnCapture');
-    if (capBtn) capBtn.addEventListener('click', capture);
+    document.getElementById('tryOnAllow')?.addEventListener('click', beginCamera);
+    document.getElementById('tryOnRetryPermission')?.addEventListener('click', beginCamera);
+
+    document.getElementById('tryOnCapture')?.addEventListener('click', capture);
+    document.getElementById('tryOnRetake')?.addEventListener('click', retake);
+    document.getElementById('tryOnDownload')?.addEventListener('click', downloadCapture);
 
     const switchBtn = document.getElementById('tryOnSwitch');
     if (switchBtn) switchBtn.addEventListener('click', async () => {
         facing = (facing === 'user') ? 'environment' : 'user';
-        try { await startCam(); } catch (e) { setStatus('⚠️ Could not switch camera.'); }
+        try { await startCam(); } catch (e) { setStatus('Could not switch camera.', 'warn'); }
     });
 
-    if (sizeEl) sizeEl.addEventListener('input', () => { sizeMul = parseFloat(sizeEl.value) || 1; });
+    document.getElementById('tryOnHelpToggle')?.addEventListener('click', function () {
+        const help = document.getElementById('tryOnHelpText');
+        if (help) help.hidden = !help.hidden;
+        this.setAttribute('aria-expanded', String(help && !help.hidden));
+    });
 
     window.OptiTryOn = { open, close };
 })();

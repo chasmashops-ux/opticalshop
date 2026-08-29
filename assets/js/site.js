@@ -1,4 +1,4 @@
-
+﻿
 // ----------------------------------------------------------HOME PAGE start----------------------------------------------------
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -862,13 +862,6 @@ const services = [
     },
 
     {
-        text:'stylish-goggles-shop-in-ranip.html',
-        icon:'fa-glasses',
-        title:'Stylish Goggles Shop In Ranip',
-        desc:'Trendy goggles and sunglasses collection available in Ahmedabad.'
-    },
-
-    {
         text:'sports-sunglasses-ahmedabad.html',
         icon:'fa-football-ball',
         title:'Sports Sunglasses Ahmedabad',
@@ -901,27 +894,6 @@ const services = [
         icon:'fa-microscope',
         title:'Computerized Eye Testing Ranip',
         desc:'Advanced computerized eye testing for accurate power checking.'
-    },
-
-    {
-        text:'vision-testing-optical-shop-ahmedabad.html',
-        icon:'fa-eye',
-        title:'Vision Testing Optical Shop Ahmedabad',
-        desc:'Professional vision testing services with modern eye checking equipment.'
-    },
-
-    {
-        text:'eye-number-checking-in-ranip.html',
-        icon:'fa-search',
-        title:'Eye Number Checking In Ranip',
-        desc:'Accurate eye number checking and optical consultation services.'
-    },
-
-    {
-        text:'digital-eye-test-center-ahmedabad.html',
-        icon:'fa-desktop',
-        title:'Digital Eye Test Center Ahmedabad',
-        desc:'Digital eye testing services for clear and accurate vision analysis.'
     },
 
     {
@@ -964,13 +936,6 @@ const services = [
         icon:'fa-toolbox',
         title:'Optical Accessories Store Ranip',
         desc:'All types of optical accessories including cases and cleaners.'
-    },
-
-    {
-        text:'frame-repair-optical-shop-ahmedabad.html',
-        icon:'fa-tools',
-        title:'Frame Repair Optical Shop Ahmedabad',
-        desc:'Quick and reliable spectacle frame repair services.'
     },
 
     {
@@ -1065,7 +1030,7 @@ function renderServices(page){
 
                 </p>
 
-                <a href="/services/${service.text}"
+                <a href="/services/${service.text.replace(/\.html$/, '')}"
                    class="service-btn-modern">
 
                     Learn More
@@ -1143,175 +1108,6 @@ if(servicesContainer){
 
 }
 
-// Eyeglasses Catalog and Try-On
-const isSunglassesCatalog = document.body?.dataset?.catalog === 'sunglasses' || window.location.pathname.includes('/sunglasses');
-
-const sunglassesTemplates = [
-    { category: 'Aviator', title: 'Aviator Sun Frame', meta: 'Polarized UV400', price: '₹2,199', image: '/assets/images/Home.jpg', badge: 'Trending' },
-    { category: 'Wayfarer', title: 'Wayfarer Classic', meta: 'Premium Tinted Lens', price: '₹2,499', image: '/assets/images/women.png', badge: 'New' },
-    { category: 'Round', title: 'Round Retro Frame', meta: 'Matte Finish', price: '₹1,899', image: '/assets/images/men.png', badge: 'Best Seller' },
-    { category: 'Cat-Eye', title: 'Cat-Eye Glam Frame', meta: 'Fashion Sunglass', price: '₹2,699', image: '/assets/images/feature.png', badge: 'Popular' },
-    { category: 'Sports', title: 'Sport Shield Frame', meta: 'Wraparound Protection', price: '₹2,999', image: '/assets/images/kid.png', badge: 'Sports' }
-];
-
-const eyeglassTemplates = isSunglassesCatalog ? sunglassesTemplates : [
-    { category: 'Women', title: 'Classic Women Frame', meta: 'Blue Cut Lens', price: '₹1,499', image: '/assets/images/women.png', badge: 'New' },
-    { category: 'Men', title: 'Men Aviator Frame', meta: 'UV Protection', price: '₹1,699', image: '/assets/images/men.png', badge: 'Best Seller' },
-    { category: 'Kids', title: 'Kids Fun Frame', meta: 'Lightweight Fit', price: '₹999', image: '/assets/images/kid.png', badge: 'Kids' },
-    { category: 'Sunglasses', title: 'Gradient Sunglass Frame', meta: 'Polarized UV400', price: '₹2,199', image: '/assets/images/Home.jpg', badge: 'Trending' },
-    { category: 'Blue Cut', title: 'Blue Cut Computer Frame', meta: 'Anti Glare', price: '₹1,599', image: '/assets/images/feature.png', badge: 'Popular' }
-];
-
-const eyeglassFrames = Array.from({ length: isSunglassesCatalog ? 320 : 520 }, (_, index) => {
-    const template = eyeglassTemplates[index % eyeglassTemplates.length];
-    const variantIndex = Math.floor(index / eyeglassTemplates.length) + 1;
-    return {
-        id: index + 1,
-        category: template.category,
-        title: `${template.title} ${variantIndex}`,
-        meta: template.meta,
-        price: template.price,
-        image: template.image,
-        badge: template.badge,
-        sku: `SHC-${1000 + index}`
-    };
-});
-
-// Show 10 frames per page (user preference)
-let productsPerPage = 10;
-let currentFramePage = 1;
-let activeFrameCategory = 'All';
-let currentStream = null;
-
-function getFilteredFrames() {
-    if (activeFrameCategory === 'All') {
-        return eyeglassFrames;
-    }
-    return eyeglassFrames.filter(frame => frame.category === activeFrameCategory);
-}
-
-function renderProductGrid() {
-    const container = document.getElementById('productGrid');
-    if (!container) return;
-    const filtered = getFilteredFrames();
-    const total = filtered.length;
-    // User request: Page 1 should show 9 items; total pages = 2 (if more than 9 items)
-    const firstPageCount = 9;
-    let totalPages = total <= firstPageCount ? 1 : 2;
-    // determine per-page count for the current page
-    let perPage;
-    if (totalPages === 1) {
-        perPage = total;
-    } else {
-        if (currentFramePage === 1) perPage = firstPageCount;
-        else perPage = Math.max(1, total - firstPageCount);
-    }
-    const start = (currentFramePage - 1) * perPage;
-    const pageItems = filtered.slice(start, start + perPage);
-
-    // For consistent 3-column layout, use Bootstrap col-12 col-md-4
-    // If last row has 1 or 2 items, add offsets to center them
-    const remainder = pageItems.length % 3;
-    container.innerHTML = pageItems.map((frame, idx) => {
-        let extra = '';
-        if (idx === 0 && remainder === 1) extra = ' offset-md-4';
-        if (idx === 0 && remainder === 2) extra = ' offset-md-2';
-        return `
-        <div class="col-12 col-md-4${extra}" data-aos="fade-up">
-            <div class="product-card">
-                <div class="product-image">
-                    <img src="${frame.image}" alt="${frame.title}" loading="lazy" decoding="async" width="400" height="300">
-                    <span class="product-badge">${frame.badge}</span>
-                </div>
-                <div class="product-details">
-                    <h3 class="product-title">${frame.title}</h3>
-                    <p class="product-meta">${frame.meta} • ${frame.category}</p>
-                    <p class="product-price">${frame.price}</p>
-                    <div class="product-actions">
-                        <button class="tryon-card-btn" onclick="openTryOn(${frame.id})"><i class="fas fa-camera"></i> Try On</button>
-                        <span class="product-sku">${frame.sku}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    }).join('');
-
-    document.getElementById('visibleCount').textContent = pageItems.length;
-    document.getElementById('totalCount').textContent = total;
-    document.getElementById('activeCategory').textContent = activeFrameCategory;
-    renderFramesPagination(total, totalPages);
-}
-
-function renderFramesPagination(totalFrames) {
-    const pagination = document.getElementById('paginationControls');
-    // second argument is totalPages (when caller computed a custom split)
-    const totalPages = arguments.length > 1 ? arguments[1] : Math.max(1, Math.ceil(totalFrames / productsPerPage));
-    let html = '';
-
-    for (let page = 1; page <= totalPages; page++) {
-        html += `
-            <button class="pagination-button ${page === currentFramePage ? 'active' : ''}" onclick="changeFramePage(${page})">${page}</button>
-        `;
-    }
-
-    pagination.innerHTML = html;
-}
-
-function changeFramePage(page) {
-    currentFramePage = page;
-    renderProductGrid();
-    const collectionSection = document.getElementById('eyeglass-collection');
-    if (collectionSection) {
-        window.scrollTo({ top: collectionSection.offsetTop - 100, behavior: 'smooth' });
-    }
-}
-
-function setFrameCategory(category) {
-    activeFrameCategory = category;
-    currentFramePage = 1;
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.category === category);
-    });
-    renderProductGrid();
-}
-
-// Expose frame data for the virtual try-on engine (assets/js/tryon.js)
-window.eyeglassFrames = eyeglassFrames;
-
-// Delegate to the face-tracking try-on engine (falls back gracefully if unloaded)
-window.openTryOn = function (id) {
-    if (window.OptiTryOn && typeof window.OptiTryOn.open === 'function') {
-        window.OptiTryOn.open(id);
-    }
-};
-
-function setupEyeglassesCatalog() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    filterButtons.forEach(btn => {
-        btn.addEventListener('click', () => setFrameCategory(btn.dataset.category));
-    });
-
-    // If URL contains ?p=2 or ?page=2, jump to that page on load
-    try {
-        const params = new URLSearchParams(window.location.search);
-        const p = params.get('p') || params.get('page');
-        const requested = parseInt(p, 10);
-        if (!isNaN(requested) && requested > 0) currentFramePage = requested;
-    } catch (e) { /* ignore */ }
-
-    renderProductGrid();
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupEyeglassesCatalog);
-} else {
-    setupEyeglassesCatalog();
-}
-
-window.setFrameCategory = setFrameCategory;
-window.changeFramePage = changeFramePage;
-
 // ----------------------------------------------------------blog data (shared by listing + article pages)----------------------------------------------------
 
 const blogPosts = [
@@ -1349,7 +1145,6 @@ const blogPosts = [
         { url: 'frame-materials-guide.html', img: 'blog2.png', cat: 'Frames', date: '6 Mar 2026', title: "A Guide to Eyeglass Frame Materials", desc: "Acetate, metal, titanium or TR90 - understand how frame material affects comfort, weight, style and durability, and which suits you best." },
         { url: 'titanium-frames-benefits.html', img: 'men.png', cat: 'Frames', date: '2 Mar 2026', title: "Why Choose Titanium Frames?", desc: "Ultra-light, strong and hypoallergenic. Discover the benefits of titanium eyeglass frames and whether they suit you." },
         { url: 'rimless-vs-full-rim.html', img: 'women.png', cat: 'Frames', date: '26 Feb 2026', title: "Rimless vs Full-Rim Frames", desc: "Minimal and light or bold and durable? Compare rimless and full-rim frames on style, comfort, strength and prescription fit." },
-        { url: 'how-to-clean-glasses.html', img: 'feature.png', cat: 'Frames', date: '22 Feb 2026', title: "How to Clean Your Glasses the Right Way", desc: "A simple, safe step-by-step method to clean your glasses without scratching the lenses or damaging the coatings." },
         { url: 'how-to-maintain-eyeglasses.html', img: 'blog2.png', cat: 'Frames', date: '18 Feb 2026', title: "How to Maintain Your Eyeglasses", desc: "Good care makes your glasses last longer. Learn simple habits for storing, handling and maintaining your eyewear." },
         { url: 'reading-glasses-guide.html', img: 'blog3.png', cat: 'Frames', date: '14 Feb 2026', title: "A Complete Guide to Reading Glasses", desc: "Learn how reading glasses work, how to pick the right power and why a proper eye test matters." },
         { url: 'first-time-glasses-tips.html', img: 'women.png', cat: 'Frames', date: '10 Feb 2026', title: "First Time Wearing Glasses: What to Expect", desc: "Adjusting to your first pair of glasses? Mild dizziness is normal. Practical tips to get comfortable quickly and enjoy clear vision." },
@@ -1414,7 +1209,7 @@ if (blogContainer) {
         return `
         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="${(index % 3) * 90}">
             <article class="blog-card">
-                <a href="/blog/${post.url}" class="blog-image" aria-label="${blogEscape(post.title)}">
+                <a href="/blog/${post.url.replace(/\.html$/, '')}" class="blog-image" aria-label="${blogEscape(post.title)}">
                     <img src="/assets/images/${post.img}" alt="${blogEscape(post.title)}" loading="lazy" width="400" height="250">
                     <span class="blog-badge">${blogEscape(post.cat)}</span>
                 </a>
@@ -1423,9 +1218,9 @@ if (blogContainer) {
                         <span><i class="far fa-calendar-alt"></i> ${post.date}</span>
                         <span><i class="far fa-clock"></i> ${blogReadTime(post)}</span>
                     </div>
-                    <h2 class="blog-title"><a href="/blog/${post.url}">${blogEscape(post.title)}</a></h2>
+                    <h2 class="blog-title"><a href="/blog/${post.url.replace(/\.html$/, '')}">${blogEscape(post.title)}</a></h2>
                     <p class="blog-description">${blogEscape(post.desc)}</p>
-                    <a href="/blog/${post.url}" class="blog-link">Read Article <i class="fas fa-arrow-right"></i></a>
+                    <a href="/blog/${post.url.replace(/\.html$/, '')}" class="blog-link">Read Article <i class="fas fa-arrow-right"></i></a>
                 </div>
             </article>
         </div>`;
@@ -1435,7 +1230,7 @@ if (blogContainer) {
         return `
         <div class="col-12" data-aos="fade-up">
             <article class="blog-card blog-card--featured">
-                <a href="/blog/${post.url}" class="blog-image" aria-label="${blogEscape(post.title)}">
+                <a href="/blog/${post.url.replace(/\.html$/, '')}" class="blog-image" aria-label="${blogEscape(post.title)}">
                     <img src="/assets/images/${post.img}" alt="${blogEscape(post.title)}" loading="lazy" width="640" height="420">
                     <span class="blog-badge">${blogEscape(post.cat)}</span>
                 </a>
@@ -1445,9 +1240,9 @@ if (blogContainer) {
                         <span><i class="far fa-calendar-alt"></i> ${post.date}</span>
                         <span><i class="far fa-clock"></i> ${blogReadTime(post)}</span>
                     </div>
-                    <h2 class="blog-title"><a href="/blog/${post.url}">${blogEscape(post.title)}</a></h2>
+                    <h2 class="blog-title"><a href="/blog/${post.url.replace(/\.html$/, '')}">${blogEscape(post.title)}</a></h2>
                     <p class="blog-description">${blogEscape(post.desc)}</p>
-                    <a href="/blog/${post.url}" class="blog-link">Read Article <i class="fas fa-arrow-right"></i></a>
+                    <a href="/blog/${post.url.replace(/\.html$/, '')}" class="blog-link">Read Article <i class="fas fa-arrow-right"></i></a>
                 </div>
             </article>
         </div>`;
@@ -1695,12 +1490,12 @@ if (blogContainer) {
     if (prevPost || nextPost) {
         extrasHtml += '<nav class="blog-prevnext reveal" aria-label="More articles">';
         if (prevPost) {
-            extrasHtml += '<a class="pn-prev" href="/blog/' + prevPost.url + '"><span class="pn-label"><i class="fas fa-arrow-left"></i> Previous</span><span class="pn-title">' + prevPost.title + '</span></a>';
+            extrasHtml += '<a class="pn-prev" href="/blog/' + prevPost.url.replace(/\.html$/, '') + '"><span class="pn-label"><i class="fas fa-arrow-left"></i> Previous</span><span class="pn-title">' + prevPost.title + '</span></a>';
         } else {
             extrasHtml += '<span></span>';
         }
         if (nextPost) {
-            extrasHtml += '<a class="pn-next" href="/blog/' + nextPost.url + '"><span class="pn-label">Next <i class="fas fa-arrow-right"></i></span><span class="pn-title">' + nextPost.title + '</span></a>';
+            extrasHtml += '<a class="pn-next" href="/blog/' + nextPost.url.replace(/\.html$/, '') + '"><span class="pn-label">Next <i class="fas fa-arrow-right"></i></span><span class="pn-title">' + nextPost.title + '</span></a>';
         } else {
             extrasHtml += '<span></span>';
         }

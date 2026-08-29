@@ -1,0 +1,15 @@
+# 301 redirects for merged service/blog pages (SEO consolidation, 2026-08-29)
+# Cloudflare Pages reads this file automatically.
+
+/services/digital-eye-test-center-ahmedabad        /services/computerized-eye-testing-ranip   301
+/services/digital-eye-test-center-ahmedabad.html   /services/computerized-eye-testing-ranip   301
+/services/eye-number-checking-in-ranip             /services/computerized-eye-testing-ranip   301
+/services/eye-number-checking-in-ranip.html        /services/computerized-eye-testing-ranip   301
+/services/vision-testing-optical-shop-ahmedabad        /services/computerized-eye-testing-ranip   301
+/services/vision-testing-optical-shop-ahmedabad.html   /services/computerized-eye-testing-ranip   301
+/services/frame-repair-optical-shop-ahmedabad        /services/spectacle-repair-in-new-ranip   301
+/services/frame-repair-optical-shop-ahmedabad.html   /services/spectacle-repair-in-new-ranip   301
+/services/stylish-goggles-shop-in-ranip        /services/sunglasses-store-in-new-ranip   301
+/services/stylish-goggles-shop-in-ranip.html   /services/sunglasses-store-in-new-ranip   301
+/blog/how-to-clean-glasses        /blog/how-to-maintain-eyeglasses   301
+/blog/how-to-clean-glasses.html   /blog/how-to-maintain-eyeglasses   301

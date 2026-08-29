@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <li><a href="/services/blue-cut-glasses-store-ahmedabad"><i class="fas fa-chevron-right"></i> Blue Cut Glasses</a></li>
                             <li><a href="/services/computer-glasses-in-ranip"><i class="fas fa-chevron-right"></i> Computer Glasses</a></li>
                             <li><a href="/services/premium-optical-store-in-new-ranip"><i class="fas fa-chevron-right"></i> Premium Store</a></li>
-                            <li><a href="/services/digital-eye-test-center-ahmedabad"><i class="fas fa-chevron-right"></i> Eye Testing</a></li>
+                            <li><a href="/services/computerized-eye-testing-ranip"><i class="fas fa-chevron-right"></i> Eye Testing</a></li>
                             <li><a href="/faq"><i class="fas fa-chevron-right"></i> FAQ</a></li>
                             <li><a href="/googlereviews"><i class="fas fa-chevron-right"></i> Google Reviews</a></li>
                         </ul>
@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             5 Sun Residency, Anand Party Plot Rd, near Manki Circle, New Ranip, Ahmedabad, Gujarat 382470</a></p>
                             <p><i class="fas fa-phone"></i> <a href="tel:+918732969601">+91 8732969601</a></p>
                             <p><i class="fas fa-envelope"></i> <a href="mailto:chasmashops@gmail.com">chasmashops@gmail.com</a></p>
-                            <p><i class="fas fa-clock"></i> Mon-Sat: 10:00 AM - 9:00 PM</p>
+                            <p><i class="fas fa-clock"></i> Mon-Sun: 10:00 AM - 9:00 PM</p>
                         </div>
                     </div>
                 </div>

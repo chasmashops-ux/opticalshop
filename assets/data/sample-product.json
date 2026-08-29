@@ -1,0 +1,25 @@
+{
+  "_comment": "Reference example only — never loaded by the live site. Copy one product object (everything except this _comment key) into eyeglasses.json or sunglasses.json and fill in real values. See PRODUCT_SCHEMA.md for field-by-field notes.",
+  "example": {
+    "id": "eyeglass-men-01",
+    "name": "Classic Rectangle Frame",
+    "category": "men",
+    "shape": "rectangle",
+    "price": 1499,
+    "images": {
+      "front": "/assets/images/eyeglass-20/eyeglass-men-01-front.webp",
+      "left": "/assets/images/eyeglass-20/eyeglass-men-01-left.webp",
+      "right": "/assets/images/eyeglass-20/eyeglass-men-01-right.webp",
+      "leftSide": "/assets/images/eyeglass-20/eyeglass-men-01-side-left.webp",
+      "rightSide": "/assets/images/eyeglass-20/eyeglass-men-01-side-right.webp"
+    },
+    "altText": "Men's rectangle eyeglass frame at Shree Hari Chasma Ghar, New Ranip",
+    "tryOn": {
+      "overlay": "/assets/images/eyeglass-20/eyeglass-men-01-overlay.png",
+      "widthRatio": 2.0,
+      "verticalOffset": 0,
+      "noseOffset": 0,
+      "rotationMultiplier": 1
+    }
+  }
+}

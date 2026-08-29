@@ -22,6 +22,15 @@ Disallow: /test/
 Disallow: /backup/
 Disallow: /logs/
 
+# Block internal staff CRM tool (not public content)
+Disallow: /crm/
+Disallow: /account/
+Disallow: /dashboard
+Disallow: /dashboard.html
+Disallow: /login
+Disallow: /login.html
+Disallow: /api/
+
 # Block non-public files
 Disallow: /*.sql$
 Disallow: /*.bak$
